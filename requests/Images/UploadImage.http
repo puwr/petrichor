@@ -1,0 +1,12 @@
+@host=http://localhost:5198
+
+POST {{host}}/Images
+Content-Type: multipart/form-data; boundary=FormBoundary
+
+--FormBoundary
+Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+
+--FormBoundary--

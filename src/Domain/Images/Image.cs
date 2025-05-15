@@ -6,17 +6,17 @@ namespace Domain.Images;
 public class Image
 {
     public Guid Id { get; private set; }
-    public string Path { get; private set; } = null!;
+    public string ImagePath { get; private set; } = null!;
     public string ThumbnailPath { get; private set; } = null!;
     public Guid UserId { get; private set; }
     public string? Description { get; private set; }
     public List<Tag> Tags { get; private set; } = [];
     public DateTime CreatedDateTime { get; private set; }
 
-    public Image(string path, string thumbnailPath, Guid userId)
+    public Image(string imagePath, string thumbnailPath, Guid userId)
     {
         Id = Guid.NewGuid();
-        Path = path;
+        ImagePath = imagePath;
         ThumbnailPath = thumbnailPath;
         UserId = userId;
         CreatedDateTime = DateTime.UtcNow;
