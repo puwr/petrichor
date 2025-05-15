@@ -1,13 +1,19 @@
+using API;
 using Application;
 using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApplication();
-builder.Services.AddControllers();
-builder.Services.AddInfrastructure();
+builder.Services
+    .AddPresentation()
+    .AddApplication()
+    .AddInfrastructure();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
+
+app.AddInfrastructureMiddleware();
 
 app.UseHttpsRedirection();
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(PetrichorDbContext))]
-    [Migration("20250515045020_InitialCreate")]
+    [Migration("20250515081200_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,9 +26,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDateTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImagePath")

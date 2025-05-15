@@ -1,21 +1,20 @@
+using Domain.Common;
+using Domain.Images.Events;
 using Domain.Tags;
 using ErrorOr;
 
 namespace Domain.Images;
 
-public class Image
+public class Image : Entity
 {
-    public Guid Id { get; private set; }
     public string ImagePath { get; private set; } = null!;
     public string ThumbnailPath { get; private set; } = null!;
     public Guid UserId { get; private set; }
-    public string? Description { get; private set; }
     public List<Tag> Tags { get; private set; } = [];
     public DateTime CreatedDateTime { get; private set; }
 
-    public Image(string imagePath, string thumbnailPath, Guid userId)
+    public Image(string imagePath, string thumbnailPath, Guid userId) : base(Guid.NewGuid())
     {
-        Id = Guid.NewGuid();
         ImagePath = imagePath;
         ThumbnailPath = thumbnailPath;
         UserId = userId;
@@ -38,6 +37,11 @@ public class Image
         var tagToRemove = Tags.Where(t => t.Id == tagId).FirstOrDefault();
 
         Tags.Remove(tagToRemove!);
+    }
+
+    public void DeleteImage()
+    {
+        _domainEvents.Add(new ImageDeletedEvent(ImagePath, ThumbnailPath));
     }
 
     private Image() { }

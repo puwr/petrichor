@@ -26,6 +26,8 @@ public class UploadsRepository : IUploadsRepository
 
     public Task RemoveFileAsync(string filePath)
     {
-        throw new NotImplementedException();
+        File.Delete(Path.Combine(_dataFolder, filePath.Substring(1)));
+
+        return Task.CompletedTask;
     }
 }

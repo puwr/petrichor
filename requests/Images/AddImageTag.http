@@ -1,0 +1,9 @@
+@host=http://localhost:5198
+@imageId=
+
+POST  {{host}}/Images/{{imageId}}/tags
+Content-Type: application/json
+
+{
+    "tag": ""
+}

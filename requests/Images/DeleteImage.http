@@ -1,0 +1,4 @@
+@host=http://localhost:5198
+@imageId=
+
+DELETE {{host}}/Images/{{imageId}}

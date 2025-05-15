@@ -27,8 +27,10 @@ public class ThumbnailsRepository : IThumbnailsRepository
         return $"/thumbs/{thumbnailName}";
     }
 
-    public Task RemoveThumbnail(string thumbnailPath)
+    public Task RemoveThumbnailAsync(string thumbnailPath)
     {
-        throw new NotImplementedException();
+        File.Delete(Path.Combine(_dataFolder, thumbnailPath.Substring(1)));
+
+        return Task.CompletedTask;
     }
 }

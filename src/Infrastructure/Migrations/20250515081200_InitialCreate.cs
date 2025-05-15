@@ -19,7 +19,6 @@ namespace Infrastructure.Migrations
                     ImagePath = table.Column<string>(type: "TEXT", nullable: false),
                     ThumbnailPath = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedDateTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
