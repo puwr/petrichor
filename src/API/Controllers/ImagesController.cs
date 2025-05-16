@@ -1,6 +1,7 @@
 using Application.Common.Interfaces;
 using Application.Images.Commands.AddImageTag;
 using Application.Images.Commands.DeleteImage;
+using Application.Images.Commands.DeleteImageTag;
 using Application.Images.Commands.UploadImage;
 using Application.Images.Queries.GetImage;
 using Application.Images.Queries.ListImages;
@@ -14,14 +15,14 @@ namespace API.Controllers;
 public class ImagesController(
     ISender _mediator,
     IUploadsRepository _uploadsRepository,
-    IThumbnailsRepository _thumbnailsRepository ) : ApiController
+    IThumbnailsRepository _thumbnailsRepository) : ApiController
 {
     [HttpPost]
     public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest request)
     {
         var imagePath = await _uploadsRepository.SaveFileAsync(request.Image);
         var thumbnailPath = await _thumbnailsRepository.GenerateAndSaveThumbnail(imagePath);
-        
+
         var uploadImageCommand = new UploadImageCommand(imagePath, thumbnailPath, Guid.NewGuid());
 
         var uploadImageResult = await _mediator.Send(uploadImageCommand);
@@ -75,11 +76,23 @@ public class ImagesController(
     {
         var command = new AddImageTagCommand(imageId, request.Tag);
 
-        var updateImageResult = await _mediator.Send(command);
+        var addImageTagResult = await _mediator.Send(command);
 
-        return updateImageResult.Match(
+        return addImageTagResult.Match(
             success => Ok(),
             Problem
         );
+    }
+
+    [HttpDelete("{imageId:guid}/tags/{tagId:guid}")]
+    public async Task<IActionResult> DeleteImageTag(Guid imageId, Guid tagId)
+    {
+        var command = new DeleteImageTagCommand(imageId, tagId);
+
+        var deleteImageTagResult = await _mediator.Send(command);
+
+        return deleteImageTagResult.Match(
+            _ => NoContent(),
+            Problem);
     }
 }

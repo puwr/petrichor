@@ -32,11 +32,18 @@ public class Image : Entity
         return Result.Success;
     }
 
-    public void RemoveTag(Guid tagId)
+    public ErrorOr<Deleted> RemoveTag(Guid tagId)
     {
         var tagToRemove = Tags.Where(t => t.Id == tagId).FirstOrDefault();
 
-        Tags.Remove(tagToRemove!);
+        if (tagToRemove is null)
+        {
+            return Error.NotFound("Tag not found");
+        }
+
+        Tags.Remove(tagToRemove);
+
+        return Result.Deleted;
     }
 
     public void DeleteImage()

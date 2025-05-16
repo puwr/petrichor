@@ -26,8 +26,6 @@ public class AddImageTagCommandHandler(
 
         var addTagResult = image.AddTag(tag);
 
-        Console.WriteLine(addTagResult.FirstError.Description);
-
         if (addTagResult.IsError)
         {
             return addTagResult.Errors;

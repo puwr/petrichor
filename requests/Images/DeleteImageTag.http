@@ -1,0 +1,5 @@
+@host=http://localhost:5198
+@imageId=
+@tagId=
+
+DELETE {{host}}/Images/{{imageId}}/tags/{{tagId}}
