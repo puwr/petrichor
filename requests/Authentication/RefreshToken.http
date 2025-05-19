@@ -1,0 +1,5 @@
+@host=http://localhost:5198
+
+POST  {{host}}/authentication/refresh-token
+Content-Type: application/json
+Cookie: 

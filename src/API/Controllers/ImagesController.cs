@@ -1,3 +1,4 @@
+using Application.Authorization;
 using Application.Common.Interfaces;
 using Application.Images.Commands.AddImageTag;
 using Application.Images.Commands.DeleteImage;
@@ -7,6 +8,7 @@ using Application.Images.Queries.GetImage;
 using Application.Images.Queries.ListImages;
 using Contracts.Images;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -23,7 +25,7 @@ public class ImagesController(
         var imagePath = await _uploadsRepository.SaveFileAsync(request.Image);
         var thumbnailPath = await _thumbnailsRepository.GenerateAndSaveThumbnail(imagePath);
 
-        var uploadImageCommand = new UploadImageCommand(imagePath, thumbnailPath, Guid.NewGuid());
+        var uploadImageCommand = new UploadImageCommand(imagePath, thumbnailPath);
 
         var uploadImageResult = await _mediator.Send(uploadImageCommand);
 
@@ -33,6 +35,7 @@ public class ImagesController(
         );
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> ListImages()
     {
@@ -46,6 +49,7 @@ public class ImagesController(
         );
     }
 
+    [AllowAnonymous]
     [HttpGet("{imageId:guid}")]
     public async Task<IActionResult> GetImage(Guid imageId)
     {
@@ -59,6 +63,7 @@ public class ImagesController(
         );
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ImageUploader)]
     [HttpDelete("{imageId:guid}")]
     public async Task<IActionResult> DeleteImage(Guid imageId)
     {
@@ -71,6 +76,7 @@ public class ImagesController(
             Problem);
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ImageUploader)]
     [HttpPost("{imageId:guid}/tags")]
     public async Task<IActionResult> AddImageTag(Guid imageId, AddTagRequest request)
     {
@@ -84,6 +90,7 @@ public class ImagesController(
         );
     }
 
+    [Authorize(Policy = AuthorizationPolicies.ImageUploader)]
     [HttpDelete("{imageId:guid}/tags/{tagId:guid}")]
     public async Task<IActionResult> DeleteImageTag(Guid imageId, Guid tagId)
     {

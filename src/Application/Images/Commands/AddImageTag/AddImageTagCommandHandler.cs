@@ -19,7 +19,7 @@ public class AddImageTagCommandHandler(
     {
         if (await _imagesRepository.GetByIdAsync(command.ImageId) is not Image image)
         {
-            return Error.NotFound("Image not found");
+            return Error.NotFound("Image not found.");
         }
 
         var tag = await _tagsRepository.GetByNameAsync(command.Tag) ?? new Tag(command.Tag);

@@ -1,8 +1,9 @@
 @host=http://localhost:5198
 @imageId=
 
-POST  {{host}}/Images/{{imageId}}/tags
+POST  {{host}}/images/{{imageId}}/tags
 Content-Type: application/json
+Cookie: 
 
 {
     "tag": ""

@@ -37,4 +37,13 @@ public class ImagesRepository(PetrichorDbContext dbContext) : IImagesRepository
 
         return Task.CompletedTask;
     }
+
+    public async Task<Guid?> GetUploaderIdAsync(Guid id)
+    {
+        return await _dbContext.Images
+            .AsNoTracking()
+            .Where(i => i.Id == id)
+            .Select(i => i.UserId)
+            .FirstOrDefaultAsync();
+    }
 }

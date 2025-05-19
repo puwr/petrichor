@@ -1,7 +1,8 @@
 @host=http://localhost:5198
 
-POST {{host}}/Images
+POST {{host}}/images
 Content-Type: multipart/form-data; boundary=FormBoundary
+Cookie: 
 
 --FormBoundary
 Content-Disposition: form-data; name="image"; filename="test.jpg"

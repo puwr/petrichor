@@ -2,4 +2,5 @@
 @imageId=
 @tagId=
 
-DELETE {{host}}/Images/{{imageId}}/tags/{{tagId}}
+DELETE {{host}}/images/{{imageId}}/tags/{{tagId}}
+Cookie: 

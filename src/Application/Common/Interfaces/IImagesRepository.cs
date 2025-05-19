@@ -9,4 +9,5 @@ public interface IImagesRepository
     Task<Image?> GetByIdAsync(Guid id);
     Task UpdateImageAsync(Image image);
     Task RemoveImageAsync(Image image);
+    Task<Guid?> GetUploaderIdAsync(Guid id);
 }

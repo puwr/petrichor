@@ -1,4 +1,5 @@
 @host=http://localhost:5198
 @imageId=
 
-DELETE {{host}}/Images/{{imageId}}
+DELETE {{host}}/images/{{imageId}}
+Cookie: 

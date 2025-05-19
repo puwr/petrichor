@@ -1,4 +1,4 @@
 @host=http://localhost:5198
 @imageId=
 
-GET {{host}}/Images/{{imageId}}
+GET {{host}}/images/{{imageId}}

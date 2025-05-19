@@ -3,8 +3,11 @@ using Application.Common.Interfaces;
 using Domain.Common;
 using Domain.Images;
 using Domain.Tags;
+using Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Common.Persistence;
@@ -12,7 +15,8 @@ namespace Infrastructure.Common.Persistence;
 public class PetrichorDbContext(
     DbContextOptions options, 
     IHttpContextAccessor httpContextAccessor,
-    IPublisher _publisher) : DbContext(options), IUnitOfWork
+    IPublisher _publisher) 
+        : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options), IUnitOfWork
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
@@ -42,7 +46,7 @@ public class PetrichorDbContext(
 
     private void AddDomainEventsToOfflineProcessingQueue(List<IDomainEvent> domainEvents)
     {
-        var domainEventsQueue = _httpContextAccessor.HttpContext.Items
+        var domainEventsQueue = _httpContextAccessor.HttpContext!.Items
             .TryGetValue("DomainEventsQueue", out var value) && value is Queue<IDomainEvent> existingDomainEvents
             ? existingDomainEvents
             : new Queue<IDomainEvent>();
@@ -52,7 +56,6 @@ public class PetrichorDbContext(
         _httpContextAccessor.HttpContext.Items["DomainEventsQueue"] = domainEventsQueue;
     }
     
-
     private static async Task PublishDomainEvents(IPublisher _publisher, List<IDomainEvent> domainEvents)
     {
         foreach (var domainEvent in domainEvents)
