@@ -5,7 +5,7 @@ Content-Type: multipart/form-data; boundary=FormBoundary
 Cookie: 
 
 --FormBoundary
-Content-Disposition: form-data; name="image"; filename="test.jpg"
+Content-Disposition: form-data; name="imagefile"; filename="test.jpg"
 Content-Type: image/jpeg
 
 < ./test.jpg

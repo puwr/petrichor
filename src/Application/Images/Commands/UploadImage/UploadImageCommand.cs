@@ -1,8 +1,8 @@
-using Domain.Images;
 using ErrorOr;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Images.Commands.UploadImage;
 
-public record UploadImageCommand(string ImagePath, string ThumbnailPath) : IRequest<ErrorOr<Image>>;
+public record UploadImageCommand(IFormFile ImageFile) : IRequest<ErrorOr<Guid>>;
 

@@ -1,22 +1,26 @@
 using Application.Common.Interfaces;
-using Domain.Images;
 using ErrorOr;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Commands.DeleteImageTag;
 
 public class DeleteImageTagCommandHandler(
-    IImagesRepository imagesRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<DeleteImageTagCommand, ErrorOr<Deleted>>
+    IPetrichorDbContext dbContext) 
+    : IRequestHandler<DeleteImageTagCommand, ErrorOr<Deleted>>
 {
-    private readonly IImagesRepository _imagesRepository = imagesRepository;
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-
-    public async Task<ErrorOr<Deleted>> Handle(DeleteImageTagCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Deleted>> Handle(
+        DeleteImageTagCommand command,
+        CancellationToken cancellationToken)
     {
-        if (await _imagesRepository.GetByIdAsync(command.ImageId) is not Image image)
+        var image = await dbContext.Images
+            .Include(i => i.Tags)
+            .FirstOrDefaultAsync(i => i.Id == command.ImageId,
+                cancellationToken: cancellationToken);
+
+        if (image is null)
         {
-            return Error.NotFound("Image not found");
+            return Error.NotFound("Image not found.");
         }
 
         var removeTagResult = image.RemoveTag(command.TagId);
@@ -26,8 +30,7 @@ public class DeleteImageTagCommandHandler(
             return removeTagResult.Errors;
         }
 
-        await _imagesRepository.UpdateImageAsync(image);
-        await _unitOfWork.CommitChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Deleted;
     }

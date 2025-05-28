@@ -1,21 +1,29 @@
 using Application.Common.Interfaces;
-using Domain.Images;
+using Application.Common.Mappings;
+using Contracts.Images;
 using ErrorOr;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Queries.GetImage;
 
-public class GetImageQueryHandler(IImagesRepository imagesRepository) : IRequestHandler<GetImageQuery, ErrorOr<Image>>
+public class GetImageQueryHandler(IPetrichorDbContext dbContext) 
+    : IRequestHandler<GetImageQuery, ErrorOr<ImageResponse>>
 {
-    private readonly IImagesRepository _imagesRepository = imagesRepository;
-
-    public async Task<ErrorOr<Image>> Handle(GetImageQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<ImageResponse>> Handle(
+        GetImageQuery request,
+        CancellationToken cancellationToken)
     {
-        if (await _imagesRepository.GetByIdAsync(request.ImageId) is not Image image)
+        var image = await dbContext.Images
+            .AsNoTracking()
+            .Include(i => i.Tags)
+            .FirstOrDefaultAsync(i => i.Id == request.ImageId, cancellationToken: cancellationToken);
+
+        if (image is null)
         {
-            return Error.NotFound("Image not found");
+            return Error.NotFound("Image not found.");
         }
 
-        return image;
+        return image.ToResponse();
     }
 }

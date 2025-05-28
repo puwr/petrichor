@@ -1,29 +1,32 @@
 using Application.Common.Interfaces;
 using ErrorOr;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Commands.DeleteImage;
 
 public class DeleteImageCommandHandler(
-    IImagesRepository imagesRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<DeleteImageCommand, ErrorOr<Deleted>>
+    IPetrichorDbContext dbContext) 
+    : IRequestHandler<DeleteImageCommand, ErrorOr<Deleted>>
 {
-    private readonly IImagesRepository _imagesRepository = imagesRepository;
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-
-    public async Task<ErrorOr<Deleted>> Handle(DeleteImageCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Deleted>> Handle(
+        DeleteImageCommand command,
+        CancellationToken cancellationToken)
     {
-        var image = await _imagesRepository.GetByIdAsync(command.ImageId);
+        var image = await dbContext.Images
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Id == command.ImageId,
+                cancellationToken: cancellationToken);
 
         if (image is null)
         {
-            return Error.NotFound(description: "Image not found");
+            return Error.NotFound(description: "Image not found.");
         }
 
         image.DeleteImage();
 
-        await _imagesRepository.RemoveImageAsync(image);
-        await _unitOfWork.CommitChangesAsync();
+        dbContext.Images.Remove(image);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Deleted;
     }

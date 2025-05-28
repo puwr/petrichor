@@ -1,4 +1,3 @@
-using Application.Common.Interfaces;
 using Domain.Users;
 using ErrorOr;
 using MediatR;
@@ -6,26 +5,29 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authentication.Commands.Register;
 
-public class RegisterCommandHandler(UserManager<User> userManager)
-        : IRequestHandler<RegisterCommand, ErrorOr<Success>>
+public class RegisterCommandHandler(
+    UserManager<User> userManager)
+    : IRequestHandler<RegisterCommand, ErrorOr<Success>>
 {
-    private readonly UserManager<User> _userManager = userManager;
-
-    public async Task<ErrorOr<Success>> Handle(RegisterCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(
+        RegisterCommand command,
+        CancellationToken cancellationToken)
     {
-        if (await _userManager.FindByEmailAsync(command.Email) is not null)
+        if (await userManager.FindByEmailAsync(command.Email) is not null)
         {
-            return Error.Conflict(description: "User with provided email already exists.");
+            return Error
+                .Conflict(description: "User with provided email already exists.");
         }
 
-        if (await _userManager.FindByNameAsync(command.UserName) is not null)
+        if (await userManager.FindByNameAsync(command.UserName) is not null)
         {
-            return Error.Conflict(description: "User with provided user name already exists.");
+            return Error
+                .Conflict(description: "User with provided user name already exists.");
         }
 
         var user = new User(command.Email, command.UserName);
 
-        var result = await _userManager.CreateAsync(user, command.Password);
+        var result = await userManager.CreateAsync(user, command.Password);
 
         if (!result.Succeeded)
         {

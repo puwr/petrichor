@@ -8,9 +8,9 @@ public static class ImageFactory
     public static Image CreateImage()
     {
         return new Image(
-            imagePath: Constants.Image.ImagePath,
-            thumbnailPath: Constants.Image.ThumbnailPath,
-            userId: Constants.Image.UserId
+            originalImage: Constants.Image.OriginalImage,
+            thumbnail: Constants.Image.Thumbnail,
+            uploaderId: Constants.Image.UploaderId
         );
     }
 }

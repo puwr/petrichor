@@ -4,6 +4,6 @@ public static partial class Constants
 {
     public static class Tag
     {
-        public const string Name = "abstractionism";
+        public const string Name = "tag";
     }
 }

@@ -1,19 +1,16 @@
-using Application.Common.Interfaces;
+using Application.Common.Interfaces.Services.Storage;
 using Domain.Images.Events;
 using MediatR;
 
 namespace Application.Images.Events;
 
 public class ImageDeletedEventHandler(
-    IUploadsRepository uploadsRepository,
-    IThumbnailsRepository thumbnailsRepository) : INotificationHandler<ImageDeletedEvent>
+    IFileStorage fileStorage) 
+    : INotificationHandler<ImageDeletedEvent>
 {
-    private readonly IUploadsRepository _uploadsRepository = uploadsRepository;
-    private readonly IThumbnailsRepository _thumbnailsRepository = thumbnailsRepository;
-
     public async Task Handle(ImageDeletedEvent notification, CancellationToken cancellationToken)
     {
-        await _uploadsRepository.RemoveFileAsync(notification.ImagePath);
-        await _thumbnailsRepository.RemoveThumbnailAsync(notification.ThumbnnailPath);
+        await fileStorage.DeleteFileAsync(notification.ImagePath);
+        await fileStorage.DeleteFileAsync(notification.ThumbnnailPath);
     }
 }

@@ -1,11 +1,14 @@
 using System.Text;
 using Application.Common.Interfaces;
+using Application.Common.Interfaces.Services.Authentication;
+using Application.Common.Interfaces.Services.Images;
+using Application.Common.Interfaces.Services.Storage;
+using Contracts.Authentication;
 using Domain.Users;
-using Infrastructure.Authentication;
-using Infrastructure.Common.Persistence;
-using Infrastructure.Images.Persistence;
-using Infrastructure.Tags.Persistence;
-using Infrastructure.Users.Persistence;
+using Infrastructure.Persistence;
+using Infrastructure.Services.Authentication;
+using Infrastructure.Services.Images;
+using Infrastructure.Services.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +21,17 @@ namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services
             .AddPersistence()
-            .AddAuthentication(configuration);
+            .AddAuthentication(configuration)
+            .AddAuthorization();
+
+        services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
+        services.AddScoped<IImageMetadataProvider, ImageMetadataProvider>();
 
         return services;
     }
@@ -31,18 +40,18 @@ public static class DependencyInjection
     {
         services.AddDbContext<PetrichorDbContext>(options =>
             options.UseSqlite("Data Source = Petrichor.db"));
+            
+        services.AddScoped<IPetrichorDbContext>(provider =>
+            provider.GetRequiredService<PetrichorDbContext>());
 
-        services.AddScoped<IImagesRepository, ImagesRepository>();
-        services.AddScoped<ITagsRepository, TagsRepository>();
-        services.AddScoped<IUploadsRepository, UploadsRepository>();
-        services.AddScoped<IThumbnailsRepository, ThumbnailsRepository>();
-        services.AddScoped<IUsersRepository, UsersRepository>();
-        services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<PetrichorDbContext>());
-
+        services.AddScoped<IFileStorage, LocalFileStorage>();
+        
         return services;
     }
 
-    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddAuthentication(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {

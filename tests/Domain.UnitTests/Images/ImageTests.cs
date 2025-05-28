@@ -1,5 +1,3 @@
-using Domain.Images;
-using ErrorOr;
 using FluentAssertions;
 using TestUtils.Images;
 
@@ -8,16 +6,12 @@ namespace Domain.UnitTests.Images;
 public class ImageTests
 {
     [Fact]
-    public void AddTag_WhenTagAlreadyExists_ShouldFail()
+    public void RemoveTag_WhenTagDoesntExist_ShouldFail()
     {
         var image = ImageFactory.CreateImage();
-        var tag = TagFactory.CreateTag();
-        var addTagResults = Enumerable.Range(0, 2)
-            .Select(_ => image.AddTag(tag)).ToList();
+        
+        var removeTagResult = image.RemoveTag(Guid.NewGuid());
 
-        addTagResults.First().Value.Should().Be(Result.Success);
-
-        addTagResults.Last().IsError.Should().BeTrue();
-        addTagResults.Last().FirstError.Should().Be(ImageErrors.TagAlreadyAdded);
+        removeTagResult.IsError.Should().BeTrue();
     }
 }

@@ -1,16 +1,25 @@
 using Application.Common.Interfaces;
-using Domain.Images;
+using Application.Common.Mappings;
+using Contracts.Images;
 using ErrorOr;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Queries.ListImages;
 
-public class ListImagesQueryHandler(IImagesRepository imagesRepository) : IRequestHandler<ListImagesQuery, ErrorOr<List<Image>>>
+public class ListImagesQueryHandler(IPetrichorDbContext dbContext) 
+    : IRequestHandler<ListImagesQuery, ErrorOr<List<ListImagesResponse>>>
 {
-    private readonly IImagesRepository _imagesRepository = imagesRepository;
-
-    public async Task<ErrorOr<List<Image>>> Handle(ListImagesQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<ListImagesResponse>>> Handle(
+        ListImagesQuery request,
+        CancellationToken cancellationToken)
     {
-        return await _imagesRepository.ListAsync();
+        var images = await dbContext.Images
+            .AsNoTracking()
+            .OrderByDescending(i => i.UploadedDateTime)
+            .Select(i => i.ToListResponse())
+            .ToListAsync(cancellationToken: cancellationToken);
+        
+        return images;
     }
 }

@@ -2,11 +2,13 @@ using Domain.Images;
 
 namespace Domain.Tags;
 
-public class Tag 
+public sealed class Tag 
 {
+    private readonly List<Image> _images = [];
+
     public Guid Id { get; private set; }
-    public string Name { get; private set; } = null!;
-    public List<Image> Images { get; private set; } = [];
+    public string Name { get; private set; }
+    public IReadOnlyCollection<Image> Images => _images.AsReadOnly();
 
     public Tag(string name)
     {
@@ -14,5 +16,5 @@ public class Tag
         Name = name;
     }
 
-    private Tag() {}
+    private Tag() { }
 }

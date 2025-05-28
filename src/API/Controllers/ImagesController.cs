@@ -1,6 +1,5 @@
 using Application.Authorization;
-using Application.Common.Interfaces;
-using Application.Images.Commands.AddImageTag;
+using Application.Images.Commands.AddImageTags;
 using Application.Images.Commands.DeleteImage;
 using Application.Images.Commands.DeleteImageTag;
 using Application.Images.Commands.UploadImage;
@@ -14,23 +13,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Route("[controller]")]
-public class ImagesController(
-    ISender _mediator,
-    IUploadsRepository _uploadsRepository,
-    IThumbnailsRepository _thumbnailsRepository) : ApiController
+public class ImagesController(ISender mediator) : ApiController
 {
     [HttpPost]
     public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest request)
     {
-        var imagePath = await _uploadsRepository.SaveFileAsync(request.Image);
-        var thumbnailPath = await _thumbnailsRepository.GenerateAndSaveThumbnail(imagePath);
+        var uploadImageCommand = new UploadImageCommand(request.ImageFile);
 
-        var uploadImageCommand = new UploadImageCommand(imagePath, thumbnailPath);
-
-        var uploadImageResult = await _mediator.Send(uploadImageCommand);
+        var uploadImageResult = await mediator.Send(uploadImageCommand);
 
         return uploadImageResult.Match(
-            Ok,
+            imageId => CreatedAtAction(nameof(GetImage), new { imageId }, imageId),
             Problem
         );
     }
@@ -41,7 +34,7 @@ public class ImagesController(
     {
         var query = new ListImagesQuery();
 
-        var getImagesResult = await _mediator.Send(query);
+        var getImagesResult = await mediator.Send(query);
 
         return getImagesResult.Match(
             Ok,
@@ -55,7 +48,7 @@ public class ImagesController(
     {
         var query = new GetImageQuery(imageId);
 
-        var getImageResult = await _mediator.Send(query);
+        var getImageResult = await mediator.Send(query);
 
         return getImageResult.Match(
             Ok,
@@ -69,7 +62,7 @@ public class ImagesController(
     {
         var command = new DeleteImageCommand(imageId);
 
-        var deleteImageResult = await _mediator.Send(command);
+        var deleteImageResult = await mediator.Send(command);
 
         return deleteImageResult.Match(
             _ => NoContent(),
@@ -78,11 +71,11 @@ public class ImagesController(
 
     [Authorize(Policy = AuthorizationPolicies.ImageUploader)]
     [HttpPost("{imageId:guid}/tags")]
-    public async Task<IActionResult> AddImageTag(Guid imageId, AddTagRequest request)
+    public async Task<IActionResult> AddImageTags(Guid imageId, AddTagsRequest request)
     {
-        var command = new AddImageTagCommand(imageId, request.Tag);
+        var command = new AddImageTagsCommand(imageId, request.Tags);
 
-        var addImageTagResult = await _mediator.Send(command);
+        var addImageTagResult = await mediator.Send(command);
 
         return addImageTagResult.Match(
             success => Ok(),
@@ -96,7 +89,7 @@ public class ImagesController(
     {
         var command = new DeleteImageTagCommand(imageId, tagId);
 
-        var deleteImageTagResult = await _mediator.Send(command);
+        var deleteImageTagResult = await mediator.Send(command);
 
         return deleteImageTagResult.Match(
             _ => NoContent(),

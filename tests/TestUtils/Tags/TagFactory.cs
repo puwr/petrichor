@@ -1,7 +1,7 @@
 using Domain.Tags;
 using TestUtils.TestConstants;
 
-namespace TestUtils.Images;
+namespace TestUtils.Tags;
 
 public static class TagFactory
 {

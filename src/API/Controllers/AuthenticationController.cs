@@ -1,6 +1,6 @@
+using Application.Authentication.Commands.Login;
 using Application.Authentication.Commands.RefreshToken;
 using Application.Authentication.Commands.Register;
-using Application.Authentication.Queries.Login;
 using Contracts.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,7 @@ namespace API.Controllers;
 [AllowAnonymous]
 [Route("[controller]")]
 public class AuthenticationController(
-    ISender _mediator,
+    ISender mediator,
     IHttpContextAccessor httpContextAccessor) : ApiController
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
@@ -21,7 +21,7 @@ public class AuthenticationController(
     {
         var command = new RegisterCommand(request.Email, request.UserName, request.Password);
 
-        var registerResult = await _mediator.Send(command);
+        var registerResult = await mediator.Send(command);
 
         return registerResult.Match(
             success => Ok(),
@@ -32,9 +32,9 @@ public class AuthenticationController(
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        var query = new LoginQuery(request.Email, request.Password);
+        var query = new LoginCommand(request.Email, request.Password);
 
-        var loginResult = await _mediator.Send(query);
+        var loginResult = await mediator.Send(query);
 
         return loginResult.Match(
             success => Ok(),
@@ -49,7 +49,7 @@ public class AuthenticationController(
 
         var command = new RefreshTokenCommand(refreshToken);
 
-        var refreshTokenResult = await _mediator.Send(command);
+        var refreshTokenResult = await mediator.Send(command);
 
         return refreshTokenResult.Match(
             success => Ok(),
