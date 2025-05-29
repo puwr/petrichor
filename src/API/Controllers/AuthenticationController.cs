@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [AllowAnonymous]
-[Route("[controller]")]
 public class AuthenticationController(
     ISender mediator,
     IHttpContextAccessor httpContextAccessor) : ApiController

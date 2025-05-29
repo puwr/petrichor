@@ -7,6 +7,7 @@ namespace API.Controllers;
 
 [Authorize]
 [ApiController]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class ApiController : ControllerBase
 {
     protected IActionResult Problem(List<Error> errors)

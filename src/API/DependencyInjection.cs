@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+
 namespace API;
 
 public static class DependencyInjection
@@ -8,7 +11,13 @@ public static class DependencyInjection
 
         services
             .AddHttpContextAccessor()
-            .AddProblemDetails();
+            .AddProblemDetails()
+            .AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            });
 
         return services;
     }

@@ -1,6 +1,6 @@
 @host=http://localhost:5198
 
-POST {{host}}/images
+POST {{host}}/api/v1/images
 Content-Type: multipart/form-data; boundary=FormBoundary
 Cookie: 
 

@@ -1,6 +1,6 @@
 @host=http://localhost:5198
 
-POST  {{host}}/authentication/register
+POST  {{host}}/api/v1/authentication/register
 Content-Type: application/json
 
 {
