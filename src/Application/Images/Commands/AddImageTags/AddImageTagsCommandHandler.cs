@@ -53,7 +53,6 @@ public class AddImageTagsCommandHandler(IPetrichorDbContext dbContext)
         }
 
         var existingTags = await dbContext.Tags
-            .AsNoTracking()
             .Where(t => normalizedTagNames.Contains(t.Name))
             .ToListAsync(cancellationToken: cancellationToken);
 

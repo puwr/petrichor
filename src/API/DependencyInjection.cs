@@ -12,6 +12,7 @@ public static class DependencyInjection
         services
             .AddHttpContextAccessor()
             .AddProblemDetails()
+            .AddCors()
             .AddApiVersioning(options =>
             {
                 options.DefaultApiVersion = new ApiVersion(1, 0);

@@ -1,0 +1,21 @@
+<div class="container">
+  @if (image$ | async; as image) {
+  <section class="image-page">
+    <img
+      class="image-page__image"
+      src="{{ baseUrl + image.url }}"
+      width="{{ image.width }}"
+      height="{{ image.height }}"
+      fetchpriority="high"
+      loading="eager"
+      (load)="onImageLoad()"
+    />
+    <div class="image-page__tags">
+      <app-tags [tags]="image.tags" />
+    </div>
+    <span class="image-page__details"
+      >Uploaded at: {{ image.uploadedAt | date : "longDate" }}</span
+    >
+  </section>
+  }
+</div>

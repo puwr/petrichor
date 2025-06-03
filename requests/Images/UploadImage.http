@@ -2,7 +2,7 @@
 
 POST {{host}}/api/v1/images
 Content-Type: multipart/form-data; boundary=FormBoundary
-Cookie: 
+Cookie:
 
 --FormBoundary
 Content-Disposition: form-data; name="imagefile"; filename="test.jpg"

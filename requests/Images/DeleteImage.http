@@ -2,4 +2,4 @@
 @imageId=
 
 DELETE {{host}}/api/v1/images/{{imageId}}
-Cookie: 
+Cookie:

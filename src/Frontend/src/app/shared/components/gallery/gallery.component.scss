@@ -1,0 +1,16 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+
+  &__item {
+    margin: 0 auto;
+  }
+
+  &__thumb {
+    display: block;
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+  }
+}

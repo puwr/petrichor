@@ -26,6 +26,9 @@ importers:
       '@angular/router':
         specifier: ^20.0.0
         version: 20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.0.0(@angular/common@20.0.0(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.0.0(@angular/compiler@20.0.0)(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
+      normalize.css:
+        specifier: ^8.0.1
+        version: 8.0.1
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -1959,6 +1962,9 @@ packages:
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
+
+  normalize.css@8.0.1:
+    resolution: {integrity: sha512-qizSNPO93t1YUuUhP22btGOo3chcvDFqFaj2TRybP0DMxkHOCTYwp3n34fel4a31ORXy4m1Xq0Gyqpb5m33qIg==}
 
   npm-bundled@4.0.0:
     resolution: {integrity: sha512-IxaQZDMsqfQ2Lz37VvyyEtKLe8FsRZuysmedy/N06TU1RyVppYKXrO4xIhR0F+7ubIBox6Q7nir6fQI3ej39iA==}
@@ -4445,6 +4451,8 @@ snapshots:
       abbrev: 3.0.1
 
   normalize-path@3.0.0: {}
+
+  normalize.css@8.0.1: {}
 
   npm-bundled@4.0.0:
     dependencies:

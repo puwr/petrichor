@@ -1,0 +1,13 @@
+<header class="header">
+  <div class="header__wrapper container">
+    <nav>
+      <a routerLink="/">
+        <img class="header__logo" src="/logo.svg" alt="Petrichor logo" />
+      </a>
+    </nav>
+  </div>
+</header>
+
+@if (loading$) {
+<app-progress-bar />
+}

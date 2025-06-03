@@ -1,0 +1,11 @@
+<div class="tags">
+  @if (tags() && tags().length > 0) {
+  <ul class="tags__list list-reset">
+    @for (tag of tags(); track tag.id) {
+    <li class="tags__item">{{ tag.name }}</li>
+    }
+  </ul>
+  } @else {
+  <p class="tags__not-found">No tags found.</p>
+  }
+</div>

@@ -2,4 +2,4 @@
 
 POST  {{host}}/api/v1/authentication/refresh-token
 Content-Type: application/json
-Cookie: 
+Cookie:

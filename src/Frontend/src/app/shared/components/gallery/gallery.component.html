@@ -1,0 +1,20 @@
+<div class="gallery">
+  @if (galleryItems() && galleryItems().length > 0) { @for (item of
+  galleryItems(); track item.id) {
+  <figure
+    class="gallery__item"
+    [style.grid-row-end]="
+      `span ${calculateRowSpan(item.thumbnailWidth, item.thumbnailHeight)}`
+    "
+  >
+    <a class="gallery__link" routerLink="/images/{{ item.id }}">
+      <img
+        class="gallery__thumb"
+        src="{{ baseUrl + item.thumbnailUrl }}"
+        width="{{ item.thumbnailWidth }}"
+        height="{{ item.thumbnailHeight }}"
+        loading="lazy"
+    /></a>
+  </figure>
+  } }
+</div>

@@ -30,7 +30,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Tags.Tag", b =>
@@ -47,7 +47,7 @@ namespace Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.User", b =>
@@ -133,7 +133,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("ImageTags");
+                    b.ToTable("ImageTags", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -284,7 +284,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ImageId");
 
-                            b1.ToTable("Images");
+                            b1.ToTable("Images", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ImageId");
@@ -310,7 +310,7 @@ namespace Infrastructure.Migrations
 
                             b1.HasKey("ImageId");
 
-                            b1.ToTable("Images");
+                            b1.ToTable("Images", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ImageId");

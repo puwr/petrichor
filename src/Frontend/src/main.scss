@@ -1,0 +1,29 @@
+@use "./styles" as *;
+@import "normalize.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+
+  font-family: var(--font-standard);
+  font-size: var(--text-size-standard);
+  color: var(--color-text);
+}
+
+.container {
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.list-reset {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

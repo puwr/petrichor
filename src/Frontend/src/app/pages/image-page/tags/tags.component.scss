@@ -1,0 +1,17 @@
+.tags {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__item {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-primary);
+  }
+
+  &__not-found {
+    margin: 0;
+  }
+}

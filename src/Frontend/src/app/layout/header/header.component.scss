@@ -1,0 +1,14 @@
+.header {
+  background-color: var(--color-primary);
+
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+  }
+
+  &__logo {
+    display: block;
+    width: 8rem;
+  }
+}

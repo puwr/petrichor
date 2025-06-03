@@ -1,0 +1,19 @@
+.image-page {
+  &__figure {
+    margin: 0;
+  }
+
+  &__image {
+    width: 100%;
+    height: auto;
+    max-height: 75vh;
+
+    margin-bottom: 2rem;
+
+    object-fit: contain;
+  }
+
+  &__tags {
+    margin-bottom: 1rem;
+  }
+}
