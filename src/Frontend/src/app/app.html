@@ -1,5 +1,7 @@
 <app-header />
 
-<main class="main" [class.main--loading]="isLoading$ | async">
+<app-progress-bar />
+
+<main class="main" [class.main--loading]="loading$ | async">
   <router-outlet />
 </main>

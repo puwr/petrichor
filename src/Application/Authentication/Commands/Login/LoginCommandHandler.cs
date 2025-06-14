@@ -1,3 +1,4 @@
+using Application.Common.Interfaces.Services;
 using Application.Common.Interfaces.Services.Authentication;
 using Domain.Users;
 using ErrorOr;
@@ -8,7 +9,8 @@ namespace Application.Authentication.Commands.Login;
 
 public class LoginCommandHandler(
     UserManager<User> userManager,
-    IJwtTokenProvider jwtTokenProvider) 
+    IJwtTokenProvider jwtTokenProvider,
+    ICookieService cookieService)
     : IRequestHandler<LoginCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(
@@ -33,16 +35,15 @@ public class LoginCommandHandler(
 
         await userManager.UpdateAsync(user);
 
-        jwtTokenProvider.WriteTokenAsHttpOnlyCookie(
+        cookieService.WriteCookie(
             "ACCESS_TOKEN",
             accessTokenResult.Token,
             accessTokenResult.ExpiresAt);
 
-        jwtTokenProvider.WriteTokenAsHttpOnlyCookie(
+        cookieService.WriteCookie(
             "REFRESH_TOKEN",
             refreshTokenResult.Token,
-            refreshTokenResult.ExpiresAt
-        );
+            refreshTokenResult.ExpiresAt);
 
         return Result.Success;
     }

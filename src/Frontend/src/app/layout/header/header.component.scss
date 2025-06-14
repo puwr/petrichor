@@ -1,14 +1,33 @@
 .header {
   background-color: var(--color-primary);
 
-  &__wrapper {
+  &__nav {
     display: flex;
     align-items: center;
-    height: 4rem;
+    justify-content: space-between;
+
+    max-height: 2rem;
+  }
+
+  &__logo-link {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: var(--outline-standard);
+      outline-offset: var(--outline-offset);
+      border-radius: var(--radius-standard);
+    }
   }
 
   &__logo {
     display: block;
     width: 8rem;
+  }
+
+  &__links {
+    display: flex;
+    gap: 1.5rem;
   }
 }

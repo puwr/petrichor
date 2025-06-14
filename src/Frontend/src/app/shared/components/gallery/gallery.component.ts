@@ -16,9 +16,8 @@ export class GalleryComponent {
 
   calculateRowSpan(width: number, height: number): number {
     const aspectRatio = height / width;
-    const columnWidthRem = 16;
 
-    const rowSpan = Math.ceil(aspectRatio * columnWidthRem);
+    const rowSpan = Math.ceil(aspectRatio * 16);
 
     return rowSpan;
   }

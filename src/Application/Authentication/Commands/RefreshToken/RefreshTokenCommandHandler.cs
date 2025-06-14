@@ -1,3 +1,4 @@
+using Application.Common.Interfaces.Services;
 using Application.Common.Interfaces.Services.Authentication;
 using Domain.Users;
 using ErrorOr;
@@ -9,14 +10,15 @@ namespace Application.Authentication.Commands.RefreshToken;
 
 public class RefreshTokenCommandHandler(
     IJwtTokenProvider jwtTokenProvider,
-    UserManager<User> userManager)
+    UserManager<User> userManager,
+    ICookieService cookieService)
     : IRequestHandler<RefreshTokenCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(
         RefreshTokenCommand command,
         CancellationToken cancellationToken)
     {
-        if (command.RefreshToken is null)
+        if (string.IsNullOrEmpty(command.RefreshToken))
         {
             return Error.Unauthorized(description: "Refresh token is missing.");
         }
@@ -46,16 +48,15 @@ public class RefreshTokenCommandHandler(
 
         await userManager.UpdateAsync(user);
 
-        jwtTokenProvider.WriteTokenAsHttpOnlyCookie(
+        cookieService.WriteCookie(
             "ACCESS_TOKEN",
             accessTokenResult.Token,
             accessTokenResult.ExpiresAt);
 
-        jwtTokenProvider.WriteTokenAsHttpOnlyCookie(
+        cookieService.WriteCookie(
             "REFRESH_TOKEN",
             refreshTokenResult.Token,
-            refreshTokenResult.ExpiresAt
-        );
+            refreshTokenResult.ExpiresAt);
 
         return Result.Success;
     }

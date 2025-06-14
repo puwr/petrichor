@@ -1,0 +1,5 @@
+@host=http://localhost:5198
+
+GET  {{host}}/api/v1/account/me
+Content-Type: application/json
+Cookie:

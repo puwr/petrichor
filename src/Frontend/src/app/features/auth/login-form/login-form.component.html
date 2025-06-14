@@ -1,0 +1,20 @@
+<form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <app-text-input label="Email" type="email" controlName="email" />
+  <app-text-input label="Password" type="password" controlName="password" />
+
+  @if (validationErrors) {
+  <ul class="list-reset validation-errors">
+    @for (error of validationErrors; track $index) {
+    <li class="validation-errors__item">{{ error }}</li>
+    }
+  </ul>
+  }
+
+  <button
+    class="btn-reset btn btn--fill"
+    [disabled]="loginForm.invalid"
+    type="submit"
+  >
+    Login
+  </button>
+</form>

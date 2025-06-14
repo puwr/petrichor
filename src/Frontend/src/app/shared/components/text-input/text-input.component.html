@@ -1,0 +1,14 @@
+<div class="text-input">
+  <label class="text-input__label" [for]="controlName()">{{ label() }}</label>
+  <input
+    class="text-input__field"
+    [class.text-input__field--error]="showError()"
+    [formControl]="control"
+    [type]="type()"
+    [id]="controlName()"
+  />
+
+  @if (showError()) {
+  <span class="text-input__error">{{ errorMessage }}</span>
+  }
+</div>

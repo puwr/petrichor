@@ -1,9 +1,11 @@
 :root {
   --color-primary: #451a33;
-  --color-secondary: #be5176;
-  --color-accent: #803c53;
+  --color-secondary: #9e4770;
+  --color-accent: #c46b5f;
+  --color-success: #356859;
+  --color-danger: #c44536;
   --color-background: #1a1a1a;
-  --color-text: #ffeef0;
+  --color-text-primary: #ffeef0;
 
   --font-standard: "Share Tech", serif;
 
@@ -13,4 +15,17 @@
   --animation-indeterminate: cubic-bezier(0.65, 0.815, 0.735, 0.395);
 
   --duration-standard: 200ms;
+
+  --outline-width: 0.15rem;
+  --outline-offset: 0.4rem;
+
+  --outline-standard: var(--outline-width) solid var(--color-accent);
+  --outline-danger: var(--outline-width) solid var(--color-danger);
+
+  --radius-standard: 0.5rem;
+
+  --shadow-secondary: 0 0.25rem 0.5rem rgba(158, 71, 112, 0.4);
+  --shadow-accent: 0 0.25rem 0.5rem rgba(196, 107, 95, 0.4);
+  --shadow-success: 0 0.25rem 0.5rem rgba(53, 104, 89, 0.4);
+  --shadow-danger: 0 0.25rem 0.5rem rgba(196, 69, 54, 0.4);
 }

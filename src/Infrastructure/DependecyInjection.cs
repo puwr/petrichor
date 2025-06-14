@@ -1,11 +1,13 @@
 using System.Text;
 using Application.Common.Interfaces;
+using Application.Common.Interfaces.Services;
 using Application.Common.Interfaces.Services.Authentication;
 using Application.Common.Interfaces.Services.Images;
 using Application.Common.Interfaces.Services.Storage;
 using Contracts.Authentication;
 using Domain.Users;
 using Infrastructure.Persistence;
+using Infrastructure.Services;
 using Infrastructure.Services.Authentication;
 using Infrastructure.Services.Images;
 using Infrastructure.Services.Storage;
@@ -30,6 +32,7 @@ public static class DependencyInjection
             .AddAuthentication(configuration)
             .AddAuthorization();
 
+        services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
         services.AddScoped<IImageMetadataProvider, ImageMetadataProvider>();
 
@@ -40,12 +43,12 @@ public static class DependencyInjection
     {
         services.AddDbContext<PetrichorDbContext>(options =>
             options.UseSqlite("Data Source = Petrichor.db"));
-            
+
         services.AddScoped<IPetrichorDbContext>(provider =>
             provider.GetRequiredService<PetrichorDbContext>());
 
         services.AddScoped<IFileStorage, LocalFileStorage>();
-        
+
         return services;
     }
 
@@ -73,6 +76,8 @@ public static class DependencyInjection
             .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
+                options.MapInboundClaims = false;
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,

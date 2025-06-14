@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ImageService } from '../../core/services/image.service';
 import { ActivatedRoute } from '@angular/router';
 import { map, of, switchMap } from 'rxjs';
@@ -13,9 +13,8 @@ import { LoadingService } from '../../core/services/loading.service';
   templateUrl: './image-page.component.html',
   styleUrl: './image-page.component.scss',
 })
-export class ImagePageComponent implements OnInit {
+export class ImagePageComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
-
   private imageService = inject(ImageService);
   public loadingService = inject(LoadingService);
 
@@ -26,11 +25,15 @@ export class ImagePageComponent implements OnInit {
     switchMap((id) => (id ? this.imageService.getImage(id) : of(null)))
   );
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadingService.show();
   }
 
-  onImageLoad() {
+  onImageLoad(): void {
+    this.loadingService.hide();
+  }
+
+  ngOnDestroy(): void {
     this.loadingService.hide();
   }
 }

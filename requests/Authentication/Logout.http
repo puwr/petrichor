@@ -1,0 +1,5 @@
+@host=http://localhost:5198
+
+POST  {{host}}/api/v1/auth/logout
+Content-Type: application/json
+Cookie:

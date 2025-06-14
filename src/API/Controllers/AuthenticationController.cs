@@ -1,4 +1,5 @@
 using Application.Authentication.Commands.Login;
+using Application.Authentication.Commands.Logout;
 using Application.Authentication.Commands.RefreshToken;
 using Application.Authentication.Commands.Register;
 using Contracts.Authentication;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [AllowAnonymous]
+[Route("api/v{version:apiVersion}/auth")]
 public class AuthenticationController(
     ISender mediator,
     IHttpContextAccessor httpContextAccessor) : ApiController
@@ -54,5 +56,27 @@ public class AuthenticationController(
             success => Ok(),
             Problem
         );
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var refreshToken = _httpContext.Request.Cookies["REFRESH_TOKEN"];
+
+        var command = new LogoutCommand(refreshToken);
+
+        var logoutResult = await mediator.Send(command);
+
+        return logoutResult.Match(
+            success => NoContent(),
+            Problem
+        );
+    }
+
+    [HttpGet("status")]
+    public IActionResult GetAuthenticationStatus()
+    {
+        return Ok(new AuthenticationStatusResponse(
+            User.Identity?.IsAuthenticated ?? false));
     }
 }

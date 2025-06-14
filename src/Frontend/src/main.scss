@@ -1,5 +1,7 @@
 @use "./styles" as *;
+@use "./app/shared/styles" as *;
 @import "normalize.css";
+@import "@angular/cdk/overlay-prebuilt.css";
 
 *,
 *::before,
@@ -13,17 +15,31 @@ body {
 
   font-family: var(--font-standard);
   font-size: var(--text-size-standard);
-  color: var(--color-text);
+  color: var(--color-text-primary);
 }
 
 .container {
   max-width: 90rem;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
 }
 
-.list-reset {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.container-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 5rem);
+  padding: 1rem;
+
+  @media (max-width: 48rem) {
+    align-items: flex-start;
+    padding-top: 3rem;
+  }
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(90vw, 30rem);
 }

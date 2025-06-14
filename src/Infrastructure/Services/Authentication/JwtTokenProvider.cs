@@ -5,15 +5,13 @@ using System.Text;
 using Application.Common.Interfaces.Services.Authentication;
 using Contracts.Authentication;
 using Domain.Users;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services.Authentication;
 
 public class JwtTokenProvider(
-    IOptions<JwtSettings> jwtSettings,
-    IHttpContextAccessor httpContextAccessor) : IJwtTokenProvider
+    IOptions<JwtSettings> jwtSettings) : IJwtTokenProvider
 {
     private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
@@ -27,7 +25,7 @@ public class JwtTokenProvider(
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-            new Claim(ClaimTypes.NameIdentifier, user.UserName!)
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!)
         };
 
         var accessTokenExpirationDateInUtc =
@@ -63,19 +61,5 @@ public class JwtTokenProvider(
         );
 
         return tokenResult;
-    }
-
-    public void WriteTokenAsHttpOnlyCookie(
-        string cookieName, string token, DateTime expiresAt)
-    {
-        httpContextAccessor.HttpContext!.Response.Cookies.Append(cookieName, token,
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = expiresAt,
-                IsEssential = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict
-            });
     }
 }

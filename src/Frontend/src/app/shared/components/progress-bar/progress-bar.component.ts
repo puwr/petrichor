@@ -10,5 +10,6 @@ import { AsyncPipe } from '@angular/common';
 })
 export class ProgressBarComponent {
   private loadingService = inject(LoadingService);
+
   loading$ = this.loadingService.loading$;
 }

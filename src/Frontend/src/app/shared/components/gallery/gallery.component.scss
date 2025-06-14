@@ -2,14 +2,34 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
   gap: 1rem;
+  align-items: start;
 
   &__item {
     margin: 0 auto;
+    position: relative;
+  }
+
+  &__link {
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible::after {
+      outline: var(--outline-standard);
+      outline-offset: var(--outline-offset);
+      border-radius: var(--radius-standard);
+    }
   }
 
   &__thumb {
     display: block;
-    max-width: 100%;
+    width: 100%;
     object-fit: cover;
     border-radius: 0.5rem;
   }

@@ -1,0 +1,73 @@
+.user-nav {
+  &__trigger {
+    color: inherit;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: var(--outline-standard);
+      outline-offset: var(--outline-offset);
+      border-radius: var(--radius-standard);
+    }
+
+    &[aria-expanded="true"] .user-nav__icon {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  &__icon {
+    width: 0.9rem;
+    height: 0.9rem;
+
+    display: flex;
+    align-items: center;
+
+    transition: transform var(--duration-standard) var(--animation-standard);
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__dropdown {
+    margin-top: 0.5rem;
+    border-radius: var(--radius-standard);
+    background-color: var(--color-secondary);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInDown var(--duration-standard) var(--animation-standard)
+      both;
+  }
+
+  &__item {
+    color: inherit;
+    padding: 0.5rem 1rem;
+    transition: background-color var(--duration-standard)
+      var(--animation-standard);
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: none;
+      background-color: var(--color-accent);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-accent);
+      }
+    }
+  }
+}

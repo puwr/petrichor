@@ -1,0 +1,20 @@
+.snackbar {
+  display: inline-flex;
+  justify-content: center;
+  text-align: center;
+  max-width: 24rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-standard);
+
+  animation: fadeInUp var(--duration-standard) var(--animation-standard);
+
+  &--success {
+    background-color: var(--color-success);
+    box-shadow: var(--shadow-success);
+  }
+
+  &--error {
+    background-color: var(--color-danger);
+    box-shadow: var(--shadow-danger);
+  }
+}

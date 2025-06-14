@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ImageService } from '../../core/services/image.service';
 import { GalleryItem } from '../../shared/models/galleryItem';
 import { GalleryComponent } from '../../shared/components/gallery/gallery.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-gallery-page',
@@ -11,6 +12,7 @@ import { GalleryComponent } from '../../shared/components/gallery/gallery.compon
 })
 export class GalleryPageComponent implements OnInit {
   private imageService = inject(ImageService);
+  private destroyRef = inject(DestroyRef);
 
   galleryItems: GalleryItem[] = [];
 
@@ -18,10 +20,13 @@ export class GalleryPageComponent implements OnInit {
     this.getImages();
   }
 
-  getImages() {
-    this.imageService.getImages().subscribe({
-      next: (response) => (this.galleryItems = response),
-      error: (error) => console.log(error),
-    });
+  getImages(): void {
+    this.imageService
+      .getImages()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => (this.galleryItems = response),
+        error: (error) => console.log(error),
+      });
   }
 }
