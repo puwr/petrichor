@@ -24,9 +24,6 @@ export class GalleryPageComponent implements OnInit {
     this.imageService
       .getImages()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => (this.galleryItems = response),
-        error: (error) => console.log(error),
-      });
+      .subscribe((response) => (this.galleryItems = response));
   }
 }

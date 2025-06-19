@@ -24,6 +24,7 @@
   &__logo {
     display: block;
     width: 8rem;
+    user-select: none;
   }
 
   &__links {

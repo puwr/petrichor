@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Authorization.MustBeImageUploader;
 
-public class MustBeImageUploaderHandler(IPetrichorDbContext dbContext) 
+public class MustBeImageUploaderHandler(IPetrichorDbContext dbContext)
         : AuthorizationHandler<MustBeImageUploaderRequirement>
 {
     protected override async Task HandleRequirementAsync(
@@ -19,7 +20,7 @@ public class MustBeImageUploaderHandler(IPetrichorDbContext dbContext)
         var imageIdFromRoute = httpContext.GetRouteValue("imageId")?.ToString();
         if (!Guid.TryParse(imageIdFromRoute, out Guid imageId)) return;
 
-        var currentUserIdClaim = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var currentUserIdClaim = httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         if (!Guid.TryParse(currentUserIdClaim, out Guid currentUserId)) return;
 
 

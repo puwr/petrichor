@@ -60,13 +60,12 @@
     }
 
     &:focus-visible {
-      outline: none;
-      background-color: var(--color-accent);
+      background-color: var(--color-secondary-hover);
     }
 
     @media (any-hover: hover) {
       &:hover:not(:disabled) {
-        background-color: var(--color-accent);
+        background-color: var(--color-secondary-hover);
       }
     }
   }

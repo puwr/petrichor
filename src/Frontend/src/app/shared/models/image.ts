@@ -5,6 +5,7 @@ export type Image = {
   url: string;
   width: number;
   height: number;
+  uploaderId: string;
   tags: Tag[];
   uploadedAt: Date;
 };

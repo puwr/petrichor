@@ -4,7 +4,6 @@
   text-decoration: none;
   border-radius: var(--radius-standard);
   cursor: pointer;
-  outline-offset: -0.5px;
 
   transition: all var(--duration-standard) var(--animation-standard);
 
@@ -28,14 +27,12 @@
     box-shadow: var(--shadow-secondary);
 
     &:focus-visible {
-      background-color: var(--color-accent);
-      box-shadow: var(--shadow-accent);
+      background-color: var(--color-secondary-hover);
     }
 
     @media (any-hover: hover) {
       &:hover:not(:disabled) {
-        background-color: var(--color-accent);
-        box-shadow: var(--shadow-accent);
+        background-color: var(--color-secondary-hover);
       }
     }
   }
@@ -53,6 +50,30 @@
         background-color: var(--color-secondary);
         box-shadow: var(--shadow-secondary);
       }
+    }
+  }
+
+  &--danger {
+    background-color: var(--color-danger);
+
+    &:focus-visible {
+      background-color: var(--color-danger-hover);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-danger-hover);
+      }
+    }
+  }
+
+  &--icon {
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
     }
   }
 }

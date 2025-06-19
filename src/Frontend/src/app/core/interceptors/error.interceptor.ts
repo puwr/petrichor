@@ -11,7 +11,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 400) {
-        if (err.error.errors) {
+        if (err.error?.errors) {
           const validationErrors = Object.values(err.error.errors).flat();
 
           if (validationErrors.length) {
@@ -19,12 +19,17 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           }
         }
 
-        snackbar.error(err.error.title || err.error);
+        snackbar.error(err.error?.title || err.error);
         return throwError(() => err);
       }
 
       if (err.status === 401) {
         // Handled in auth interceptor
+        return throwError(() => err);
+      }
+
+      if (err.status === 403) {
+        snackbar.error('Access denied.');
         return throwError(() => err);
       }
 
@@ -34,7 +39,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       if (err.status === 409) {
-        return throwError(() => [err.error.title || 'Conflict occured.']);
+        return throwError(() => [err.error?.title || 'Conflict occured.']);
       }
 
       if (err.status >= 500) {
@@ -42,7 +47,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => err);
       }
 
-      snackbar.error(err.error.title || 'Something went wrong.');
+      snackbar.error(err.error?.title || 'Something went wrong.');
       return throwError(() => err);
     })
   );

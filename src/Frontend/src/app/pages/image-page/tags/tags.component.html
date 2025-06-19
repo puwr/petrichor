@@ -1,11 +1,61 @@
 <div class="tags">
-  @if (tags() && tags().length > 0) {
+  @if (showAddTagInput) {
+  <form
+    class="tags__form"
+    [formGroup]="addTagsForm"
+    (ngSubmit)="onSubmit()"
+    (reset)="onReset()"
+  >
+    <app-text-input label="Tags" controlName="tags" />
+    <div class="tags__actions">
+      <button class="btn-reset btn btn--fill" type="reset">Cancel</button>
+      <button class="btn-reset btn btn--fill" type="submit">Save</button>
+    </div>
+  </form>
+  } @else { @if (tags() && tags().length > 0) {
   <ul class="tags__list list-reset">
     @for (tag of tags(); track tag.id) {
-    <li class="tags__item">{{ tag.name }}</li>
+    <li class="tags__item">
+      <span class="tags__name">{{ tag.name }}</span>
+      @if (isUploader()) {
+      <button
+        class="btn-reset btn btn--fill btn--icon tags__delete-icon"
+        (click)="deleteTag(tag.id)"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18 18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+      }
+    </li>
     }
   </ul>
   } @else {
   <p class="tags__not-found">No tags found.</p>
-  }
+  } @if (isUploader()) {
+  <button
+    class="btn-reset btn btn--fill btn--icon"
+    (click)="showAddTagInput = true"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke-width="1.5"
+      stroke="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M11 11v-11h1v11h11v1h-11v11h-1v-11h-11v-1h11z" />
+    </svg>
+  </button>
+  } }
 </div>
