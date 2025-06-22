@@ -1,5 +1,8 @@
-.progress-bar {
+:host {
   width: 100%;
+}
+
+.progress-bar {
   height: 0.2rem;
   overflow: hidden;
   position: relative;
@@ -26,6 +29,12 @@
     will-change: transform;
     backface-visibility: hidden;
 
-    animation: indeterminate 1.5s var(--animation-indeterminate) infinite;
+    &--determinate {
+      transition: transform var(--duration-standard) var(--animation-standard);
+    }
+
+    &--indeterminate {
+      animation: indeterminate 1.5s var(--animation-indeterminate) infinite;
+    }
   }
 }

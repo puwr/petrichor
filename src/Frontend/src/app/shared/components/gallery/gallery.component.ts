@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { GalleryItem } from '../../models/galleryItem';
+import { GalleryItem } from '../../models/image';
 import { RouterLink } from '@angular/router';
 
 @Component({

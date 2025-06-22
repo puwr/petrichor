@@ -4,7 +4,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, exhaustMap, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { AccountService } from '../services/account.service';
 
@@ -20,8 +20,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       if (is401Error(error, request)) {
         return authService.refreshToken().pipe(
-          exhaustMap(() => accountService.updateCurrentUser()),
-          exhaustMap(() => next(request)),
+          switchMap(() => accountService.updateCurrentUser()),
+          switchMap(() => next(request)),
           catchError((error) => {
             accountService.currentUser.set(null);
             return throwError(() => error);

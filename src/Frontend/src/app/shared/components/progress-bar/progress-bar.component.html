@@ -1,3 +1,8 @@
-<div class="progress-bar" [class.progress-bar--active]="loading$ | async">
-  <div class="progress-bar__fill"></div>
+<div class="progress-bar" [class.progress-bar--active]="isActive()">
+  <div
+    class="progress-bar__fill"
+    [class.progress-bar__fill--determinate]="isDeterminate()"
+    [class.progress-bar__fill--indeterminate]="isIndeterminate()"
+    [style.transform]="isDeterminate() ? progressTransform() : null"
+  ></div>
 </div>

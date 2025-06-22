@@ -50,6 +50,7 @@
   }
 
   &__item {
+    text-decoration: none;
     color: inherit;
     padding: 0.5rem 1rem;
     transition: background-color var(--duration-standard)

@@ -7,7 +7,7 @@ import {
   OnInit,
   output,
 } from '@angular/core';
-import { Tag } from '../../../shared/models/tag';
+import { Tag } from '../../../shared/models/image';
 import { ImageService } from '../../../core/services/image.service';
 import { exhaustMap, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

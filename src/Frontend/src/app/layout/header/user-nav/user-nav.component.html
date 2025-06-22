@@ -27,6 +27,7 @@
 
   <ng-template #userNav>
     <div class="user-nav__dropdown" cdkMenu>
+      <a class="user-nav__item" routerLink="/upload" cdkMenuItem>Upload</a>
       <button class="btn-reset user-nav__item" cdkMenuItem (click)="logout()">
         Logout
       </button>

@@ -1,0 +1,47 @@
+.upload {
+  text-align: center;
+
+  &__drop {
+    border: 2px dashed var(--color-secondary);
+    border-radius: var(--radius-standard);
+    width: 70vh;
+    height: 45vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--duration-standard) var(--animation-standard);
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-accent);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:focus-visible) {
+        border-color: var(--color-secondary-hover);
+        box-shadow: var(--shadow-secondary);
+      }
+    }
+
+    &--drag-over {
+      border-color: var(--color-secondary-hover);
+      box-shadow: var(--shadow-secondary);
+      animation: pulse 1.5s infinite;
+    }
+  }
+
+  &__preview {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: cover;
+    margin-bottom: 2rem;
+  }
+
+  &__progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

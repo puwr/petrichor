@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Services.Images;
@@ -23,7 +24,7 @@ public class UploadImageCommandHandler(
         CancellationToken cancellationToken)
     {
         var currentUserIdClaim = httpContextAccessor.HttpContext!.User
-            .FindFirstValue(ClaimTypes.NameIdentifier);
+            .FindFirstValue(JwtRegisteredClaimNames.Sub);
 
         if (!Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
         {

@@ -1,0 +1,42 @@
+<section class="upload">
+  <input
+    #fileInput
+    type="file"
+    accept="image/*"
+    (change)="onFileSeleted($event)"
+    hidden
+  />
+
+  @if (previewUrl) {
+  <div class="container">
+    <img class="upload__preview" [src]="previewUrl" alt="Upload preview" />
+    <div class="upload__progress">
+      <app-progress-bar
+        mode="determinate"
+        [progressPercentage]="uploadPercentage"
+      />
+      <span class="upload__percentage">{{ uploadPercentage }}%</span>
+    </div>
+  </div>
+
+  } @else {
+  <div class="container-centered">
+    <div
+      class="upload__drop"
+      [class.upload__drop--drag-over]="isDragOver"
+      (click)="triggerFileInput()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      (keydown)="onKeydown($event)"
+      tabindex="0"
+    >
+      <div class="upload__content">
+        <h2>Drag and drop your image here</h2>
+        <p>or click to browse files</p>
+      </div>
+    </div>
+  </div>
+
+  }
+</section>

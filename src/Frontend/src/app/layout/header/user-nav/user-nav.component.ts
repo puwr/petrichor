@@ -4,10 +4,11 @@ import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { AuthService } from '../../../core/services/auth.service';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-nav',
-  imports: [CdkMenu, CdkMenuItem, CdkMenuTrigger],
+  imports: [CdkMenu, CdkMenuItem, CdkMenuTrigger, RouterLink],
   templateUrl: './user-nav.component.html',
   styleUrl: './user-nav.component.scss',
 })

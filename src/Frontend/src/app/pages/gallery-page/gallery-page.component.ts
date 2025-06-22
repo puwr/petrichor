@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ImageService } from '../../core/services/image.service';
-import { GalleryItem } from '../../shared/models/galleryItem';
+import { GalleryItem } from '../../shared/models/image';
 import { GalleryComponent } from '../../shared/components/gallery/gallery.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 

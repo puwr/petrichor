@@ -22,7 +22,11 @@ public class ImagesController(ISender mediator) : ApiController
         var uploadImageResult = await mediator.Send(uploadImageCommand);
 
         return uploadImageResult.Match(
-            imageId => CreatedAtAction(nameof(GetImage), new { imageId }, imageId),
+            imageId =>
+            {
+                var path = $"/images/{imageId}";
+                return Created(path, imageId);
+            },
             Problem
         );
     }
