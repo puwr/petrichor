@@ -5,12 +5,14 @@ import {
   HttpContext,
   HttpEvent,
   HttpEventType,
+  HttpParams,
   HttpProgressEvent,
   HttpResponse,
 } from '@angular/common/http';
 import { Image, GalleryItem, UploadEvent } from '../../shared/models/image';
 import { filter, map, Observable } from 'rxjs';
 import { SKIP_GLOBAL_LOADING } from '../../shared/constants';
+import { PagedResponse } from '../../shared/models/pagination';
 
 @Injectable({
   providedIn: 'root',
@@ -60,8 +62,12 @@ export class ImageService {
       );
   }
 
-  getImages(): Observable<GalleryItem[]> {
-    return this.http.get<GalleryItem[]>(`${this.apiUrl}/images`);
+  getImages(pageNumber: number): Observable<PagedResponse<GalleryItem>> {
+    const params = new HttpParams().set('page', pageNumber);
+
+    return this.http.get<PagedResponse<GalleryItem>>(`${this.apiUrl}/images`, {
+      params,
+    });
   }
 
   getImage(id: string): Observable<Image> {

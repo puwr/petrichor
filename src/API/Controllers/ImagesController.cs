@@ -6,6 +6,7 @@ using Application.Images.Commands.UploadImage;
 using Application.Images.Queries.GetImage;
 using Application.Images.Queries.ListImages;
 using Contracts.Images;
+using Contracts.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,9 +34,11 @@ public class ImagesController(ISender mediator) : ApiController
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> ListImages()
+    public async Task<IActionResult> ListImages([FromQuery(Name = "page")] int pageNumber = 1)
     {
-        var query = new ListImagesQuery();
+        var pagination = new PaginationParameters(pageNumber);
+
+        var query = new ListImagesQuery(pagination);
 
         var getImagesResult = await mediator.Send(query);
 

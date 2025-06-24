@@ -1,5 +1,13 @@
-<section>
+@if (galleryData; as data) {
+<section class="gallery-page">
   <div class="container">
-    <app-gallery [galleryItems]="galleryItems"></app-gallery>
+    <div class="gallery-page__gallery-wrapper">
+      <app-gallery [galleryItems]="data.items" />
+    </div>
+    <app-pagination
+      [pageNumber]="data.pageNumber"
+      [totalPages]="data.totalPages"
+    />
   </div>
 </section>
+}
