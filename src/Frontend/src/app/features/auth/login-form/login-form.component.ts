@@ -7,10 +7,11 @@ import { AccountService } from '../../../core/services/account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { exhaustMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 
 @Component({
   selector: 'app-login-form',
-  imports: [ReactiveFormsModule, TextInputComponent],
+  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
 })
@@ -25,7 +26,7 @@ export class LoginFormComponent implements OnInit {
   validationErrors?: string[];
 
   loginForm = this.fb.group({
-    email: ['', Validators.required],
+    email: ['', Validators.required, Validators.email],
     password: ['', Validators.required],
   });
 

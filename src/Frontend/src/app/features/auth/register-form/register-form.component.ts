@@ -6,10 +6,11 @@ import { Router } from '@angular/router';
 import { RegisterRequest } from '../../../shared/models/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 
 @Component({
   selector: 'app-register-form',
-  imports: [ReactiveFormsModule, TextInputComponent],
+  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss',
 })
@@ -22,18 +23,29 @@ export class RegisterFormComponent {
 
   validationErrors?: string[];
 
+  private usernamePattern =
+    '^' +
+    '[a-zA-Z0-9_]{3,30}' + // letters, digits, underscores, 3-30 chars
+    '$';
+
   private passwordPattern =
     '^' +
     '(?=.*[a-z])' + // lowercase letter
     '(?=.*[A-Z])' + // uppercase letter
     '(?=.*\\d)' + // digit
     '(?=.*\\W)' + // non-alphanumeric char
-    '[A-Za-z\\d\\W]{8,}' + // 8 chars minimum
+    '[A-Za-z\\d\\W]{8,128}' + // 8-128 chars
     '$';
 
   registerForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    userName: ['', [Validators.required, Validators.minLength(3)]],
+    email: [
+      '',
+      [Validators.required, Validators.email, Validators.maxLength(100)],
+    ],
+    userName: [
+      '',
+      [Validators.required, Validators.pattern(this.usernamePattern)],
+    ],
     password: [
       '',
       [Validators.required, Validators.pattern(this.passwordPattern)],

@@ -34,8 +34,8 @@ public class GetCurrentUserInfoQueryHandler(
         if (string.IsNullOrEmpty(email))
         {
             return Task.FromResult(Error
-            .Failure("User email claim is missing.")
-            .ToErrorOr<GetCurrentUserInfoResponse>());
+                .Failure("User email claim is missing.")
+                .ToErrorOr<GetCurrentUserInfoResponse>());
         }
 
         var userName = user?
@@ -44,8 +44,8 @@ public class GetCurrentUserInfoQueryHandler(
         if (string.IsNullOrEmpty(userName))
         {
             return Task.FromResult(Error
-            .Failure("User name claim is missing.")
-            .ToErrorOr<GetCurrentUserInfoResponse>());
+                .Failure("User name claim is missing.")
+                .ToErrorOr<GetCurrentUserInfoResponse>());
         }
 
         return Task.FromResult(new GetCurrentUserInfoResponse(

@@ -16,10 +16,12 @@ import {
   UploadEvent,
 } from '../../shared/models/image';
 import { Router } from '@angular/router';
+import { ValidationErrorsComponent } from '../../shared/components/validation-errors/validation-errors.component';
+import { finalize, tap } from 'rxjs';
 
 @Component({
   selector: 'app-upload-page',
-  imports: [ProgressBarComponent],
+  imports: [ProgressBarComponent, ValidationErrorsComponent],
   templateUrl: './upload-page.component.html',
   styleUrl: './upload-page.component.scss',
 })
@@ -31,9 +33,13 @@ export class UploadPageComponent implements OnDestroy {
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  private filePreviewReader: FileReader | null = null;
+
   isDragOver = false;
   previewUrl: string | ArrayBuffer | null = null;
   uploadPercentage = 0;
+
+  validationErrors: string[] | null = null;
 
   ngOnDestroy(): void {
     this.previewUrl = null;
@@ -84,27 +90,52 @@ export class UploadPageComponent implements OnDestroy {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.previewUrl = reader.result;
-    };
+    this.validationErrors = null;
 
-    reader.readAsDataURL(file);
+    this.filePreviewReader = new FileReader();
+    this.filePreviewReader.onload = () => {
+      if (this.uploadPercentage > 0) {
+        this.previewUrl = this.filePreviewReader?.result ?? null;
+      }
+    };
 
     this.imageService
       .uploadImage(file)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event: UploadEvent) => {
-        if (isProgressEvent(event)) {
-          this.uploadPercentage = event.progress;
-        }
+      .pipe(
+        tap({
+          next: () => {
+            if (!this.previewUrl && this.filePreviewReader) {
+              this.filePreviewReader.readAsDataURL(file);
+            }
+          },
+        }),
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          if (this.filePreviewReader) {
+            this.filePreviewReader.onload = null;
+            this.filePreviewReader.abort();
+            this.filePreviewReader = null;
+          }
+        })
+      )
+      .subscribe({
+        next: (event: UploadEvent) => {
+          if (isProgressEvent(event)) {
+            this.uploadPercentage = event.progress;
+          }
 
-        if (isCompleteEvent(event)) {
-          this.uploadPercentage = 100;
-          this.snackbar.success('Image uploaded successfully!');
+          if (isCompleteEvent(event)) {
+            this.uploadPercentage = 100;
+            this.snackbar.success('Image uploaded successfully!');
 
-          this.router.navigateByUrl(event.imageUrl);
-        }
+            this.router.navigateByUrl(event.imageUrl);
+          }
+        },
+        error: (errors) => {
+          this.validationErrors = errors;
+          this.uploadPercentage = 0;
+          this.previewUrl = null;
+        },
       });
   }
 }

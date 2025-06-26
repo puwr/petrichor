@@ -1,0 +1,5 @@
+<ul class="list-reset validation-errors">
+  @for (error of validationErrors(); track $index) {
+  <li class="validation-errors__item">{{ error }}</li>
+  }
+</ul>

@@ -21,9 +21,7 @@ public class LoginCommandHandler(
 
         if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
         {
-            return Error.Validation(
-                code: "Authentication.InvalidCredentials",
-                description: "Invalid credentials.");
+            return Error.Validation("Invalid credentials.");
         }
 
         var accessTokenResult = jwtTokenProvider.GenerateAccessToken(user);

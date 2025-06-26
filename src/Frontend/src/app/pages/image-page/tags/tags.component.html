@@ -7,6 +7,14 @@
     (reset)="onReset()"
   >
     <app-text-input label="Tags" controlName="tags" />
+
+    @if (validationErrors) {
+    <div class="tags__errors">
+      <app-validation-errors [validationErrors]="validationErrors" />
+    </div>
+
+    }
+
     <div class="tags__actions">
       <button class="btn-reset btn btn--fill" type="reset">Cancel</button>
       <button class="btn-reset btn btn--fill" type="submit">Save</button>

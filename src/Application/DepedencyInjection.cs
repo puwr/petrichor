@@ -1,5 +1,8 @@
 using Application.Authorization;
 using Application.Authorization.MustBeImageUploader;
+using Application.Common.Behaviors;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +18,12 @@ public static class DependencyInjection
                 typeof(DependencyInjection)));
 
         services.AddAuthorization();
+
+        services.AddScoped(
+            typeof(IPipelineBehavior<,>),
+            typeof(ValidationBehavior<,>));
+
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
         return services;
     }

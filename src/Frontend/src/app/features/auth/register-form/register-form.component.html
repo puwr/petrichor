@@ -3,13 +3,9 @@
   <app-text-input label="Username" controlName="userName" />
   <app-text-input label="Password" type="password" controlName="password" />
 
-  @if (validationErrors) {
-  <ul class="list-reset validation-errors">
-    @for (error of validationErrors; track $index) {
-    <li class="validation-errors__item">{{ error }}</li>
-    }
-  </ul>
-  }
+  @if (validationErrors) { @if (validationErrors) {
+  <app-validation-errors [validationErrors]="validationErrors" />
+  } }
 
   <button
     class="btn-reset btn btn--fill"

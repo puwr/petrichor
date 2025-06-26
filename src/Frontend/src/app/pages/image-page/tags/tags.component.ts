@@ -12,12 +12,13 @@ import { ImageService } from '../../../core/services/image.service';
 import { exhaustMap, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TextInputComponent } from '../../../shared/components/text-input/text-input.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SnackbarService } from '../../../core/services/snackbar.service';
+import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 
 @Component({
   selector: 'app-tags',
-  imports: [ReactiveFormsModule, TextInputComponent],
+  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.scss',
 })
@@ -36,10 +37,12 @@ export class TagsComponent implements OnInit, OnDestroy {
   private addTags$ = new Subject<string[]>();
   private deleteTag$ = new Subject<string>();
 
+  validationErrors: string[] | null = null;
+
   showAddTagInput = false;
 
   addTagsForm = this.fb.group({
-    tags: [''],
+    tags: ['', Validators.required],
   });
 
   ngOnInit(): void {
@@ -50,9 +53,12 @@ export class TagsComponent implements OnInit, OnDestroy {
         ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(() => {
-        this.tagsChanged.emit();
-        this.showAddTagInput = false;
+      .subscribe({
+        next: () => {
+          this.tagsChanged.emit();
+          this.showAddTagInput = false;
+        },
+        error: (errors) => (this.validationErrors = errors),
       });
 
     this.deleteTag$

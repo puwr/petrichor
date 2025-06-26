@@ -47,8 +47,19 @@ export class TextInputComponent {
       } characters long.`;
     }
 
+    if (errors['maxlength']) {
+      return `${this.label()} cannot exceed ${
+        this.control.getError('maxlength').requiredLength
+      } characters.`;
+    }
+
+    if (this.controlName() === 'userName' && errors['pattern']) {
+      return `Username must be 3-30 characters long
+        and only contain letters, digits or underscores.`;
+    }
+
     if (this.controlName() === 'password' && errors['pattern']) {
-      return `Passwords must be at least 8 characters long, have lowercase letter,
+      return `Password must be 8-128 characters long, have lowercase letter,
         uppercase letter, digit and special character.`;
     }
 
