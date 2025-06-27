@@ -55,6 +55,7 @@
 
   &--danger {
     background-color: var(--color-danger);
+    box-shadow: var(--shadow-danger);
 
     &:focus-visible {
       background-color: var(--color-danger-hover);
@@ -63,6 +64,21 @@
     @media (any-hover: hover) {
       &:hover:not(:disabled) {
         background-color: var(--color-danger-hover);
+      }
+    }
+  }
+
+  &--neutral {
+    background-color: var(--color-neutral);
+    box-shadow: var(--shadow-neutral);
+
+    &:focus-visible {
+      background-color: var(--color-neutral-hover);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-neutral-hover);
       }
     }
   }

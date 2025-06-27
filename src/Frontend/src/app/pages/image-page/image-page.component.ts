@@ -17,6 +17,9 @@ import { LoadingService } from '../../core/services/loading.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Image } from '../../shared/models/image';
 import { AccountService } from '../../core/services/account.service';
+import { Dialog } from '@angular/cdk/dialog';
+import { DialogComponent } from '../../shared/components/dialog/dialog.component';
+import { DialogData } from '../../shared/models/dialog';
 
 @Component({
   selector: 'app-image-page',
@@ -27,6 +30,7 @@ import { AccountService } from '../../core/services/account.service';
 export class ImagePageComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private dialog = inject(Dialog);
   private imageService = inject(ImageService);
   private loadingService = inject(LoadingService);
   private accountService = inject(AccountService);
@@ -61,11 +65,36 @@ export class ImagePageComponent implements OnInit, OnDestroy {
   }
 
   onImageDelete(): void {
-    this.imageService
-      .deleteImage(this.image()!.id)
+    const dialogRef = this.dialog.open<boolean, DialogData>(DialogComponent, {
+      data: {
+        title: 'Image deletion',
+        message: 'The image will be removed forever. Proceed?',
+        actions: [
+          {
+            text: 'Cancel',
+            style: 'neutral',
+            result: false,
+          },
+          {
+            text: 'Delete',
+            style: 'danger',
+            result: true,
+          },
+        ],
+      },
+    });
+
+    dialogRef.closed
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.router.navigateByUrl('/');
+      .subscribe((result) => {
+        if (result) {
+          this.imageService
+            .deleteImage(this.image()!.id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+              this.router.navigateByUrl('/');
+            });
+        }
       });
   }
 

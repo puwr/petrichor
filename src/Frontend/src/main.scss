@@ -1,7 +1,6 @@
 @use "./styles" as *;
 @use "./app/shared/styles" as *;
 @import "normalize.css";
-@import "@angular/cdk/overlay-prebuilt.css";
 
 *,
 *::before,
@@ -35,6 +34,12 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #333;
+}
+
+/* Disable CDK's scroll compensation for dialogs */
+.cdk-global-scrollblock:has(.dialog) {
+  position: fixed !important;
+  overflow: visible !important;
 }
 
 .container {
