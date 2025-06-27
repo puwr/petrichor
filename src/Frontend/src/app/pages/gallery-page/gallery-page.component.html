@@ -1,6 +1,21 @@
 @if (galleryData; as data) {
 <section class="gallery-page">
   <div class="container">
+    <form
+      class="gallery-page__search"
+      [formGroup]="searchForm"
+      (ngSubmit)="onSearch()"
+    >
+      <app-text-input label="Search by tags" controlName="tags" />
+      <button class="btn-reset btn btn--fill gallery-page__btn" type="submit">
+        Search
+      </button>
+    </form>
+    @if (searchTags.length > 0) {
+    <span class="gallery-page__results">
+      Search results for: {{ searchTags.join(", ") }}
+    </span>
+    }
     <div class="gallery-page__gallery-wrapper">
       <app-gallery [galleryItems]="data.items" />
     </div>

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Contracts.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -5,6 +6,12 @@ namespace Application.Common.Extensions;
 
 public static class QueryableExtensions
 {
+    public static IQueryable<T> WhereIf<T>(
+        this IQueryable<T> query,
+        bool condition,
+        Expression<Func<T, bool>> predicate)
+        => condition ? query.Where(predicate) : query;
+
     public static async Task<PagedResponse<T>> ToPagedResponseAsync<T>(
         this IQueryable<T> query,
         PaginationParameters pagination,

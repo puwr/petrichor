@@ -1,4 +1,5 @@
 using Application.Common.Interfaces;
+using Application.Common.Utilities;
 using Domain.Tags;
 using ErrorOr;
 using MediatR;
@@ -41,11 +42,7 @@ public class AddImageTagsCommandHandler(IPetrichorDbContext dbContext)
         List<string> tags,
         CancellationToken cancellationToken = default)
     {
-        var normalizedTagNames = tags
-            .Select(t => t.Trim().ToLowerInvariant())
-            .Where(t => !string.IsNullOrEmpty(t))
-            .Distinct()
-            .ToList();
+        var normalizedTagNames = TagHelpers.Normalize(tags);
 
         if (normalizedTagNames.Count == 0)
         {
@@ -53,6 +50,7 @@ public class AddImageTagsCommandHandler(IPetrichorDbContext dbContext)
         }
 
         var existingTags = await dbContext.Tags
+            .AsNoTracking()
             .Where(t => normalizedTagNames.Contains(t.Name))
             .ToListAsync(cancellationToken: cancellationToken);
 

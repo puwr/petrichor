@@ -1,6 +1,7 @@
 using Application.Common.Extensions;
 using Application.Common.Interfaces;
 using Application.Common.Mappings;
+using Application.Common.Utilities;
 using Contracts.Images;
 using Contracts.Pagination;
 using ErrorOr;
@@ -17,6 +18,14 @@ public class ListImagesQueryHandler(IPetrichorDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var query = dbContext.Images.AsQueryable();
+
+        var normalizedTags = TagHelpers.Normalize(request.Tags);
+
+        query = query.WhereIf(
+            condition: normalizedTags?.Count > 0,
+            predicate: image => normalizedTags!
+                .All(nt => image.Tags.Any(t => t.Name.Contains(nt)))
+        );
 
         var images = await query
             .AsNoTracking()

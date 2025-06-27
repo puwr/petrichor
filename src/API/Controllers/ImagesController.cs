@@ -34,11 +34,13 @@ public class ImagesController(ISender mediator) : ApiController
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> ListImages([FromQuery(Name = "page")] int pageNumber = 1)
+    public async Task<IActionResult> ListImages(
+        [FromQuery(Name = "page")] int pageNumber = 1,
+        [FromQuery] List<string>? tags = null)
     {
-        var pagination = new PaginationParameters(pageNumber);
+        var pagination = new PaginationParameters(pageNumber, PageSize: 14);
 
-        var query = new ListImagesQuery(pagination);
+        var query = new ListImagesQuery(pagination, tags);
 
         var getImagesResult = await mediator.Send(query);
 

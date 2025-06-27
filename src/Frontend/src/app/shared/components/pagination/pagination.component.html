@@ -3,8 +3,8 @@
   <a
     class="pagination__link"
     [class.pagination__link--active]="pageNumber() === 1"
-    [routerLink]="[]"
-    [queryParams]="{ page: 1 }"
+    [routerLink]="['/']"
+    [queryParams]="{ page: null }"
     queryParamsHandling="merge"
     >1</a
   >

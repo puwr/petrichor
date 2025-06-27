@@ -23,7 +23,7 @@ export class LoginFormComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
-  validationErrors?: string[];
+  validationErrors: string[] | null = null;
 
   loginForm = this.fb.group({
     email: ['', Validators.required, Validators.email],

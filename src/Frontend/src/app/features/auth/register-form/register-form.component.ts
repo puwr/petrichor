@@ -21,9 +21,9 @@ export class RegisterFormComponent {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  validationErrors?: string[];
+  validationErrors: string[] | null = null;
 
-  private usernamePattern =
+  private userNamePattern =
     '^' +
     '[a-zA-Z0-9_]{3,30}' + // letters, digits, underscores, 3-30 chars
     '$';
@@ -44,7 +44,7 @@ export class RegisterFormComponent {
     ],
     userName: [
       '',
-      [Validators.required, Validators.pattern(this.usernamePattern)],
+      [Validators.required, Validators.pattern(this.userNamePattern)],
     ],
     password: [
       '',
