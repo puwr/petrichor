@@ -1,4 +1,4 @@
-namespace TestUtils.TestConstants;
+namespace TestUtilities.TestConstants;
 
 public static partial class Constants
 {

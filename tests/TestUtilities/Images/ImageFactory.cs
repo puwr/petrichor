@@ -1,7 +1,7 @@
 using Domain.Images;
-using TestUtils.TestConstants;
+using TestUtilities.TestConstants;
 
-namespace TestUtils.Images;
+namespace TestUtilities.Images;
 
 public static class ImageFactory
 {

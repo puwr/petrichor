@@ -1,6 +1,6 @@
 using Domain.Images.ValueObjects;
 
-namespace TestUtils.TestConstants;
+namespace TestUtilities.TestConstants;
 
 public static partial class Constants
 {
