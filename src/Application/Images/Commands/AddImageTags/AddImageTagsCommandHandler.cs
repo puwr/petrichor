@@ -31,7 +31,12 @@ public class AddImageTagsCommandHandler(IPetrichorDbContext dbContext)
             return Error.NotFound("Image not found.");
         }
 
-        image.AddTags(tags);
+        var addTagsResult = image.AddTags(tags);
+
+        if (addTagsResult.IsError)
+        {
+            return addTagsResult.Errors;
+        }
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

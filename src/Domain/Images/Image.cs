@@ -23,11 +23,20 @@ public sealed class Image : Entity
         UploaderId = uploaderId;
     }
 
-    public void AddTags(List<Tag> tags)
+    public ErrorOr<Success> AddTags(List<Tag> tags)
     {
         var tagsToAdd = tags.Except(_tags).ToList();
 
+        var potentialTotal = _tags.Count + tagsToAdd.Count;
+
+        if (potentialTotal > ImageConstants.MaxTagsPerImage)
+        {
+            return ImageErrors.MaxTagsExceeded;
+        }
+
         _tags.AddRange(tagsToAdd);
+
+        return Result.Success;
     }
 
     public ErrorOr<Deleted> RemoveTag(Guid tagId)
@@ -36,7 +45,7 @@ public sealed class Image : Entity
 
         if (tagToRemove is null)
         {
-            return Error.NotFound("Tag not found.");
+            return ImageErrors.TagNotAssociated;
         }
 
         _tags.Remove(tagToRemove);
