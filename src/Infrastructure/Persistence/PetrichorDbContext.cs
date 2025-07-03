@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Persistence;
 
 public class PetrichorDbContext(
-    DbContextOptions options, 
+    DbContextOptions options,
     IHttpContextAccessor httpContextAccessor,
-    IPublisher publisher) 
+    IPublisher publisher)
     : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options), IPetrichorDbContext
 {
     public DbSet<Image> Images { get; set; }
@@ -41,7 +41,7 @@ public class PetrichorDbContext(
         return await base.SaveChangesAsync(cancellationToken);
     }
 
-    private bool IsUserWaitingOnline() => httpContextAccessor.HttpContext is not null;
+    private bool IsUserWaitingOnline() => httpContextAccessor?.HttpContext is not null;
 
     private void AddDomainEventsToOfflineProcessingQueue(List<IDomainEvent> domainEvents)
     {
@@ -55,7 +55,7 @@ public class PetrichorDbContext(
 
         httpContextAccessor.HttpContext.Items["DomainEventsQueue"] = domainEventsQueue;
     }
-    
+
     private static async Task PublishDomainEvents(
         IPublisher publisher,
         List<IDomainEvent> domainEvents)
