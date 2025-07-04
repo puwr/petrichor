@@ -3,10 +3,12 @@ using Infrastructure.Common.Extensions;
 
 namespace Infrastructure.Services.Storage;
 
-public class LocalFileStorage : IFileStorage
+public class LocalFileStorage(string? dataFolder = null) : IFileStorage
 {
-    private readonly string _dataFolder = Path
-        .Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Petrichor");
+    private readonly string _dataFolder = dataFolder
+        ?? Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            "Petrichor");
 
     public async Task<string> SaveFileAsync(
         Stream fileStream,

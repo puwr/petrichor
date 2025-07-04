@@ -14,7 +14,7 @@ using NSubstitute;
 namespace Application.Tests.Images.Commands;
 
 [Trait("Category", "Subcutaneous")]
-public class UploadImageTests
+public class UploadImageTests : IDisposable
 {
     private readonly MediatorFactory _mediatorFactory;
     private static readonly byte[] JpegSignature =
@@ -145,4 +145,10 @@ public class UploadImageTests
 
         return imageFile;
     }
+
+    public void Dispose()
+    {
+        _mediatorFactory.Dispose();
+    }
+
 }

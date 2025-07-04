@@ -54,7 +54,5 @@ public class MediatorFactory: IDisposable
         _testDatabase.Dispose();
         _webApplicationFactory.Dispose();
         _scope.Dispose();
-
-        GC.SuppressFinalize(this);
     }
 }

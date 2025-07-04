@@ -102,8 +102,6 @@ public class QueryableExtensionsTests
         {
             _dbContext.Dispose();
             _testDatabase.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }
