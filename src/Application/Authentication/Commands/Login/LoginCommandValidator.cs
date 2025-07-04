@@ -1,4 +1,5 @@
 using FluentValidation;
+using Application.Common;
 
 namespace Application.Authentication.Commands.Login;
 

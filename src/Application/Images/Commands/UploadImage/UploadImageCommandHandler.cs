@@ -28,7 +28,7 @@ public class UploadImageCommandHandler(
 
         if (!Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
         {
-            return Error.Failure("User identification missing.");
+            return UploadImageCommandErrors.UserIdClaimIsMissingOrInvalid;
         }
 
         var (originalImage, thumbnail) = await ProcessImageAsync(command.ImageFile);
