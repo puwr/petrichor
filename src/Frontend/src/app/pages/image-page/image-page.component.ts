@@ -5,16 +5,16 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  signal,
+  Signal,
 } from '@angular/core';
 import { ImageService } from '../../core/services/image.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, of, switchMap } from 'rxjs';
+import { filter, of, startWith, Subject, switchMap } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { TagsComponent } from './tags/tags.component';
 import { LoadingService } from '../../core/services/loading.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Image } from '../../shared/models/image';
 import { AccountService } from '../../core/services/account.service';
 import { Dialog } from '@angular/cdk/dialog';
@@ -40,24 +40,34 @@ export class ImagePageComponent implements OnInit, OnDestroy {
 
   currentUser = this.accountService.currentUser;
 
-  imageId$ = this.route.paramMap.pipe(map((params) => params.get('id')));
+  private refreshImage$ = new Subject<void>();
 
-  image = signal<Image | null>(null);
+  image: Signal<Image | null> = toSignal(
+    this.route.paramMap.pipe(
+      switchMap((params) => {
+        const imageId = params.get('id');
+
+        return this.refreshImage$.pipe(
+          startWith(undefined),
+          switchMap(() =>
+            imageId ? this.imageService.getImage(imageId) : of(null)
+          )
+        );
+      })
+    ),
+    { initialValue: null }
+  );
+
   isUploader = computed(
     () => this.image()?.uploaderId === this.currentUser()?.id
   );
 
   ngOnInit(): void {
     this.loadingService.show();
-    this.loadImage();
   }
 
   ngOnDestroy(): void {
     this.loadingService.hide();
-  }
-
-  handleTagsChanged(): void {
-    this.loadImage();
   }
 
   onImageLoad(): void {
@@ -85,25 +95,15 @@ export class ImagePageComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.closed
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((result) => {
-        if (result) {
-          this.imageService
-            .deleteImage(this.image()!.id)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => {
-              this.router.navigateByUrl('/');
-            });
-        }
-      });
-  }
-
-  private loadImage(): void {
-    this.imageId$
       .pipe(
-        switchMap((id) => (id ? this.imageService.getImage(id) : of(null))),
+        filter((result) => result === true),
+        switchMap(() => this.imageService.deleteImage(this.image()!.id)),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((image) => this.image.set(image));
+      .subscribe(() => this.router.navigateByUrl('/'));
+  }
+
+  refreshImage(): void {
+    this.refreshImage$.next();
   }
 }

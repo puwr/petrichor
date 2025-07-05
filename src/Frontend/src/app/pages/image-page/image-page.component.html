@@ -17,7 +17,7 @@
           [isUploader]="isUploader()"
           [imageId]="img.id"
           [tags]="img.tags"
-          (tagsChanged)="handleTagsChanged()"
+          (tagsChanged)="refreshImage()"
         />
       </div>
       <div class="image-page__meta">
