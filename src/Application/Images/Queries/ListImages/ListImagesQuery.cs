@@ -1,7 +1,7 @@
 using Contracts.Images;
 using Contracts.Pagination;
 using ErrorOr;
-using MediatR;
+using Mediator;
 
 namespace Application.Images.Queries.ListImages;
 

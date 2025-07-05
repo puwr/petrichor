@@ -2,7 +2,7 @@ using Application.Authorization;
 using Application.Authorization.MustBeImageUploader;
 using Application.Common.Behaviors;
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +13,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(options =>
-            options.RegisterServicesFromAssemblyContaining(
-                typeof(DependencyInjection)));
+        services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 
         services.AddAuthorization();
 

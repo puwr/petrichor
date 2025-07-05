@@ -6,7 +6,7 @@ using Application.Common.Interfaces.Services.Storage;
 using Domain.Images;
 using Domain.Images.ValueObjects;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Images.Commands.UploadImage;
@@ -19,7 +19,7 @@ public class UploadImageCommandHandler(
     IImageMetadataProvider imageMetadataProvider
 ) : IRequestHandler<UploadImageCommand, ErrorOr<Guid>>
 {
-    public async Task<ErrorOr<Guid>> Handle(
+    public async ValueTask<ErrorOr<Guid>> Handle(
         UploadImageCommand command,
         CancellationToken cancellationToken)
     {

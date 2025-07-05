@@ -1,6 +1,6 @@
 using Domain.Common;
 using Infrastructure.Persistence;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Middleware;

@@ -2,7 +2,7 @@ using Application.Common.Interfaces;
 using Application.Common.Utilities;
 using Domain.Tags;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Commands.AddImageTags;
@@ -10,7 +10,7 @@ namespace Application.Images.Commands.AddImageTags;
 public class AddImageTagsCommandHandler(IPetrichorDbContext dbContext)
     : IRequestHandler<AddImageTagsCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public async ValueTask<ErrorOr<Success>> Handle(
         AddImageTagsCommand command,
         CancellationToken cancellationToken)
     {
@@ -55,7 +55,6 @@ public class AddImageTagsCommandHandler(IPetrichorDbContext dbContext)
         }
 
         var existingTags = await dbContext.Tags
-            .AsNoTracking()
             .Where(t => normalizedTagNames.Contains(t.Name))
             .ToListAsync(cancellationToken: cancellationToken);
 

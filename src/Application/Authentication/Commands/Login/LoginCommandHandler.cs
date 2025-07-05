@@ -2,7 +2,7 @@ using Application.Common.Interfaces.Services;
 using Application.Common.Interfaces.Services.Authentication;
 using Domain.Users;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authentication.Commands.Login;
@@ -13,7 +13,7 @@ public class LoginCommandHandler(
     ICookieService cookieService)
     : IRequestHandler<LoginCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public async ValueTask<ErrorOr<Success>> Handle(
         LoginCommand request,
         CancellationToken cancellationToken)
     {

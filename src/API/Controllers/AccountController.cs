@@ -1,5 +1,5 @@
 using Application.Account.Queries.GetCurrentUserInfo;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

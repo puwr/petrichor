@@ -1,5 +1,5 @@
-using MediatR;
+using Mediator;
 
 namespace Domain.Common;
 
-public interface IDomainEvent : INotification;
+public interface IDomainEvent: INotification;

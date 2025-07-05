@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Contracts.Account;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Account.Queries.GetCurrentUserInfo;
@@ -12,7 +12,7 @@ public class GetCurrentUserInfoQueryHandler(
     ) : IRequestHandler<GetCurrentUserInfoQuery,
         ErrorOr<GetCurrentUserInfoResponse>>
 {
-    public Task<ErrorOr<GetCurrentUserInfoResponse>> Handle(
+    public ValueTask<ErrorOr<GetCurrentUserInfoResponse>> Handle(
         GetCurrentUserInfoQuery request,
         CancellationToken cancellationToken)
     {
@@ -23,7 +23,7 @@ public class GetCurrentUserInfoQueryHandler(
 
         if (string.IsNullOrEmpty(id))
         {
-            return Task.FromResult(Error
+            return ValueTask.FromResult(Error
                 .Failure("User id claim is missing.")
                 .ToErrorOr<GetCurrentUserInfoResponse>());
         }
@@ -33,7 +33,7 @@ public class GetCurrentUserInfoQueryHandler(
 
         if (string.IsNullOrEmpty(email))
         {
-            return Task.FromResult(Error
+            return ValueTask.FromResult(Error
                 .Failure("User email claim is missing.")
                 .ToErrorOr<GetCurrentUserInfoResponse>());
         }
@@ -43,12 +43,12 @@ public class GetCurrentUserInfoQueryHandler(
 
         if (string.IsNullOrEmpty(userName))
         {
-            return Task.FromResult(Error
+            return ValueTask.FromResult(Error
                 .Failure("User name claim is missing.")
                 .ToErrorOr<GetCurrentUserInfoResponse>());
         }
 
-        return Task.FromResult(new GetCurrentUserInfoResponse(
+        return ValueTask.FromResult(new GetCurrentUserInfoResponse(
             id,
             email,
             userName

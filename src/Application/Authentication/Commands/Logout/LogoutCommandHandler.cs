@@ -1,7 +1,7 @@
 using Application.Common.Interfaces.Services;
 using Domain.Users;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +12,7 @@ public class LogoutCommandHandler(
     ICookieService cookieService)
     : IRequestHandler<LogoutCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public async ValueTask<ErrorOr<Success>> Handle(
         LogoutCommand command,
         CancellationToken cancellationToken)
     {

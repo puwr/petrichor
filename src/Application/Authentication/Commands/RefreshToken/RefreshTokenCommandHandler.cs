@@ -2,7 +2,7 @@ using Application.Common.Interfaces.Services;
 using Application.Common.Interfaces.Services.Authentication;
 using Domain.Users;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +14,7 @@ public class RefreshTokenCommandHandler(
     ICookieService cookieService)
     : IRequestHandler<RefreshTokenCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public async ValueTask<ErrorOr<Success>> Handle(
         RefreshTokenCommand command,
         CancellationToken cancellationToken)
     {

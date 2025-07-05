@@ -7,7 +7,7 @@ using Application.Images.Queries.GetImage;
 using Application.Images.Queries.ListImages;
 using Contracts.Images;
 using Contracts.Pagination;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,6 +1,6 @@
 using Contracts.Account;
 using ErrorOr;
-using MediatR;
+using Mediator;
 
 namespace Application.Account.Queries.GetCurrentUserInfo;
 

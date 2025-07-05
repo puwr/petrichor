@@ -5,7 +5,7 @@ using Application.Common.Utilities;
 using Contracts.Images;
 using Contracts.Pagination;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Queries.ListImages;
@@ -13,7 +13,7 @@ namespace Application.Images.Queries.ListImages;
 public class ListImagesQueryHandler(IPetrichorDbContext dbContext)
     : IRequestHandler<ListImagesQuery, ErrorOr<PagedResponse<ListImagesResponse>>>
 {
-    public async Task<ErrorOr<PagedResponse<ListImagesResponse>>> Handle(
+    public async ValueTask<ErrorOr<PagedResponse<ListImagesResponse>>> Handle(
         ListImagesQuery request,
         CancellationToken cancellationToken)
     {

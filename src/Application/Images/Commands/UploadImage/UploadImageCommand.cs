@@ -1,5 +1,5 @@
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Images.Commands.UploadImage;

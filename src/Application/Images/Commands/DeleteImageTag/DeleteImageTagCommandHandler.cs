@@ -1,15 +1,15 @@
 using Application.Common.Interfaces;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Images.Commands.DeleteImageTag;
 
 public class DeleteImageTagCommandHandler(
-    IPetrichorDbContext dbContext) 
+    IPetrichorDbContext dbContext)
     : IRequestHandler<DeleteImageTagCommand, ErrorOr<Deleted>>
 {
-    public async Task<ErrorOr<Deleted>> Handle(
+    public async ValueTask<ErrorOr<Deleted>> Handle(
         DeleteImageTagCommand command,
         CancellationToken cancellationToken)
     {

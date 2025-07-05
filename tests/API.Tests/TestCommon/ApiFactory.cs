@@ -56,7 +56,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
                     .Scoped<IFileStorage>(_ => new LocalFileStorage(TestDataFolder)));
 
             using var scope = services.BuildServiceProvider().CreateScope();
-            var useManager = _scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            var useManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             await useManager.CreateAsync(new User("test@test.test", "testUser"), "Pa$$w0rd!");
         });
     }

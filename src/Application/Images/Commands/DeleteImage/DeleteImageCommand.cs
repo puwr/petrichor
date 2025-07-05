@@ -1,5 +1,5 @@
 using ErrorOr;
-using MediatR;
+using Mediator;
 
 namespace Application.Images.Commands.DeleteImage;
 

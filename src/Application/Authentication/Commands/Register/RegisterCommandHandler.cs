@@ -1,6 +1,6 @@
 using Domain.Users;
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.Authentication.Commands.Register;
@@ -9,7 +9,7 @@ public class RegisterCommandHandler(
     UserManager<User> userManager)
     : IRequestHandler<RegisterCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public async ValueTask<ErrorOr<Success>> Handle(
         RegisterCommand command,
         CancellationToken cancellationToken)
     {

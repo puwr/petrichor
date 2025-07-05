@@ -1,25 +1,25 @@
 using ErrorOr;
 using FluentValidation;
-using MediatR;
+using Mediator;
 
 namespace Application.Common.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+public class ValidationBehavior<TMessage, TResponse>(IEnumerable<IValidator<TMessage>> validators)
+    : IPipelineBehavior<TMessage, TResponse>
+    where TMessage : IRequest<TResponse>
     where TResponse : IErrorOr
 {
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
+    public async ValueTask<TResponse> Handle(
+        TMessage message,
+        MessageHandlerDelegate<TMessage, TResponse> next,
         CancellationToken cancellationToken)
     {
         if (!validators.Any())
         {
-            return await next(cancellationToken);
+            return await next(message, cancellationToken);
         }
 
-        var context = new ValidationContext<TRequest>(request);
+        var context = new ValidationContext<TMessage>(message);
 
         var validationResults = await Task.WhenAll(
             validators.Select(v => v.ValidateAsync(context, cancellationToken)));
@@ -35,6 +35,6 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
                 error => Error.Validation(error.PropertyName, error.ErrorMessage)).ToList();
         }
 
-        return await next(cancellationToken);
+        return await next(message, cancellationToken);
     }
 }

@@ -1,6 +1,6 @@
 using Contracts.Images;
 using ErrorOr;
-using MediatR;
+using Mediator;
 
 namespace Application.Images.Queries.GetImage;
 
