@@ -1,6 +1,7 @@
 <div class="text-input">
   <label class="text-input__label" [for]="controlName()">{{ label() }}</label>
   <input
+    #input
     class="text-input__field"
     [class.text-input__field--error]="showError()"
     [formControl]="control"

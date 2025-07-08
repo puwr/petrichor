@@ -1,4 +1,13 @@
-import { Component, inject, input } from '@angular/core';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import {
   ControlContainer,
   FormControl,
@@ -17,12 +26,26 @@ import {
     },
   ],
 })
-export class TextInputComponent {
+export class TextInputComponent implements AfterViewInit, OnDestroy {
   type = input<'text' | 'email' | 'password'>('text');
   label = input.required();
   controlName = input.required<string>();
+  autoFocus = input<boolean>(false);
 
   private parentContainer = inject(ControlContainer);
+  private focusMonitor = inject(FocusMonitor);
+
+  @ViewChild('input') inputRef!: ElementRef;
+
+  ngAfterViewInit(): void {
+    if (this.autoFocus() && this.inputRef) {
+      this.focusMonitor.focusVia(this.inputRef.nativeElement, 'program');
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.focusMonitor.stopMonitoring(this.inputRef.nativeElement);
+  }
 
   get control(): FormControl {
     return this.parentContainer.control?.get(this.controlName()) as FormControl;

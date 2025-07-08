@@ -6,7 +6,7 @@
     (ngSubmit)="onSubmit()"
     (reset)="onReset()"
   >
-    <app-text-input label="Tags" controlName="tags" />
+    <app-text-input label="Tags" controlName="tags" [autoFocus]="true" />
 
     @if (validationErrors) {
     <div class="tags__errors">
