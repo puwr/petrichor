@@ -19,13 +19,12 @@ describe('AuthService', () => {
   let httpMock: HttpTestingController;
 
   let accountService: { currentUser: WritableSignal<User | null> };
-  let router: { navigateByUrl: Mock };
+  let router: Router;
 
   const apiUrl = environment.apiUrl;
 
   beforeEach(() => {
     accountService = { currentUser: signal<User | null>(null) };
-    router = { navigateByUrl: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
@@ -36,12 +35,14 @@ describe('AuthService', () => {
           provide: AccountService,
           useValue: accountService,
         },
-        { provide: Router, useValue: router },
       ],
     });
 
     authService = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
+
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigateByUrl');
   });
 
   afterEach(() => {

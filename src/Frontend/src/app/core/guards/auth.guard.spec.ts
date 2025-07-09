@@ -20,7 +20,7 @@ describe('authGuard', () => {
 
   let authService: { getAuthStatus: Mock };
   let accountService: { currentUser: WritableSignal<User | null> };
-  let router: { navigate: Mock };
+  let router: Router;
 
   const mockRoute = {} as ActivatedRouteSnapshot;
   const mockState = { url: '/upload' } as RouterStateSnapshot;
@@ -28,15 +28,16 @@ describe('authGuard', () => {
   beforeEach(() => {
     authService = { getAuthStatus: vi.fn() };
     accountService = { currentUser: signal<User | null>(null) };
-    router = { navigate: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: AuthService, useValue: authService },
         { provide: AccountService, useValue: accountService },
-        { provide: Router, useValue: router },
       ],
     });
+
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate');
   });
 
   it('should be created', () => {
