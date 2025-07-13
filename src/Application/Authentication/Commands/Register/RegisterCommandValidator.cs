@@ -1,10 +1,9 @@
 using System.Text.RegularExpressions;
-using Domain.Users;
 using FluentValidation;
 
 namespace Application.Authentication.Commands.Register;
 
-public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
+public partial class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
     public RegisterCommandValidator()
     {
@@ -28,25 +27,12 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
                 digit and special character.");
     }
 
-    private static readonly Regex UsernameRegex = new(
-        pattern: """
-            ^
-            [a-zA-Z0-9_]{3,30} // letters, digits, underscores, 3-30 chars
-            $
-        """,
-        options: RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace
-    );
+    private static readonly Regex UsernameRegex = UsernameValidationRegex();
+    private static readonly Regex PasswordRegex = PasswordValidationRegex();
 
-    private static readonly Regex PasswordRegex = new(
-        pattern: """
-            ^
-            (?=.*[a-z]) // lowercase letter
-            (?=.*[A-Z]) // uppercase letter
-            (?=.*\\d) // digit
-            (?=.*\\W) // non-alphanumeric char
-            [A-Za-z\\d\\W]{8,128} // 8-128 chars
-            $'
-        """,
-        options: RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace
-    );
+    [GeneratedRegex(@"^[a-zA-Z0-9_]{3,30}$")]
+    private static partial Regex UsernameValidationRegex();
+
+    [GeneratedRegex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z\d\W]{8,128}$")]
+    private static partial Regex PasswordValidationRegex();
 }
