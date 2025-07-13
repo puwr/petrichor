@@ -11,8 +11,7 @@ import { Router } from '@angular/router';
 import { AccountService } from './account.service';
 import { signal, WritableSignal } from '@angular/core';
 import { User } from '../../shared/models/user';
-import { mockUser } from '../../../testing/fixtures';
-import { Mock } from 'vitest';
+import { mockUser } from '../../../testing/test-data';
 
 describe('AuthService', () => {
   let authService: AuthService;

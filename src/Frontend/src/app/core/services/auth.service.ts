@@ -10,6 +10,10 @@ import { AccountService } from './account.service';
 import { finalize, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
+/**
+ * @deprecated This service is deprecated.
+ * Please use AuthFacade instead.
+ */
 @Injectable({
   providedIn: 'root',
 })

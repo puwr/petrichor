@@ -1,24 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { AccountService } from './account.service';
-import {
-  catchError,
-  ignoreElements,
-  map,
-  Observable,
-  of,
-  startWith,
-  take,
-  throwError,
-} from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
+import { AuthFacade } from '../stores/auth/auth.facade';
+import { catchError, EMPTY } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InitService {
-  private accountService = inject(AccountService);
+  private authFacade = inject(AuthFacade);
 
-  initialize(): Observable<void> {
-    return this.accountService.updateCurrentUser();
+  initialize() {
+    return this.authFacade.refreshToken().pipe(catchError(() => EMPTY));
   }
 }

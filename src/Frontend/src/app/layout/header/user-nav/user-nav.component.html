@@ -5,7 +5,7 @@
     [cdkMenuPosition]="menuPosition"
   >
     <span class="user-nav__name"
-      >{{ currentUser?.userName }} ({{ currentUser?.email }})
+      >{{ currentUser()?.userName }} ({{ currentUser()?.email }})
       <div class="user-nav__icon">
         <svg
           aria-hidden="true"

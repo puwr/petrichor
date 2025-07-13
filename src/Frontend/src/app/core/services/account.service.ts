@@ -11,6 +11,10 @@ import {
   throwError,
 } from 'rxjs';
 
+/**
+ * @deprecated This service is deprecated.
+ * Please use AuthFacade instead.
+ */
 @Injectable({
   providedIn: 'root',
 })

@@ -10,6 +10,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
+      if (err.status === 0) {
+        snackbar.error('Network error. Please check your connection.');
+      }
+
       if (err.status === 400) {
         if (err.error?.errors) {
           const validationErrors = Object.values(err.error.errors).flat();
@@ -20,22 +24,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         snackbar.error(err.error?.title || err.error);
-        return throwError(() => err);
-      }
-
-      if (err.status === 401) {
-        // Handled in auth interceptor
-        return throwError(() => err);
       }
 
       if (err.status === 403) {
         snackbar.error('Access denied.');
-        return throwError(() => err);
       }
 
       if (err.status === 404) {
         router.navigateByUrl('/not-found');
-        return throwError(() => err);
       }
 
       if (err.status === 409) {
@@ -44,10 +40,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (err.status >= 500) {
         snackbar.error('Server error. Please try again later.');
-        return throwError(() => err);
       }
 
-      snackbar.error(err.error?.title || 'Something went wrong.');
       return throwError(() => err);
     })
   );

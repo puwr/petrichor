@@ -1,29 +1,18 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { AccountService } from '../services/account.service';
-import { map, Observable, of } from 'rxjs';
+import { AuthFacade } from '../stores/auth/auth.facade';
 
-export const authGuard: CanActivateFn = (route, state): Observable<boolean> => {
+export const authGuard: CanActivateFn = (route, state): boolean => {
   const router = inject(Router);
-  const accountService = inject(AccountService);
-  const authService = inject(AuthService);
+  const authFacade = inject(AuthFacade);
 
-  if (accountService.currentUser()) {
-    return of(true);
+  if (authFacade.isAuthenticated()) {
+    return true;
   }
 
-  return authService.getAuthStatus().pipe(
-    map((authStatus) => {
-      if (authStatus.isAuthenticated) {
-        return true;
-      } else {
-        router.navigate(['/login'], {
-          queryParams: { returnUrl: state.url },
-        });
+  router.navigate(['/login'], {
+    queryParams: { returnUrl: state.url },
+  });
 
-        return false;
-      }
-    })
-  );
+  return false;
 };

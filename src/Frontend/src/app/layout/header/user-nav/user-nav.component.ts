@@ -1,10 +1,8 @@
-import { Component, DestroyRef, inject } from '@angular/core';
-import { AccountService } from '../../../core/services/account.service';
+import { Component, inject } from '@angular/core';
 import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
-import { AuthService } from '../../../core/services/auth.service';
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { AuthFacade } from '../../../core/stores/auth/auth.facade';
 
 @Component({
   selector: 'app-user-nav',
@@ -13,11 +11,9 @@ import { RouterLink } from '@angular/router';
   styleUrl: './user-nav.component.scss',
 })
 export class UserNavComponent {
-  private accountService = inject(AccountService);
-  private authServicce = inject(AuthService);
-  private destroyRef = inject(DestroyRef);
+  private authFacade = inject(AuthFacade);
 
-  currentUser = this.accountService.currentUser();
+  currentUser = this.authFacade.currentUser;
 
   menuPosition: ConnectedPosition[] = [
     {
@@ -29,9 +25,6 @@ export class UserNavComponent {
   ];
 
   logout(): void {
-    this.authServicce
-      .logout()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+    this.authFacade.logoutEffect();
   }
 }

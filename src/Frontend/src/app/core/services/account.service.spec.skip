@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { mockUser } from '../../../testing/fixtures';
+import { mockUser } from '../../../testing/test-data';
 
 describe('AccountService', () => {
   let accountService: AccountService;

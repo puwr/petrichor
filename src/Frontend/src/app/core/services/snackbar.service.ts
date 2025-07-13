@@ -14,7 +14,7 @@ export class SnackbarService {
   private show(
     message: string,
     type: 'success' | 'error',
-    duration: number = 3000
+    duration: number = 5000
   ): void {
     this.overlayRef?.dispose();
 

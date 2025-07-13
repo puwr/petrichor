@@ -2,8 +2,8 @@
   <app-text-input label="Email" type="email" controlName="email" />
   <app-text-input label="Password" type="password" controlName="password" />
 
-  @if (validationErrors) {
-  <app-validation-errors [validationErrors]="validationErrors" />
+  @if (validationErrors(); as errors) {
+  <app-validation-errors [validationErrors]="errors" />
   }
 
   <button

@@ -4,13 +4,15 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, switchMap, throwError } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { AccountService } from '../services/account.service';
+import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
+import { AuthFacade } from '../stores/auth/auth.facade';
+import { Router } from '@angular/router';
+import { SnackbarService } from '../services/snackbar.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const accountService = inject(AccountService);
+  const router = inject(Router);
+  const authFacade = inject(AuthFacade);
+  const snackbar = inject(SnackbarService);
 
   const request = req.clone({
     withCredentials: true,
@@ -19,12 +21,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(request).pipe(
     catchError((error) => {
       if (is401Error(error, request)) {
-        return authService.refreshToken().pipe(
-          switchMap(() => accountService.updateCurrentUser()),
+        return authFacade.refreshToken().pipe(
           switchMap(() => next(request)),
-          catchError((error) => {
-            accountService.currentUser.set(null);
-            return throwError(() => error);
+          catchError(() => {
+            snackbar.error('Something went wrong, please log in again.');
+
+            router.navigate(['/login'], {
+              queryParams: { returnUrl: router.url },
+            });
+
+            return EMPTY;
           })
         );
       }

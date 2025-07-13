@@ -16,10 +16,10 @@ import { TagsComponent } from './tags/tags.component';
 import { LoadingService } from '../../core/services/loading.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Image } from '../../shared/models/image';
-import { AccountService } from '../../core/services/account.service';
 import { Dialog } from '@angular/cdk/dialog';
 import { DialogComponent } from '../../shared/components/dialog/dialog.component';
 import { DialogData } from '../../shared/models/dialog';
+import { AuthFacade } from '../../core/stores/auth/auth.facade';
 
 @Component({
   selector: 'app-image-page',
@@ -33,12 +33,12 @@ export class ImagePageComponent implements OnInit, OnDestroy {
   private dialog = inject(Dialog);
   private imageService = inject(ImageService);
   private loadingService = inject(LoadingService);
-  private accountService = inject(AccountService);
+  private authFacade = inject(AuthFacade);
   private destroyRef = inject(DestroyRef);
 
   baseUrl = environment.baseUrl;
 
-  currentUser = this.accountService.currentUser;
+  currentUser = this.authFacade.currentUser;
 
   private refreshImage$ = new Subject<void>();
 

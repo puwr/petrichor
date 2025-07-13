@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AccountService } from '../../core/services/account.service';
 import { UserNavComponent } from './user-nav/user-nav.component';
+import { AuthFacade } from '../../core/stores/auth/auth.facade';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +10,7 @@ import { UserNavComponent } from './user-nav/user-nav.component';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-  private accountService = inject(AccountService);
+  private authFacade = inject(AuthFacade);
 
-  currentUser = this.accountService.currentUser;
+  currentUser = this.authFacade.currentUser;
 }

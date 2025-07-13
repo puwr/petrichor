@@ -1,56 +1,45 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextInputComponent } from '../../../shared/components/text-input/text-input.component';
-import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from '../../../shared/models/auth';
-import { AccountService } from '../../../core/services/account.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { exhaustMap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
+import { AuthFacade } from '../../../core/stores/auth/auth.facade';
 
 @Component({
   selector: 'app-login-form',
   imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginFormComponent implements OnInit {
+export class LoginFormComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private accountService = inject(AccountService);
-  private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
-  private destroyRef = inject(DestroyRef);
+  private authFacade = inject(AuthFacade);
 
-  validationErrors: string[] | null = null;
+  loginStatus = this.authFacade.loginStatus;
 
-  loginForm = this.fb.group({
-    email: ['', Validators.required, Validators.email],
-    password: ['', Validators.required],
+  validationErrors = computed(() => {
+    const status = this.loginStatus();
+    if (status?.value === 'error') {
+      return status.error as string[];
+    }
+
+    return null;
   });
 
-  returnUrl = '/';
-
-  ngOnInit(): void {
-    const url = this.activatedRoute.snapshot.queryParams['returnUrl'];
-    if (url) this.returnUrl = url;
-  }
+  loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
 
   onSubmit(): void {
     const credentials = this.loginForm.getRawValue() as LoginRequest;
 
-    this.authService
-      .login(credentials)
-      .pipe(
-        exhaustMap(() => this.accountService.updateCurrentUser()),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe({
-        complete: () => {
-          this.router.navigateByUrl(this.returnUrl);
-        },
-        error: (errors) => (this.validationErrors = errors),
-      });
+    this.authFacade.loginEffect(credentials);
   }
 }
