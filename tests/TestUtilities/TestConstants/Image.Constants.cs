@@ -1,16 +1,16 @@
-using Domain.Images.ValueObjects;
+using Petrichor.Modules.Gallery.Domain.Images.ValueObjects;
 
 namespace TestUtilities.TestConstants;
 
 public static partial class Constants
 {
-    public static class Image
+    public class Image
     {
         public static readonly OriginalImage OriginalImage = new(
-            Path: "/uploads/original.jpg",
-            Width: 2000,
-            Height: 1500
-        );
+        Path: "/uploads/original.jpg",
+        Width: 2000,
+        Height: 1500
+    );
 
         public static readonly Thumbnail Thumbnail = new(
             Path: "/thumbs/thumb.jpg",

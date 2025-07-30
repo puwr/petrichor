@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Modules\Gallery\Petrichor.Modules.Gallery.Application\Petrichor.Modules.Gallery.Application.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Modules\Gallery\Petrichor.Modules.Gallery.Infrastructure\Petrichor.Modules.Gallery.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" Version="5.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

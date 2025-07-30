@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Petrichor.Modules.Gallery.Application\Petrichor.Modules.Gallery.Application.csproj" />
+    <ProjectReference Include="..\Petrichor.Modules.Gallery.Domain\Petrichor.Modules.Gallery.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Infrastructure\Petrichor.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+  </ItemGroup>
+
+</Project>

@@ -3,6 +3,7 @@
 **Backend**
 
 - .NET
+- Modular Monolith
 - CQRS
 - JWT authentication (HTTP-only cookies)
 - Image upload

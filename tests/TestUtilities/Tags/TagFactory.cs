@@ -1,4 +1,4 @@
-using Domain.Tags;
+using Petrichor.Modules.Gallery.Domain.Tags;
 using TestUtilities.TestConstants;
 
 namespace TestUtilities.Tags;

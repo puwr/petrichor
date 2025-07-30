@@ -1,4 +1,4 @@
-using Domain.Images;
+using Petrichor.Modules.Gallery.Domain.Images;
 using TestUtilities.TestConstants;
 
 namespace TestUtilities.Images;
