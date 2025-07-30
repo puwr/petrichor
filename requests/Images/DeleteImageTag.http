@@ -1,6 +1,0 @@
-@host=http://localhost:5198
-@imageId=
-@tagId=
-
-DELETE {{host}}/api/v1/images/{{imageId}}/tags/{{tagId}}
-Cookie:
