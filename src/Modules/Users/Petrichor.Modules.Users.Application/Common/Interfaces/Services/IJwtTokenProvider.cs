@@ -5,7 +5,7 @@ namespace Petrichor.Modules.Users.Application.Common.Interfaces.Services;
 
 public interface IJwtTokenProvider
 {
-    TokenResult GenerateAccessToken(User user);
+    TokenResult GenerateAccessToken(User user, IList<string> roles);
 
     TokenResult GenerateRefreshToken();
 }

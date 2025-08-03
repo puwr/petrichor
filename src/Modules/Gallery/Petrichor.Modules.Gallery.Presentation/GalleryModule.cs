@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +10,7 @@ using Petrichor.Modules.Gallery.Infrastructure.Authorization;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploader;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 using Petrichor.Modules.Gallery.Infrastructure.Services;
-using Petrichor.Modules.Gallery.Presentation.Middleware;
+using Petrichor.Shared.Infrastructure.Outbox;
 
 namespace Petrichor.Modules.Gallery.Presentation;
 
@@ -32,24 +31,21 @@ public static class GalleryModule
         return services;
     }
 
-    public static IApplicationBuilder UseGalleryMiddleware(this IApplicationBuilder builder)
-    {
-        builder.UseMiddleware<EventualConsistencyMiddleware>();
-        return builder;
-    }
-
     private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<GalleryDbContext>(options =>
+        services.AddDbContext<GalleryDbContext>((sp, options) =>
             options
                 .UseNpgsql(
                     configuration.GetConnectionString("Database"),
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "gallery"))
-                .UseSnakeCaseNamingConvention());
+                .UseSnakeCaseNamingConvention()
+                .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>()));
 
         services.AddScoped<IGalleryDbContext>(provider =>
             provider.GetRequiredService<GalleryDbContext>());
+
+        services.AddHostedService<OutboxBackgroudService<GalleryDbContext>>();
 
         return services;
     }

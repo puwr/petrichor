@@ -1,6 +1,6 @@
 namespace Petrichor.Shared.Domain.Common;
 
-public abstract class Entity
+public abstract class Entity : IHasDomainEvents
 {
     public Guid Id { get; private set; }
 

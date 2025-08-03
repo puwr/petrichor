@@ -17,7 +17,7 @@ public class QueryableExtensionsTests : IDisposable
     {
         var options = new DbContextOptionsBuilder<GalleryDbContext>()
             .UseInMemoryDatabase($"{Guid.NewGuid()}").Options;
-        _dbContext = new GalleryDbContext(options, null!, null!);
+        _dbContext = new GalleryDbContext(options);
     }
 
     [Fact]

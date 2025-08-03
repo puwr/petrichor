@@ -16,18 +16,18 @@ public class JwtTokenProvider(
 {
     private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
-    public TokenResult GenerateAccessToken(User user)
+    public TokenResult GenerateAccessToken(User user, IList<string> roles)
     {
         var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var credentials = new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!)
-        };
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email!),
+            new(JwtRegisteredClaimNames.UniqueName, user.UserName!)
+        }.Concat(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         var accessTokenExpirationDateInUtc =
             DateTime.UtcNow.AddMinutes(_jwtSettings.AccessTokenExpirationTimeInMinutes);

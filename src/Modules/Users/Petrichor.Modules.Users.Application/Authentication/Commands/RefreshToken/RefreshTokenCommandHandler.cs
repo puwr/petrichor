@@ -38,7 +38,9 @@ public class RefreshTokenCommandHandler(
             return Error.Unauthorized(description: "Refresh token is expired.");
         }
 
-        var accessTokenResult = jwtTokenProvider.GenerateAccessToken(user);
+        var roles = await userManager.GetRolesAsync(user);
+
+        var accessTokenResult = jwtTokenProvider.GenerateAccessToken(user, roles);
 
         var refreshTokenResult = jwtTokenProvider.GenerateRefreshToken();
 

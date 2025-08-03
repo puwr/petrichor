@@ -23,7 +23,9 @@ public class LoginCommandHandler(
             return Error.Validation("Invalid credentials.");
         }
 
-        var accessTokenResult = jwtTokenProvider.GenerateAccessToken(user);
+        var roles = await userManager.GetRolesAsync(user);
+
+        var accessTokenResult = jwtTokenProvider.GenerateAccessToken(user, roles);
 
         var refreshTokenResult = jwtTokenProvider.GenerateRefreshToken();
 

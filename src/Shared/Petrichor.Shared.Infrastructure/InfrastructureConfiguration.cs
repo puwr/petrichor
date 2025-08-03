@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Petrichor.Shared.Application.Common.Interfaces.Services.Storage;
+using Petrichor.Shared.Infrastructure.Outbox;
 using Petrichor.Shared.Infrastructure.Services.Storage;
 
 namespace Petrichor.Shared.Infrastructure;
@@ -19,6 +21,8 @@ public static class InfrastructureConfiguration
                 .RequireAuthenticatedUser()
                 .Build();
         });
+
+        services.TryAddSingleton<InsertOutboxMessagesInterceptor>();
 
         services.AddScoped<IFileStorage, LocalFileStorage>();
 

@@ -7,12 +7,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Application.Common.Interfaces.Services;
 using Petrichor.Modules.Users.Contracts.Authentication;
 using Petrichor.Modules.Users.Domain.Users;
 using Petrichor.Modules.Users.Infrastructure.Persistence;
 using Petrichor.Modules.Users.Infrastructure.Services;
 using Petrichor.Modules.Users.Presentation;
+using Petrichor.Shared.Infrastructure.Outbox;
 
 namespace Petrichor.Modules.Users.Presentation;
 
@@ -34,13 +36,19 @@ public static class UsersModule
 
     private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<UsersDbContext>(options =>
+        services.AddDbContext<UsersDbContext>((sp, options) =>
             options
                 .UseNpgsql(
                     configuration.GetConnectionString("Database"),
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
-                .UseSnakeCaseNamingConvention());
+                .UseSnakeCaseNamingConvention()
+                .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>()));
+
+        services.AddScoped<IUsersDbContext>(provider =>
+            provider.GetRequiredService<UsersDbContext>());
+
+        services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
 
         return services;
     }

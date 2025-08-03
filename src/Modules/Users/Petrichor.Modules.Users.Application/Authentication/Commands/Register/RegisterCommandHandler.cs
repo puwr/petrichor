@@ -1,6 +1,7 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Users.Domain.Users;
 
 namespace Petrichor.Modules.Users.Application.Authentication.Commands.Register;
@@ -25,6 +26,8 @@ public class RegisterCommandHandler(
                 .Conflict(description: "User with provided user name already exists.");
         }
 
+        var isFirstUser = !await userManager.Users.AnyAsync(cancellationToken);
+
         var user = new User(command.Email, command.UserName);
 
         var result = await userManager.CreateAsync(user, command.Password);
@@ -40,6 +43,11 @@ public class RegisterCommandHandler(
             }
 
             return errors;
+        }
+
+        if (isFirstUser)
+        {
+            await userManager.AddToRoleAsync(user, "Admin");
         }
 
         return Result.Success;

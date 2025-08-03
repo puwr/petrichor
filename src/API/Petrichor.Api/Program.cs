@@ -69,8 +69,6 @@ app.UseCors(x => x.AllowAnyHeader()
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseGalleryMiddleware();
-
 app.MapControllers();
 
 app.Run();

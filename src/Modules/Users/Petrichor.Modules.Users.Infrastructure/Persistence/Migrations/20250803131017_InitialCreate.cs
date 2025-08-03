@@ -38,6 +38,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     refresh_token = table.Column<string>(type: "text", nullable: true),
                     refresh_token_expires_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    registered_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -56,6 +57,23 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_asp_net_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                schema: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_messages", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,6 +193,12 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                schema: "users",
+                table: "AspNetRoles",
+                columns: new[] { "id", "concurrency_stamp", "name", "normalized_name" },
+                values: new object[] { new Guid("b31c98af-5964-4773-ab6c-cdc026b888ef"), null, "Admin", "ADMIN" });
+
             migrationBuilder.CreateIndex(
                 name: "ix_asp_net_role_claims_role_id",
                 schema: "users",
@@ -241,6 +265,10 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages",
                 schema: "users");
 
             migrationBuilder.DropTable(
