@@ -28,7 +28,8 @@ public class ListUsersQueryHandler(IUsersDbContext dbContext)
                         .Where(r => dbContext.UserRoles
                             .Any(ur => ur.UserId == u.Id && ur.RoleId == r.Id))
                         .Select(r => r.Name ?? string.Empty)
-                        .ToList()))
+                        .ToList(),
+                    u.IsDeleted))
             .ToPagedResponseAsync(request.Pagination, cancellationToken);
 
         return users;

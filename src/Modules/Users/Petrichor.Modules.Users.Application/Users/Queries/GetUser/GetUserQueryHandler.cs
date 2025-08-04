@@ -22,7 +22,11 @@ public class GetUserQueryHandler(IUsersDbContext dbContext)
             return Error.NotFound(description: "User not found.");
         }
 
+        if (user.IsDeleted)
+        {
+            return new GetUserResponse(Id: user.Id, UserName: "Deleted User");
+        }
+
         return new GetUserResponse(Id: user.Id, UserName: user.UserName!);
     }
-
 }

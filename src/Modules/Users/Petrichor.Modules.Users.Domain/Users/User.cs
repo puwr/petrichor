@@ -10,6 +10,7 @@ public class User : IdentityUser<Guid>, IHasDomainEvents
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
     public DateTime RegisteredAtUtc { get; init; } = DateTime.UtcNow;
+    public bool IsDeleted { get; set; } = false;
 
     public User(string email, string userName)
     {

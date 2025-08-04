@@ -39,6 +39,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     refresh_token = table.Column<string>(type: "text", nullable: true),
                     refresh_token_expires_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     registered_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

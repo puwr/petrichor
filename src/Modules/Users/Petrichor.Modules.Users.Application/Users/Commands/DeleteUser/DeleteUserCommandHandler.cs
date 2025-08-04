@@ -19,7 +19,8 @@ public class DeleteUserCommandHandler(UserManager<User> userManager)
             return Error.NotFound(description: "User not found.");
         }
 
-        await userManager.DeleteAsync(user);
+        user.IsDeleted = true;
+        await userManager.UpdateAsync(user);
 
         return Result.Deleted;
     }
