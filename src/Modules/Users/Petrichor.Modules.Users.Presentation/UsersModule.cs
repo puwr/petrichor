@@ -14,6 +14,7 @@ using Petrichor.Modules.Users.Domain.Users;
 using Petrichor.Modules.Users.Infrastructure.Persistence;
 using Petrichor.Modules.Users.Infrastructure.Services;
 using Petrichor.Modules.Users.Presentation;
+using Petrichor.Shared.Infrastructure.Inbox;
 using Petrichor.Shared.Infrastructure.Outbox;
 
 namespace Petrichor.Modules.Users.Presentation;
@@ -43,11 +44,12 @@ public static class UsersModule
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
                 .UseSnakeCaseNamingConvention()
-                .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>()));
+                .AddInterceptors(sp.GetRequiredService<InsertDomainOutboxMessagesInterceptor>()));
 
         services.AddScoped<IUsersDbContext>(provider =>
             provider.GetRequiredService<UsersDbContext>());
 
+        services.AddHostedService<InboxBackgroundService<UsersDbContext>>();
         services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
 
         return services;

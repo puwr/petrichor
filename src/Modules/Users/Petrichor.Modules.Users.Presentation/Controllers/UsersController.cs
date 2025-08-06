@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Petrichor.Modules.Users.Application.Users.Commands.DeleteUser;
 using Petrichor.Modules.Users.Application.Users.Queries.GetUser;
 using Petrichor.Modules.Users.Application.Users.Queries.ListUsers;
+using Petrichor.Modules.Users.Contracts.Users;
 using Petrichor.Shared.Contracts.Pagination;
 using Petrichor.Shared.Presentation;
 
@@ -43,9 +44,9 @@ public class UsersController(ISender mediator) : ApiController
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{userId:guid}")]
-    public async Task<IActionResult> DeleteUser(Guid userId)
+    public async Task<IActionResult> DeleteUser(Guid userId, DeleteUserRequest request)
     {
-        var command = new DeleteUserCommand(userId);
+        var command = new DeleteUserCommand(userId, request.DeleteUploadedImages);
 
         var deleteUserResult = await mediator.Send(command);
 

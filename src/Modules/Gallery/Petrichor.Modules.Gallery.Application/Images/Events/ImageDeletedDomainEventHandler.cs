@@ -4,13 +4,13 @@ using Petrichor.Modules.Gallery.Domain.Images.Events;
 
 namespace Petrichor.Modules.Gallery.Application.Images.Events;
 
-public class ImageDeletedEventHandler(
+public class ImageDeletedDomainEventHandler(
     IFileStorage fileStorage)
-    : INotificationHandler<ImageDeletedEvent>
+    : INotificationHandler<ImageDeletedDomainEvent>
 {
-    public async Task Handle(ImageDeletedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(ImageDeletedDomainEvent notification, CancellationToken cancellationToken)
     {
         await fileStorage.DeleteFileAsync(notification.ImagePath);
-        await fileStorage.DeleteFileAsync(notification.ThumbnnailPath);
+        await fileStorage.DeleteFileAsync(notification.ThumbnailPath);
     }
 }

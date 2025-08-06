@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -12,7 +13,9 @@ namespace Petrichor.Shared.Infrastructure;
 
 public static class InfrastructureConfiguration
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        Action<IRegistrationConfigurator>[] moduleConfigureConsumers)
     {
         services.AddAuthorization(options =>
         {
@@ -22,9 +25,24 @@ public static class InfrastructureConfiguration
                 .Build();
         });
 
-        services.TryAddSingleton<InsertOutboxMessagesInterceptor>();
+        services.TryAddSingleton<InsertDomainOutboxMessagesInterceptor>();
 
         services.AddScoped<IFileStorage, LocalFileStorage>();
+
+        services.AddMassTransit(configure =>
+        {
+            foreach (Action<IRegistrationConfigurator> configureConsumers in moduleConfigureConsumers)
+            {
+                configureConsumers(configure);
+            }
+
+            configure.SetKebabCaseEndpointNameFormatter();
+
+            configure.UsingInMemory((context, cfg) =>
+            {
+                cfg.ConfigureEndpoints(context);
+            });
+        });
 
         return services;
     }

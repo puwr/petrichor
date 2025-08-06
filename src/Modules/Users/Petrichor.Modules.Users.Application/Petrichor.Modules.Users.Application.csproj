@@ -2,8 +2,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Application\Petrichor.Shared.Application.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Infrastructure\Petrichor.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Users.Contracts\Petrichor.Modules.Users.Contracts.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Users.Domain\Petrichor.Modules.Users.Domain.csproj" />
+    <ProjectReference Include="..\Petrichor.Modules.Users.IntegrationEvents\Petrichor.Modules.Users.IntegrationEvents.csproj" />
   </ItemGroup>
 
 </Project>

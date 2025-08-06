@@ -1,8 +1,11 @@
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Petrichor.Shared.Domain.Common;
 using Petrichor.Shared.Infrastructure.Serialization;
 
 namespace Petrichor.Shared.Infrastructure.Outbox;
@@ -21,6 +24,7 @@ public class OutboxBackgroudService<TDbContext>(
             await using var scope = services.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            var bus = scope.ServiceProvider.GetRequiredService<IBus>();
 
             var outboxMessages = await dbContext.OutboxMessages
                 .Where(om => om.ProcessedAtUtc == null)
@@ -38,9 +42,25 @@ public class OutboxBackgroudService<TDbContext>(
             {
                 try
                 {
-                    var domainEvent = DomainEventsSerializer.Deserialize(message.Content);
+                    if (message.Type == OutboxEventType.Domain)
+                    {
+                        var domainEvent = JsonConvert.DeserializeObject<DomainEvent>(
+                            message.Content,
+                            SerializerSettings.Events)!;
 
-                    await publisher.Publish(domainEvent, cancellationToken);
+                        await publisher.Publish(domainEvent, cancellationToken);
+                    }
+                    else if (message.Type == OutboxEventType.Integration)
+                    {
+                        var integrationEventType = Type.GetType(message.AssemblyQualifiedName);
+
+                        var integrationEvent = JsonConvert.DeserializeObject(
+                            message.Content,
+                            integrationEventType,
+                            SerializerSettings.Events)!;
+
+                        await bus.Publish(integrationEvent, cancellationToken);
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -64,7 +84,7 @@ public class OutboxBackgroudService<TDbContext>(
                     outboxMessages.Count);
             }
 
-            await Task.Delay(1000, cancellationToken);
+            await Task.Delay(2000, cancellationToken);
         }
     }
 }

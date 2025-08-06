@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -8,10 +9,12 @@ using Petrichor.Modules.Gallery.Application.Common.Interfaces;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces.Services;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploader;
+using Petrichor.Modules.Gallery.Infrastructure.Inbox;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 using Petrichor.Modules.Gallery.Infrastructure.Services;
+using Petrichor.Modules.Users.IntegrationEvents;
+using Petrichor.Shared.Infrastructure.Inbox;
 using Petrichor.Shared.Infrastructure.Outbox;
-
 namespace Petrichor.Modules.Gallery.Presentation;
 
 public static class GalleryModule
@@ -31,6 +34,11 @@ public static class GalleryModule
         return services;
     }
 
+    public static void ConfigureConsumers(IRegistrationConfigurator registrationConfigurator)
+    {
+        registrationConfigurator.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
+    }
+
     private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<GalleryDbContext>((sp, options) =>
@@ -40,11 +48,12 @@ public static class GalleryModule
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "gallery"))
                 .UseSnakeCaseNamingConvention()
-                .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>()));
+                .AddInterceptors(sp.GetRequiredService<InsertDomainOutboxMessagesInterceptor>()));
 
         services.AddScoped<IGalleryDbContext>(provider =>
             provider.GetRequiredService<GalleryDbContext>());
 
+        services.AddHostedService<InboxBackgroundService<GalleryDbContext>>();
         services.AddHostedService<OutboxBackgroudService<GalleryDbContext>>();
 
         return services;

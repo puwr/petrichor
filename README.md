@@ -4,6 +4,8 @@
 
 - .NET
 - Modular Monolith
+- Outbox for domain evets
+- Inbox and Outbox for integration events
 - CQRS
 - JWT authentication (HTTP-only cookies)
 - Image upload
@@ -15,23 +17,3 @@
 - Elf store
 
 # How to run
-
-```
-dotnet ef database update -p .\src\Infrastructure\ -s .\src\API\
-```
-
-```
-dotnet run --project .\src\API\
-```
-
-```
-cd .\src\Frontend\
-```
-
-```
-pnpm install
-```
-
-```
-ng serve
-```

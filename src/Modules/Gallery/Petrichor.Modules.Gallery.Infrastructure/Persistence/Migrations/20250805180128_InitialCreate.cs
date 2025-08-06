@@ -35,12 +35,31 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "inbox_messages",
+                schema: "gallery",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
+                    occurred_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    processed_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    error = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "outbox_messages",
                 schema: "gallery",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    type = table.Column<string>(type: "text", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    assembly_qualified_name = table.Column<string>(type: "text", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
                     occurred_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     processed_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -110,6 +129,10 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "image_tags",
+                schema: "gallery");
+
+            migrationBuilder.DropTable(
+                name: "inbox_messages",
                 schema: "gallery");
 
             migrationBuilder.DropTable(

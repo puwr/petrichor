@@ -4,6 +4,8 @@
     <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Application\Petrichor.Shared.Application.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Gallery.Domain\Petrichor.Modules.Gallery.Domain.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Gallery.Contracts\Petrichor.Modules.Gallery.Contracts.csproj" />
+    <ProjectReference Include="..\..\Users\Petrichor.Modules.Users.IntegrationEvents\Petrichor.Modules.Users.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Infrastructure\Petrichor.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

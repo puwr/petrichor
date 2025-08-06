@@ -12,7 +12,7 @@ using Petrichor.Modules.Users.Infrastructure.Persistence;
 namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20250804052216_InitialCreate")]
+    [Migration("20250805180219_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -293,7 +293,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUsers", "users");
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Inbox.InboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -310,6 +310,11 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("error");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
                     b.Property<DateTime>("OccurredAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("occurred_at_utc");
@@ -318,9 +323,49 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("processed_at_utc");
 
-                    b.Property<string>("Type")
+                    b.HasKey("Id")
+                        .HasName("pk_inbox_messages");
+
+                    b.ToTable("inbox_messages", "users");
+                });
+
+            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AssemblyQualifiedName")
                         .IsRequired()
                         .HasColumnType("text")
+                        .HasColumnName("assembly_qualified_name");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("jsonb")
+                        .HasColumnName("content");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text")
+                        .HasColumnName("error");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at_utc");
+
+                    b.Property<DateTime?>("ProcessedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at_utc");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
                         .HasColumnName("type");
 
                     b.HasKey("Id")

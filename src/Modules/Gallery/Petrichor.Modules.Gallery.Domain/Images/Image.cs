@@ -9,15 +9,16 @@ namespace Petrichor.Modules.Gallery.Domain.Images;
 public sealed class Image : Entity
 {
     private readonly List<Tag> _tags = [];
-
+    public Guid Id { get; private set; }
     public OriginalImage OriginalImage { get; private set; }
     public Thumbnail Thumbnail { get; private set; }
     public Guid UploaderId { get; private set; }
     public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
     public DateTime UploadedDateTime { get; init; } = DateTime.UtcNow;
 
-    public Image(OriginalImage originalImage, Thumbnail thumbnail, Guid uploaderId) : base(Guid.NewGuid())
+    public Image(OriginalImage originalImage, Thumbnail thumbnail, Guid uploaderId)
     {
+        Id = Guid.NewGuid();
         OriginalImage = originalImage;
         Thumbnail = thumbnail;
         UploaderId = uploaderId;
@@ -55,7 +56,7 @@ public sealed class Image : Entity
 
     public void DeleteImage()
     {
-        _domainEvents.Add(new ImageDeletedEvent(OriginalImage.Path, Thumbnail.Path));
+        _domainEvents.Add(new ImageDeletedDomainEvent(OriginalImage.Path, Thumbnail.Path));
     }
 
     private Image() { }

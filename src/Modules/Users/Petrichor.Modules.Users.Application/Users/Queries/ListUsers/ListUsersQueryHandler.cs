@@ -1,10 +1,8 @@
 using ErrorOr;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Contracts.Users;
-using Petrichor.Modules.Users.Domain.Users;
 using Petrichor.Shared.Application.Extensions;
 using Petrichor.Shared.Contracts.Pagination;
 

@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Presentation\Petrichor.Shared.Presentation.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Gallery.Infrastructure\Petrichor.Modules.Gallery.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Users\Petrichor.Modules.Users.IntegrationEvents\Petrichor.Modules.Users.IntegrationEvents.csproj" />
   </ItemGroup>
 
 </Project>

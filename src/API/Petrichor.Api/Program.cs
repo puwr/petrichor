@@ -33,7 +33,11 @@ Assembly[] moduleApplicationAssemblies = [
 ];
 
 builder.Services.AddApplication(moduleApplicationAssemblies);
-builder.Services.AddInfrastructure();
+builder.Services.AddInfrastructure(
+    [
+        GalleryModule.ConfigureConsumers
+    ]
+);
 
 builder.Configuration.AddModuleConfiguration(["users"]);
 

@@ -72,7 +72,7 @@ public class ImageTests
     }
 
     [Fact]
-    public void DeleteImage_AddsImageDeletedEvent()
+    public void DeleteImage_AddsImageDeletedDomainEvent()
     {
         var image = ImageFactory.CreateImage();
 
@@ -81,8 +81,8 @@ public class ImageTests
         var domainEvents = image.PopDomainEvents();
         domainEvents.Should().HaveCount(1);
 
-        var deletedEvent = domainEvents.First().Should().BeOfType<ImageDeletedEvent>().Subject;
+        var deletedEvent = domainEvents.First().Should().BeOfType<ImageDeletedDomainEvent>().Subject;
         deletedEvent.ImagePath.Should().Be(image.OriginalImage.Path);
-        deletedEvent.ThumbnnailPath.Should().Be(image.Thumbnail.Path);
+        deletedEvent.ThumbnailPath.Should().Be(image.Thumbnail.Path);
     }
 }

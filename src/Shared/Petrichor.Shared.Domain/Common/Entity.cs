@@ -2,13 +2,9 @@ namespace Petrichor.Shared.Domain.Common;
 
 public abstract class Entity : IHasDomainEvents
 {
-    public Guid Id { get; private set; }
+    protected readonly List<DomainEvent> _domainEvents = [];
 
-    protected readonly List<IDomainEvent> _domainEvents = [];
-
-    protected Entity(Guid id) => Id = id;
-
-    public List<IDomainEvent> PopDomainEvents()
+    public List<DomainEvent> PopDomainEvents()
     {
         var copy = _domainEvents.ToList();
 

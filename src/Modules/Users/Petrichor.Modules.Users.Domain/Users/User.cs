@@ -5,7 +5,7 @@ namespace Petrichor.Modules.Users.Domain.Users;
 
 public class User : IdentityUser<Guid>, IHasDomainEvents
 {
-    protected readonly List<IDomainEvent> _domainEvents = [];
+    protected readonly List<DomainEvent> _domainEvents = [];
 
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiresAtUtc { get; set; }
@@ -20,7 +20,7 @@ public class User : IdentityUser<Guid>, IHasDomainEvents
 
     public User() { }
 
-    public List<IDomainEvent> PopDomainEvents()
+    public List<DomainEvent> PopDomainEvents()
     {
         var copy = _domainEvents.ToList();
 
