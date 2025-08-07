@@ -70,7 +70,7 @@ public static class UsersModule
         }).AddEntityFrameworkStores<UsersDbContext>();
 
         var jwtSettings = new JwtSettings();
-        configuration.Bind(JwtSettings.JwtSettingsKey, jwtSettings);
+        configuration.Bind(JwtSettings.Key, jwtSettings);
 
         services.AddSingleton(Options.Create(jwtSettings));
 

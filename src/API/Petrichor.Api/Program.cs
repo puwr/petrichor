@@ -34,6 +34,7 @@ Assembly[] moduleApplicationAssemblies = [
 
 builder.Services.AddApplication(moduleApplicationAssemblies);
 builder.Services.AddInfrastructure(
+    builder.Configuration,
     [
         GalleryModule.ConfigureConsumers
     ]
