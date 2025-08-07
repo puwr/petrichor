@@ -24,6 +24,8 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options)
         modelBuilder.ApplyConfiguration(new InboxMessageConfiguration());
         modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
 
+        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
+
         modelBuilder.Entity<IdentityRole<Guid>>()
             .HasData(new IdentityRole<Guid>
             {

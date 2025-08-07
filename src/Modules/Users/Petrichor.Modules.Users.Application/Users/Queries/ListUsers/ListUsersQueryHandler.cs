@@ -17,6 +17,7 @@ public class ListUsersQueryHandler(IUsersDbContext dbContext)
     {
         var users = await dbContext.Users
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .OrderByDescending(u => u.RegisteredAtUtc)
             .Select(u => new ListUsersResponse(
                     u.Id,

@@ -15,6 +15,7 @@ public class GetUserQueryHandler(IUsersDbContext dbContext)
     {
         var user = await dbContext.Users
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
         if (user is null)
