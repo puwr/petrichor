@@ -2,15 +2,14 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Minio;
+using Minio.DataModel.Args;
 using Petrichor.Api;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 using Petrichor.Modules.Users.Contracts.Authentication;
 using Petrichor.Modules.Users.Domain.Users;
-using Petrichor.Shared.Application.Common.Interfaces.Services.Storage;
-using Petrichor.Shared.Infrastructure.Services.Storage;
+using Testcontainers.Minio;
 using Testcontainers.PostgreSql;
 
 namespace Petrichor.Modules.Gallery.Presentation.Tests;
@@ -23,28 +22,28 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         .WithUsername("postgres")
         .WithPassword("postgres")
         .Build();
+    private readonly MinioContainer _minioContainer = new MinioBuilder()
+        .WithImage("minio/minio:latest")
+        .WithPortBinding(9000, true)
+        .WithEnvironment("MINIO_ROOT_USER", "minioadmin")
+        .WithEnvironment("MINIO_ROOT_PASSWORD", "minioadmin")
+        .Build();
     private IServiceScope _scope;
     public HttpClient AnonymousClient { get; private set; }
     public HttpClient AuthenticatedClient { get; private set; }
     public GalleryDbContext GalleryDbContext { get; private set; }
-    public readonly string TestDataFolder = Path
-        .Combine(Path.GetTempPath(), $"{Guid.NewGuid()}");
+    public IMinioClient MinioClient { get; private set; }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable("ConnectionStrings:Database", _dbContainer.GetConnectionString());
-
-        builder.ConfigureTestServices(services =>
-        {
-            services.Replace(
-                ServiceDescriptor
-                    .Scoped<IFileStorage>(_ => new LocalFileStorage(TestDataFolder)));
-        });
+        Environment.SetEnvironmentVariable("Minio:Endpoint", $"localhost:{_minioContainer.GetMappedPublicPort(9000)}");
     }
 
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+        await _minioContainer.StartAsync();
 
         _scope = Services.CreateScope();
 
@@ -52,6 +51,10 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         AuthenticatedClient = await CreateAuthenticatedClient();
 
         GalleryDbContext = _scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
+        MinioClient = _scope.ServiceProvider.GetRequiredService<IMinioClient>();
+
+        await MinioClient.MakeBucketAsync(new MakeBucketArgs().WithBucket("uploads"));
+        await MinioClient.MakeBucketAsync(new MakeBucketArgs().WithBucket("thumbs"));
     }
 
     private async Task<HttpClient> CreateAuthenticatedClient()
@@ -77,11 +80,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
         await base.DisposeAsync();
         await _dbContainer.DisposeAsync();
+        await _minioContainer.DisposeAsync();
         _scope.Dispose();
-
-        if (Directory.Exists(TestDataFolder))
-        {
-            Directory.Delete(TestDataFolder, recursive: true);
-        }
     }
 }

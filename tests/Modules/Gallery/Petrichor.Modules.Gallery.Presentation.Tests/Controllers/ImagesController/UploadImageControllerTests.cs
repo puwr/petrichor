@@ -1,5 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using Minio;
+using Minio.DataModel.Args;
+using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 using TestUtilities.Images;
 
 namespace Petrichor.Modules.Gallery.Presentation.Tests.Controllers.ImagesController;
@@ -11,12 +14,18 @@ public class UploadImageControllerTests
     private readonly ApiFactory _apiFactory;
     private readonly HttpClient _anonymousClient;
     private readonly HttpClient _authenticatedClient;
+    private readonly IMinioClient _minioClient;
+    private readonly GalleryDbContext _dbContext;
 
     public UploadImageControllerTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _anonymousClient = _apiFactory.AnonymousClient;
         _authenticatedClient = _apiFactory.AuthenticatedClient;
+
+        _minioClient = _apiFactory.MinioClient;
+
+        _dbContext = _apiFactory.GalleryDbContext;
     }
 
     [Fact]
@@ -37,19 +46,27 @@ public class UploadImageControllerTests
         imageId.Should().NotBeEmpty();
         response.Headers.Location.Should().Be($"/images/{imageId}");
 
-        var image = await _apiFactory.GalleryDbContext.Images.FindAsync(imageId);
+        var image = await _dbContext.Images.FindAsync(imageId);
         image.Should().NotBeNull();
 
-        var sanitizedImagePath = Path.Combine(image.OriginalImage.Path.Split("/"));
-        var sanitizedThumbnailPath = Path.Combine(image.Thumbnail.Path.Split("/"));
+        var imagePath = image.OriginalImage.Path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+        var thumbnailPath = image.Thumbnail.Path.Split("/", StringSplitOptions.RemoveEmptyEntries);
 
-        File.Exists(Path.Combine(_apiFactory.TestDataFolder, sanitizedImagePath))
-            .Should()
-            .BeTrue();
+        await FluentActions.Invoking(async () =>
+        {
+            await _minioClient
+                .StatObjectAsync(new StatObjectArgs()
+                    .WithBucket(imagePath[0])
+                    .WithObject(imagePath[1]));
+        }).Should().NotThrowAsync();
 
-        File.Exists(Path.Combine(_apiFactory.TestDataFolder, sanitizedThumbnailPath))
-            .Should()
-            .BeTrue();
+        await FluentActions.Invoking(async () =>
+        {
+            await _minioClient
+                .StatObjectAsync(new StatObjectArgs()
+                    .WithBucket(thumbnailPath[0])
+                    .WithObject(thumbnailPath[1]));
+        }).Should().NotThrowAsync();
     }
 
     [Fact]
