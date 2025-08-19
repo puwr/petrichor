@@ -77,7 +77,7 @@ public static class UsersModule
         services.AddSingleton<IJwtTokenProvider, JwtTokenProvider>();
 
         services
-            .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication()
             .AddJwtBearer(options =>
             {
                 options.MapInboundClaims = false;

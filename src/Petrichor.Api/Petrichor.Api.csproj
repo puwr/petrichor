@@ -3,7 +3,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Modules\Gallery\Petrichor.Modules.Gallery.Presentation\Petrichor.Modules.Gallery.Presentation.csproj" />
-    <ProjectReference Include="..\..\Modules\Users\Petrichor.Modules.Users.Presentation\Petrichor.Modules.Users.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Gallery\Petrichor.Modules.Gallery.Presentation\Petrichor.Modules.Gallery.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Users\Petrichor.Modules.Users.Presentation\Petrichor.Modules.Users.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\TestUtilities\TestUtilities.csproj" />
-    <ProjectReference Include="..\..\..\..\src\API\Petrichor.Api\Petrichor.Api.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Petrichor.Api\Petrichor.Api.csproj" />
   </ItemGroup>
 
 </Project>

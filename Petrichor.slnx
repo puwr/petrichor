@@ -4,9 +4,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/src/" />
-  <Folder Name="/src/API/">
-    <Project Path="src/API/Petrichor.Api/Petrichor.Api.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/Petrichor.Api/Petrichor.Api.csproj" />
+    <Project Path="src/Petrichor.Gateway/Petrichor.Gateway.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/Gallery/">
@@ -24,6 +24,10 @@
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.Infrastructure/Petrichor.Modules.Users.Infrastructure.csproj" />
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.IntegrationEvents/Petrichor.Modules.Users.IntegrationEvents.csproj" />
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.Presentation/Petrichor.Modules.Users.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Comments/">
+    <Project Path="src/Services/Comments/Petrichor.Services.Comments.Api/Petrichor.Services.Comments.Api.csproj" />
   </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Petrichor.Shared.Application/Petrichor.Shared.Application.csproj" />

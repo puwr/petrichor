@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Domain.Users;
+using Petrichor.Modules.Users.IntegrationEvents;
+using Petrichor.Shared.Infrastructure.Outbox;
 
 namespace Petrichor.Modules.Users.Application.Authentication.Commands.Register;
 
@@ -51,6 +53,12 @@ public class RegisterCommandHandler(
         {
             await userManager.AddToRoleAsync(user, "Admin");
         }
+
+        dbContext.OutboxMessages.Add(OutboxMessage.From(new UserRegisteredIntegrationEvent(
+            user.Id,
+            user.UserName!)));
+
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Success;
     }

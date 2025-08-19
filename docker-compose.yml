@@ -38,3 +38,17 @@ services:
       /usr/bin/mc mb minio/thumbs;
       exit 0;
       "
+
+  petrichor.queue:
+    image: rabbitmq:management-alpine
+    container_name: Petrichor.Queue
+    hostname: petrichor-queue
+    volumes:
+      - ./.containers/queue/data/:/var/lib/rabbitmq
+      - ./.containers/queue/log/:/var/log/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672

@@ -9,6 +9,7 @@ using Minio;
 using Petrichor.Shared.Application.Common.Interfaces.Services.Storage;
 using Petrichor.Shared.Infrastructure.Outbox;
 using Petrichor.Shared.Infrastructure.Services.Storage.Minio;
+using Petrichor.Shared.Infrastructure.Settings;
 
 namespace Petrichor.Shared.Infrastructure;
 
@@ -40,8 +41,17 @@ public static class InfrastructureConfiguration
 
             configure.SetKebabCaseEndpointNameFormatter();
 
-            configure.UsingInMemory((context, cfg) =>
+            var rabbitMqSettings = new RabbitMqSettings();
+            configuration.Bind(RabbitMqSettings.Key, rabbitMqSettings);
+
+            configure.UsingRabbitMq((context, cfg) =>
             {
+                cfg.Host(new Uri(rabbitMqSettings.Host), h =>
+                {
+                    h.Username(rabbitMqSettings.Username);
+                    h.Password(rabbitMqSettings.Password);
+                });
+
                 cfg.ConfigureEndpoints(context);
             });
         });
