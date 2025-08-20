@@ -1,10 +1,8 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Petrichor.Shared.Application.Common.Events;
 using Petrichor.Shared.Infrastructure.Serialization;
 
 namespace Petrichor.Shared.Infrastructure.Inbox;
@@ -22,7 +20,7 @@ public class InboxBackgroundService<TDbContext>(
 
             await using var scope = services.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            var dispatcher = scope.ServiceProvider.GetRequiredService<IntegrationEventDispatcher<TDbContext>>();
 
             var inboxMessages = await dbContext.InboxMessages
                 .Where(om => om.ProcessedAtUtc == null)
@@ -40,11 +38,17 @@ public class InboxBackgroundService<TDbContext>(
             {
                 try
                 {
-                    var integrationEvent = JsonConvert.DeserializeObject<IntegrationEvent>(
-                            message.Content,
-                            SerializerSettings.Events)!;
+                    var integrationEvent = JsonConvert.DeserializeObject(
+                        message.Content,
+                        SerializerSettings.Events)!;
 
-                    await publisher.Publish(integrationEvent, cancellationToken);
+                    var integrationEventType = integrationEvent.GetType();
+
+                    var dispatchMethod = typeof(IntegrationEventDispatcher<TDbContext>)
+                        .GetMethod(nameof(IntegrationEventDispatcher<TDbContext>.DispatchAsync))
+                        ?.MakeGenericMethod(integrationEventType)!;
+
+                    await (Task)dispatchMethod.Invoke(dispatcher, [integrationEvent, cancellationToken])!;
                 }
                 catch (Exception exception)
                 {

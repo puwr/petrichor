@@ -8,7 +8,9 @@ using Petrichor.Shared.Infrastructure.Outbox;
 
 namespace Petrichor.Modules.Users.Application.Users.Commands.DeleteUser;
 
-public class DeleteUserCommandHandler(UserManager<User> userManager, IUsersDbContext dbContext)
+public class DeleteUserCommandHandler(
+    UserManager<User> userManager,
+    IntegrationEventPublisher<IUsersDbContext> integrationEventPublisher)
     : IRequestHandler<DeleteUserCommand, ErrorOr<Deleted>>
 {
     public async Task<ErrorOr<Deleted>> Handle(
@@ -24,9 +26,9 @@ public class DeleteUserCommandHandler(UserManager<User> userManager, IUsersDbCon
 
         user.IsDeleted = true;
 
-        dbContext.OutboxMessages.Add(OutboxMessage.From(new UserDeletedIntegrationEvent(
+        integrationEventPublisher.Publish(new UserDeletedIntegrationEvent(
             user.Id,
-            command.DeleteUploadedImages)));
+            command.DeleteUploadedImages));
 
         await userManager.UpdateAsync(user);
 

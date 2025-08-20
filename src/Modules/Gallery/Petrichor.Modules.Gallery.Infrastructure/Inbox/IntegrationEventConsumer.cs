@@ -9,7 +9,7 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Inbox;
 
 public class IntegrationEventConsumer<TIntegrationEvent>(GalleryDbContext dbContext)
     : IConsumer<TIntegrationEvent>
-    where TIntegrationEvent : IntegrationEvent
+    where TIntegrationEvent : class, IIntegrationEvent
 {
     public async Task Consume(ConsumeContext<TIntegrationEvent> context)
     {

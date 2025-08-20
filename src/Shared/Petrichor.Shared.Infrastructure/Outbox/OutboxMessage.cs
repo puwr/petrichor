@@ -9,7 +9,6 @@ public class OutboxMessage
 {
     public Guid Id { get; init; }
     public string Name { get; init; }
-    public string AssemblyQualifiedName { get; init; }
     public OutboxEventType Type { get; init; }
     public string Content { get; init; }
     public DateTime OccurredAtUtc { get; init; }
@@ -21,7 +20,6 @@ public class OutboxMessage
         {
             Id = @event.Id,
             Name = @event.GetType().Name,
-            AssemblyQualifiedName = @event.GetType().AssemblyQualifiedName!,
             Type = OutboxEventType.Domain,
             Content = JsonConvert.SerializeObject(@event, SerializerSettings.Events),
             OccurredAtUtc = @event.OccurredAtUtc
@@ -32,7 +30,6 @@ public class OutboxMessage
         {
             Id = @event.Id,
             Name = @event.GetType().Name,
-            AssemblyQualifiedName = @event.GetType().AssemblyQualifiedName!,
             Type = OutboxEventType.Integration,
             Content = JsonConvert.SerializeObject(@event, SerializerSettings.Events),
             OccurredAtUtc = @event.OccurredAtUtc

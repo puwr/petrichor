@@ -23,7 +23,7 @@ public class OutboxBackgroudService<TDbContext>(
 
             await using var scope = services.CreateAsyncScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
-            var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            var dispatcher = scope.ServiceProvider.GetRequiredService<DomainEventDispatcher<TDbContext>>();
             var bus = scope.ServiceProvider.GetRequiredService<IBus>();
 
             var outboxMessages = await dbContext.OutboxMessages
@@ -44,20 +44,21 @@ public class OutboxBackgroudService<TDbContext>(
                 {
                     if (message.Type == OutboxEventType.Domain)
                     {
-                        var domainEvent = JsonConvert.DeserializeObject<DomainEvent>(
+                        var domainEvent = JsonConvert.DeserializeObject(
                             message.Content,
                             SerializerSettings.Events)!;
 
-                        await publisher.Publish(domainEvent, cancellationToken);
+                        var domainEventType = domainEvent.GetType();
+
+                        var dispatchMethod = typeof(DomainEventDispatcher<TDbContext>)
+                            .GetMethod(nameof(DomainEventDispatcher<TDbContext>.DispatchAsync))
+                            ?.MakeGenericMethod(domainEventType)!;
+
+                        await (Task)dispatchMethod.Invoke(dispatcher, [domainEvent, cancellationToken])!;
                     }
                     else if (message.Type == OutboxEventType.Integration)
                     {
-                        var integrationEventType = Type.GetType(message.AssemblyQualifiedName);
-
-                        var integrationEvent = JsonConvert.DeserializeObject(
-                            message.Content,
-                            integrationEventType,
-                            SerializerSettings.Events)!;
+                        var integrationEvent = JsonConvert.DeserializeObject(message.Content, SerializerSettings.Events)!;
 
                         await bus.Publish(integrationEvent, cancellationToken);
                     }

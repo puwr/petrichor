@@ -11,7 +11,8 @@ namespace Petrichor.Modules.Users.Application.Authentication.Commands.Register;
 
 public class RegisterCommandHandler(
     UserManager<User> userManager,
-    IUsersDbContext dbContext)
+    IUsersDbContext dbContext,
+    IntegrationEventPublisher<IUsersDbContext> integrationEventPublisher)
     : IRequestHandler<RegisterCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(
@@ -54,9 +55,9 @@ public class RegisterCommandHandler(
             await userManager.AddToRoleAsync(user, "Admin");
         }
 
-        dbContext.OutboxMessages.Add(OutboxMessage.From(new UserRegisteredIntegrationEvent(
+        integrationEventPublisher.Publish(new UserRegisteredIntegrationEvent(
             user.Id,
-            user.UserName!)));
+            user.UserName!));
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

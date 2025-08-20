@@ -326,17 +326,29 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     b.ToTable("inbox_messages", "users");
                 });
 
+            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Inbox.InboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("InboxMessageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("inbox_message_id");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("name");
+
+                    b.HasKey("InboxMessageId", "Name")
+                        .HasName("pk_inbox_message_consumers");
+
+                    b.ToTable("inbox_message_consumers", "users");
+                });
+
             modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    b.Property<string>("AssemblyQualifiedName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("assembly_qualified_name");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -369,6 +381,23 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                         .HasName("pk_outbox_messages");
 
                     b.ToTable("outbox_messages", "users");
+                });
+
+            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("OutboxMessageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("outbox_message_id");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("name");
+
+                    b.HasKey("OutboxMessageId", "Name")
+                        .HasName("pk_outbox_message_consumers");
+
+                    b.ToTable("outbox_message_consumers", "users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Petrichor.Shared.Contracts\Petrichor.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\Petrichor.Shared.Domain\Petrichor.Shared.Domain.csproj" />
   </ItemGroup>
 
 </Project>

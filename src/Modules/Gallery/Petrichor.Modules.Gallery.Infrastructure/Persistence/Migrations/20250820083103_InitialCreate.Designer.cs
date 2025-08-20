@@ -12,7 +12,7 @@ using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(GalleryDbContext))]
-    [Migration("20250805180128_InitialCreate")]
+    [Migration("20250820083103_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -122,17 +122,29 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("inbox_messages", "gallery");
                 });
 
+            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Inbox.InboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("InboxMessageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("inbox_message_id");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("name");
+
+                    b.HasKey("InboxMessageId", "Name")
+                        .HasName("pk_inbox_message_consumers");
+
+                    b.ToTable("inbox_message_consumers", "gallery");
+                });
+
             modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    b.Property<string>("AssemblyQualifiedName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("assembly_qualified_name");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -167,6 +179,23 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("outbox_messages", "gallery");
                 });
 
+            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessageConsumer", b =>
+                {
+                    b.Property<Guid>("OutboxMessageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("outbox_message_id");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(600)
+                        .HasColumnType("character varying(600)")
+                        .HasColumnName("name");
+
+                    b.HasKey("OutboxMessageId", "Name")
+                        .HasName("pk_outbox_message_consumers");
+
+                    b.ToTable("outbox_message_consumers", "gallery");
+                });
+
             modelBuilder.Entity("ImageTags", b =>
                 {
                     b.HasOne("Petrichor.Modules.Gallery.Domain.Images.Image", null)
@@ -194,16 +223,16 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
 
                             b1.Property<int>("Height")
                                 .HasColumnType("integer")
-                                .HasColumnName("OriginalImageHeight");
+                                .HasColumnName("original_image_height");
 
                             b1.Property<string>("Path")
                                 .IsRequired()
                                 .HasColumnType("text")
-                                .HasColumnName("OriginalImagePath");
+                                .HasColumnName("original_image_path");
 
                             b1.Property<int>("Width")
                                 .HasColumnType("integer")
-                                .HasColumnName("OriginalImageWidth");
+                                .HasColumnName("original_image_width");
 
                             b1.HasKey("ImageId");
 
@@ -222,16 +251,16 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
 
                             b1.Property<int>("Height")
                                 .HasColumnType("integer")
-                                .HasColumnName("ThumbnailHeight");
+                                .HasColumnName("thumbnail_height");
 
                             b1.Property<string>("Path")
                                 .IsRequired()
                                 .HasColumnType("text")
-                                .HasColumnName("ThumbnailPath");
+                                .HasColumnName("thumbnail_path");
 
                             b1.Property<int>("Width")
                                 .HasColumnType("integer")
-                                .HasColumnName("ThumbnailWidth");
+                                .HasColumnName("thumbnail_width");
 
                             b1.HasKey("ImageId");
 

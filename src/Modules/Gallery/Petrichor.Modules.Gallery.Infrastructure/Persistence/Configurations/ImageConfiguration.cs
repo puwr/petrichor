@@ -16,31 +16,25 @@ public class ImageConfiguration : IEntityTypeConfiguration<Image>
 
         builder.OwnsOne(i => i.OriginalImage, originalImage =>
         {
-            originalImage.Property(o => o.Path)
-                .HasColumnName("OriginalImagePath");
+            originalImage.Property(o => o.Path);
 
-            originalImage.Property(o => o.Width)
-                .HasColumnName("OriginalImageWidth");
+            originalImage.Property(o => o.Width);
 
-            originalImage.Property(o => o.Height)
-                .HasColumnName("OriginalImageHeight");
+            originalImage.Property(o => o.Height);
         });
 
         builder.OwnsOne(i => i.Thumbnail, thumbnail =>
         {
-            thumbnail.Property(o => o.Path)
-                .HasColumnName("ThumbnailPath");
+            thumbnail.Property(o => o.Path);
 
-            thumbnail.Property(o => o.Width)
-                .HasColumnName("ThumbnailWidth");
+            thumbnail.Property(o => o.Width);
 
-            thumbnail.Property(o => o.Height)
-                .HasColumnName("ThumbnailHeight");
+            thumbnail.Property(o => o.Height);
         });
 
         builder
             .HasMany(i => i.Tags)
             .WithMany(t => t.Images)
-            .UsingEntity("ImageTags");
+            .UsingEntity("image_tags");
     }
 }

@@ -61,6 +61,19 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "inbox_message_consumers",
+                schema: "users",
+                columns: table => new
+                {
+                    inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(600)", maxLength: 600, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_inbox_message_consumers", x => new { x.inbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "inbox_messages",
                 schema: "users",
                 columns: table => new
@@ -78,13 +91,25 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "outbox_message_consumers",
+                schema: "users",
+                columns: table => new
+                {
+                    outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(600)", maxLength: 600, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_outbox_message_consumers", x => new { x.outbox_message_id, x.name });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "outbox_messages",
                 schema: "users",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
-                    assembly_qualified_name = table.Column<string>(type: "text", nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
                     content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
                     occurred_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -288,7 +313,15 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                 schema: "users");
 
             migrationBuilder.DropTable(
+                name: "inbox_message_consumers",
+                schema: "users");
+
+            migrationBuilder.DropTable(
                 name: "inbox_messages",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "outbox_message_consumers",
                 schema: "users");
 
             migrationBuilder.DropTable(

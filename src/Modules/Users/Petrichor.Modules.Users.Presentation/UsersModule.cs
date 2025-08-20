@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
@@ -14,6 +15,7 @@ using Petrichor.Modules.Users.Domain.Users;
 using Petrichor.Modules.Users.Infrastructure.Persistence;
 using Petrichor.Modules.Users.Infrastructure.Services;
 using Petrichor.Modules.Users.Presentation;
+using Petrichor.Shared.Application.Common.Events;
 using Petrichor.Shared.Infrastructure.Inbox;
 using Petrichor.Shared.Infrastructure.Outbox;
 
@@ -29,6 +31,9 @@ public static class UsersModule
 
         services.AddControllers()
             .AddApplicationPart(typeof(UsersModule).Assembly);
+
+        services.AddDomainEvents();
+        services.AddIntegrationEvents();
 
         services.AddScoped<ICookieService, CookieService>();
 
@@ -103,6 +108,49 @@ public static class UsersModule
                     }
                 };
             });
+
+        return services;
+    }
+
+    private static IServiceCollection AddDomainEvents(this IServiceCollection services)
+    {
+        services.AddScoped<DomainEventDispatcher<UsersDbContext>>();
+
+        Type[] handlerTypes = Application.AssemblyMarker.Assembly
+            .GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>)))
+            .ToArray();
+
+        foreach (Type handlerType in handlerTypes)
+        {
+            var interfaceType = handlerType.GetInterfaces()
+                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>));
+
+            services.TryAddScoped(interfaceType, handlerType);
+        }
+
+        return services;
+    }
+
+    private static IServiceCollection AddIntegrationEvents(this IServiceCollection services)
+    {
+        services.AddScoped<IntegrationEventPublisher<IUsersDbContext>>();
+        services.AddScoped<IntegrationEventDispatcher<UsersDbContext>>();
+
+        Type[] handlerTypes = Application.AssemblyMarker.Assembly
+            .GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IIntegrationEventHandler<>)))
+            .ToArray();
+
+        foreach (Type handlerType in handlerTypes)
+        {
+            var interfaceType = handlerType.GetInterfaces()
+                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IIntegrationEventHandler<>));
+
+            services.TryAddScoped(interfaceType, handlerType);
+        }
 
         return services;
     }
