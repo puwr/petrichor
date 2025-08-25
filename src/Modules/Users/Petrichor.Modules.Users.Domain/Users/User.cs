@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
-using Petrichor.Shared.Domain.Common;
+using Petrichor.Shared.DomainEvents;
 
 namespace Petrichor.Modules.Users.Domain.Users;
 
-public class User : IdentityUser<Guid>, IHasDomainEvents
+public class User : IdentityUser<Guid>
 {
     protected readonly List<DomainEvent> _domainEvents = [];
 
@@ -19,13 +19,4 @@ public class User : IdentityUser<Guid>, IHasDomainEvents
     }
 
     public User() { }
-
-    public List<DomainEvent> PopDomainEvents()
-    {
-        var copy = _domainEvents.ToList();
-
-        _domainEvents.Clear();
-
-        return copy;
-    }
 }

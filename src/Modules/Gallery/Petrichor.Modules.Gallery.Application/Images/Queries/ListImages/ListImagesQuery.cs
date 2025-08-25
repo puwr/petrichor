@@ -1,7 +1,7 @@
 using ErrorOr;
 using MediatR;
-using Petrichor.Shared.Contracts.Pagination;
 using Petrichor.Modules.Gallery.Contracts.Images;
+using Petrichor.Shared.Pagination;
 
 namespace Petrichor.Modules.Gallery.Application.Images.Queries.ListImages;
 

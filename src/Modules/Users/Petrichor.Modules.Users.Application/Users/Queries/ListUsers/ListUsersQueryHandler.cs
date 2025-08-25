@@ -3,8 +3,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Contracts.Users;
-using Petrichor.Shared.Application.Extensions;
-using Petrichor.Shared.Contracts.Pagination;
+using Petrichor.Shared.Pagination;
+using Petrichor.Shared.Extensions;
 
 namespace Petrichor.Modules.Users.Application.Users.Queries.ListUsers;
 

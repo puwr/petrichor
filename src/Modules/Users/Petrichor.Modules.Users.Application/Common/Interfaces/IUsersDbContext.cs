@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Users.Domain.Users;
-using Petrichor.Shared.Infrastructure.Inbox;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Shared.Inbox;
+using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Users.Application.Common.Interfaces;
 

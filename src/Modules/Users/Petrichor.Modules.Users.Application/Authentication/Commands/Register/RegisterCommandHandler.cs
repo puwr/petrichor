@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Domain.Users;
-using Petrichor.Modules.Users.IntegrationEvents;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Modules.Users.IntegrationMessages;
+using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Users.Application.Authentication.Commands.Register;
 
 public class RegisterCommandHandler(
     UserManager<User> userManager,
     IUsersDbContext dbContext,
-    IntegrationEventPublisher<IUsersDbContext> integrationEventPublisher)
+    EventPublisher<IUsersDbContext> eventPublisher)
     : IRequestHandler<RegisterCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(
@@ -55,7 +55,7 @@ public class RegisterCommandHandler(
             await userManager.AddToRoleAsync(user, "Admin");
         }
 
-        integrationEventPublisher.Publish(new UserRegisteredIntegrationEvent(
+        eventPublisher.Publish(new UserRegisteredIntegrationEvent(
             user.Id,
             user.UserName!));
 

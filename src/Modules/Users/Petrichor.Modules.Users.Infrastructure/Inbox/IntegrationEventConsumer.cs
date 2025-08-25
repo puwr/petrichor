@@ -1,9 +1,9 @@
 using MassTransit;
 using Newtonsoft.Json;
 using Petrichor.Modules.Users.Infrastructure.Persistence;
-using Petrichor.Shared.Application.Common.Events;
-using Petrichor.Shared.Infrastructure.Inbox;
-using Petrichor.Shared.Infrastructure.Serialization;
+using Petrichor.Shared.Serialization;
+using Petrichor.Shared.Events;
+using Petrichor.Shared.Inbox;
 
 namespace Petrichor.Modules.Users.Infrastructure.Inbox;
 

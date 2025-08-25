@@ -7,6 +7,7 @@
   <Folder Name="/src/">
     <Project Path="src/Petrichor.Api/Petrichor.Api.csproj" />
     <Project Path="src/Petrichor.Gateway/Petrichor.Gateway.csproj" />
+    <Project Path="src/Petrichor.Shared/Petrichor.Shared.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/Gallery/">
@@ -14,7 +15,7 @@
     <Project Path="src/Modules/Gallery/Petrichor.Modules.Gallery.Contracts/Petrichor.Modules.Gallery.Contracts.csproj" />
     <Project Path="src/Modules/Gallery/Petrichor.Modules.Gallery.Domain/Petrichor.Modules.Gallery.Domain.csproj" />
     <Project Path="src/Modules/Gallery/Petrichor.Modules.Gallery.Infrastructure/Petrichor.Modules.Gallery.Infrastructure.csproj" />
-    <Project Path="src/Modules/Gallery/Petrichor.Modules.Gallery.IntegrationEvents/Petrichor.Modules.Gallery.IntegrationEvents.csproj" />
+    <Project Path="src/Modules/Gallery/Petrichor.Modules.Gallery.IntegrationMessages/Petrichor.Modules.Gallery.IntegrationMessages.csproj" />
     <Project Path="src/Modules/Gallery/Petrichor.Modules.Gallery.Presentation/Petrichor.Modules.Gallery.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/Modules/Users/">
@@ -22,22 +23,22 @@
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.Contracts/Petrichor.Modules.Users.Contracts.csproj" />
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.Domain/Petrichor.Modules.Users.Domain.csproj" />
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.Infrastructure/Petrichor.Modules.Users.Infrastructure.csproj" />
-    <Project Path="src/Modules/Users/Petrichor.Modules.Users.IntegrationEvents/Petrichor.Modules.Users.IntegrationEvents.csproj" />
+    <Project Path="src/Modules/Users/Petrichor.Modules.Users.IntegrationMessages/Petrichor.Modules.Users.IntegrationMessages.csproj" />
     <Project Path="src/Modules/Users/Petrichor.Modules.Users.Presentation/Petrichor.Modules.Users.Presentation.csproj" />
   </Folder>
   <Folder Name="/src/Services/" />
   <Folder Name="/src/Services/Comments/">
     <Project Path="src/Services/Comments/Petrichor.Services.Comments.Api/Petrichor.Services.Comments.Api.csproj" />
+    <Project Path="src/Services/Comments/Petrichor.Services.Comments.IntegrationMessages/Petrichor.Services.Comments.IntegrationMessages.csproj" />
   </Folder>
-  <Folder Name="/src/Shared/">
-    <Project Path="src/Shared/Petrichor.Shared.Application/Petrichor.Shared.Application.csproj" />
-    <Project Path="src/Shared/Petrichor.Shared.Contracts/Petrichor.Shared.Contracts.csproj" />
-    <Project Path="src/Shared/Petrichor.Shared.Domain/Petrichor.Shared.Domain.csproj" />
-    <Project Path="src/Shared/Petrichor.Shared.Infrastructure/Petrichor.Shared.Infrastructure.csproj" />
-    <Project Path="src/Shared/Petrichor.Shared.Presentation/Petrichor.Shared.Presentation.csproj" />
+  <Folder Name="/src/Modules/Shared/">
+    <Project Path="src/Modules/Shared/Petrichor.Modules.Shared.Application/Petrichor.Modules.Shared.Application.csproj" />
+    <Project Path="src/Modules/Shared/Petrichor.Modules.Shared.Infrastructure/Petrichor.Modules.Shared.Infrastructure.csproj" />
+    <Project Path="src/Modules/Shared/Petrichor.Modules.Shared.Presentation/Petrichor.Modules.Shared.Presentation.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/TestUtilities/TestUtilities.csproj" />
+    <Project Path="tests/Petrichor.Shared.Tests/Petrichor.Shared.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Modules/" />
   <Folder Name="/tests/Modules/Gallery/">
@@ -45,8 +46,7 @@
     <Project Path="tests/Modules/Gallery/Petrichor.Modules.Gallery.Domain.Tests/Petrichor.Modules.Gallery.Domain.Tests.csproj" />
     <Project Path="tests/Modules/Gallery/Petrichor.Modules.Gallery.Presentation.Tests/Petrichor.Modules.Gallery.Presentation.Tests.csproj" />
   </Folder>
-  <Folder Name="/tests/Shared/">
-    <Project Path="tests/Shared/Petrichor.Shared.Application.Tests/Petrichor.Shared.Application.Tests.csproj" />
-    <Project Path="tests/Shared/Petrichor.Shared.Infrastructure.Tests/Petrichor.Shared.Infrastructure.Tests.csproj" />
+  <Folder Name="/tests/Modules/Shared/">
+    <Project Path="tests/Modules/Shared/Petrichor.Modules.Shared.Infrastructure.Tests/Petrichor.Modules.Shared.Infrastructure.Tests.csproj" />
   </Folder>
 </Solution>

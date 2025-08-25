@@ -5,8 +5,8 @@ using Petrichor.Modules.Users.Application.Users.Commands.DeleteUser;
 using Petrichor.Modules.Users.Application.Users.Queries.GetUser;
 using Petrichor.Modules.Users.Application.Users.Queries.ListUsers;
 using Petrichor.Modules.Users.Contracts.Users;
-using Petrichor.Shared.Contracts.Pagination;
-using Petrichor.Shared.Presentation;
+using Petrichor.Modules.Shared.Presentation;
+using Petrichor.Shared.Pagination;
 
 namespace Petrichor.Modules.Users.Presentation.Controllers;
 

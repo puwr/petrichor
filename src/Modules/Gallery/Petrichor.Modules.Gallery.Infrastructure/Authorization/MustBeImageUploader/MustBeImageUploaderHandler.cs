@@ -23,7 +23,6 @@ public class MustBeImageUploaderHandler(GalleryDbContext dbContext)
         var currentUserIdClaim = httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         if (!Guid.TryParse(currentUserIdClaim, out Guid currentUserId)) return;
 
-
         var uploaderId = await dbContext.Images
             .AsNoTracking()
             .Where(i => i.Id == imageId)

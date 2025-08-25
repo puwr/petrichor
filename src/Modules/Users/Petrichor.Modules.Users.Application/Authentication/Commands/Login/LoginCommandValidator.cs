@@ -1,5 +1,5 @@
 using FluentValidation;
-using Petrichor.Shared.Application.Common;
+using Petrichor.Modules.Shared.Application.Common;
 
 namespace Petrichor.Modules.Users.Application.Authentication.Commands.Login;
 

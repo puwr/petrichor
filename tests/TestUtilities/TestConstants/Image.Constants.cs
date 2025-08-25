@@ -18,6 +18,6 @@ public static partial class Constants
             Height: 200
         );
 
-        public static readonly Guid UploaderId = Guid.NewGuid();
+        public static readonly Guid UploaderId = Guid.CreateVersion7();
     }
 }

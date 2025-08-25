@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Petrichor.Shared.Presentation;
+using Petrichor.Modules.Shared.Presentation;
 using Petrichor.Modules.Users.Application.Account.Queries.GetCurrentUserInfo;
 
 namespace Petrichor.Modules.Users.Presentation.Controllers;

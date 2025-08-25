@@ -3,14 +3,14 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Domain.Users;
-using Petrichor.Modules.Users.IntegrationEvents;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Modules.Users.IntegrationMessages;
+using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Users.Application.Users.Commands.DeleteUser;
 
 public class DeleteUserCommandHandler(
     UserManager<User> userManager,
-    IntegrationEventPublisher<IUsersDbContext> integrationEventPublisher)
+    EventPublisher<IUsersDbContext> eventPublisher)
     : IRequestHandler<DeleteUserCommand, ErrorOr<Deleted>>
 {
     public async Task<ErrorOr<Deleted>> Handle(
@@ -26,7 +26,7 @@ public class DeleteUserCommandHandler(
 
         user.IsDeleted = true;
 
-        integrationEventPublisher.Publish(new UserDeletedIntegrationEvent(
+        eventPublisher.Publish(new UserDeletedIntegrationEvent(
             user.Id,
             command.DeleteUploadedImages));
 

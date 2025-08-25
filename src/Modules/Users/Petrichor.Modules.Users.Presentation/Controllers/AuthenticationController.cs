@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Petrichor.Shared.Presentation;
+using Petrichor.Modules.Shared.Presentation;
 using Petrichor.Modules.Users.Application.Authentication.Commands.Login;
 using Petrichor.Modules.Users.Application.Authentication.Commands.Logout;
 using Petrichor.Modules.Users.Application.Authentication.Commands.RefreshToken;
@@ -12,7 +12,7 @@ using Petrichor.Modules.Users.Contracts.Authentication;
 namespace Petrichor.Modules.Users.Presentation.Controllers;
 
 [AllowAnonymous]
-[Route("api/v{version:apiVersion}/auth")]
+[Route("api/auth")]
 public class AuthenticationController(
     ISender mediator,
     IHttpContextAccessor httpContextAccessor) : ApiController

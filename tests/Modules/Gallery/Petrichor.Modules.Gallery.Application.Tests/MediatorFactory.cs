@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
-using Petrichor.Shared.Application.Common.Behaviors;
+using Petrichor.Shared.Behaviors;
 
 namespace Petrichor.Modules.Gallery.Application.Tests;
 
@@ -26,7 +26,7 @@ public class MediatorFactory : IDisposable
         DefaultServices.AddValidatorsFromAssembly(AssemblyMarker.Assembly);
 
         DefaultServices.AddDbContext<GalleryDbContext>(options =>
-            options.UseInMemoryDatabase($"{Guid.NewGuid()}"));
+            options.UseInMemoryDatabase($"{Guid.CreateVersion7()}"));
         DefaultServices.AddScoped<IGalleryDbContext>(provider => provider.GetRequiredService<GalleryDbContext>());
 
         testServices?.Invoke(DefaultServices);

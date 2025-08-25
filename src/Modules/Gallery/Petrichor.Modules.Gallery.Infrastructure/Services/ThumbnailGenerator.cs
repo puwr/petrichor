@@ -1,4 +1,4 @@
-using Petrichor.Shared.Infrastructure.Common.Extensions;
+using Petrichor.Modules.Shared.Infrastructure.Common.Extensions;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces.Services;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;

@@ -290,7 +290,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUsers", "users");
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Inbox.InboxMessage", b =>
+            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Inbox.InboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -326,7 +326,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     b.ToTable("inbox_messages", "users");
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Inbox.InboxMessageConsumer", b =>
+            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Inbox.InboxMessageConsumer", b =>
                 {
                     b.Property<Guid>("InboxMessageId")
                         .HasColumnType("uuid")
@@ -343,7 +343,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     b.ToTable("inbox_message_consumers", "users");
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -383,7 +383,7 @@ namespace Petrichor.Modules.Users.Infrastructure.Persistence.Migrations
                     b.ToTable("outbox_messages", "users");
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Infrastructure.Outbox.OutboxMessageConsumer", b =>
+            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Outbox.OutboxMessageConsumer", b =>
                 {
                     b.Property<Guid>("OutboxMessageId")
                         .HasColumnType("uuid")

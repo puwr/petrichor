@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces;
-using Petrichor.Modules.Users.IntegrationEvents;
-using Petrichor.Shared.Application.Common.Events;
+using Petrichor.Modules.Gallery.Domain.Images.Events;
+using Petrichor.Modules.Users.IntegrationMessages;
+using Petrichor.Shared.Events;
+using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Gallery.Application.IntegrationEventHandlers;
 
-public class UserDeletedIntegrationEventHandler(IGalleryDbContext dbContext)
+public class UserDeletedIntegrationEventHandler(
+    IGalleryDbContext dbContext,
+    EventPublisher<IGalleryDbContext> eventPublisher)
     : IIntegrationEventHandler<UserDeletedIntegrationEvent>
 {
     public async Task Handle(UserDeletedIntegrationEvent @event, CancellationToken cancellationToken)
@@ -18,7 +22,10 @@ public class UserDeletedIntegrationEventHandler(IGalleryDbContext dbContext)
 
             foreach (var image in images)
             {
-                image.DeleteImage();
+                eventPublisher.Publish(new ImageDeletedDomainEvent(
+                    image.OriginalImage.Path,
+                    image.Thumbnail.Path));
+
                 dbContext.Images.Remove(image);
             }
 

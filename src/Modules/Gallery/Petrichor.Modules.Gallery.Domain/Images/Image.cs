@@ -1,12 +1,9 @@
 using ErrorOr;
-using Petrichor.Modules.Gallery.Domain.Images.Events;
 using Petrichor.Modules.Gallery.Domain.Images.ValueObjects;
 using Petrichor.Modules.Gallery.Domain.Tags;
-using Petrichor.Shared.Domain.Common;
-
 namespace Petrichor.Modules.Gallery.Domain.Images;
 
-public sealed class Image : Entity
+public sealed class Image
 {
     private readonly List<Tag> _tags = [];
     public Guid Id { get; private set; }
@@ -18,7 +15,7 @@ public sealed class Image : Entity
 
     public Image(OriginalImage originalImage, Thumbnail thumbnail, Guid uploaderId)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         OriginalImage = originalImage;
         Thumbnail = thumbnail;
         UploaderId = uploaderId;
@@ -52,11 +49,6 @@ public sealed class Image : Entity
         _tags.Remove(tagToRemove);
 
         return Result.Deleted;
-    }
-
-    public void DeleteImage()
-    {
-        _domainEvents.Add(new ImageDeletedDomainEvent(OriginalImage.Path, Thumbnail.Path));
     }
 
     private Image() { }

@@ -1,12 +1,12 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Petrichor.Shared.Application.Extensions;
-using Petrichor.Shared.Contracts.Pagination;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces;
 using Petrichor.Modules.Gallery.Application.Common.Mappings;
 using Petrichor.Modules.Gallery.Application.Common.Utilities;
 using Petrichor.Modules.Gallery.Contracts.Images;
+using Petrichor.Shared.Pagination;
+using Petrichor.Shared.Extensions;
 
 namespace Petrichor.Modules.Gallery.Application.Images.Queries.ListImages;
 

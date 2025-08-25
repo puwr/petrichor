@@ -1,0 +1,39 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using ErrorOr;
+using MediatR;
+
+namespace Petrichor.Services.Comments.Api.Features.CreateComment;
+
+public class CreateCommentEndpoint : FeatureEndpoint
+{
+    public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
+    {
+        endpointRouteBuilder.MapPost(
+            "api/comments",
+            async (CreateCommentRequest request, ISender mediator, HttpContext context) =>
+            {
+                var currentUserIdClaim = context.User
+                    .FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+                if (!Guid.TryParse(currentUserIdClaim, out Guid authorId))
+                {
+                    return Problem(Error.Unauthorized());
+                }
+
+                var command = new CreateCommentCommand(
+                    authorId,
+                    request.ResourceId,
+                    request.Message);
+
+                var createCommentResult = await mediator.Send(command);
+
+                return createCommentResult.Match(
+                    Results.Ok,
+                    Problem
+                );
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Comments);
+    }
+}

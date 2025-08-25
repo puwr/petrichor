@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Domain\Petrichor.Shared.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Petrichor.Shared\Petrichor.Shared.csproj" />
   </ItemGroup>
 
 </Project>

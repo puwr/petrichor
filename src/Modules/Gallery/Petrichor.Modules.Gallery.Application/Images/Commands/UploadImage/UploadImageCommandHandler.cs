@@ -3,7 +3,7 @@ using System.Security.Claims;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Petrichor.Shared.Application.Common.Interfaces.Services.Storage;
+using Petrichor.Modules.Shared.Application.Common.Interfaces.Services.Storage;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces.Services;
 using Petrichor.Modules.Gallery.Domain.Images;
@@ -35,7 +35,7 @@ public class UploadImageCommandHandler(
 
         var image = new Image(originalImage, thumbnail, currentUserId);
 
-        await dbContext.Images.AddAsync(image, cancellationToken);
+        dbContext.Images.Add(image);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return image.Id;

@@ -1,0 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using Petrichor.Modules.Users.IntegrationMessages;
+using Petrichor.Services.Comments.Api.Common.Persistence;
+using Petrichor.Shared.Events;
+
+namespace Petrichor.Services.Comments.Api.IntegrationMessageHandlers;
+
+public class UserDeletedIntegrationEventHandler(CommentsDbContext dbContext)
+    : IIntegrationEventHandler<UserDeletedIntegrationEvent>
+{
+    public async Task Handle(
+        UserDeletedIntegrationEvent @event,
+        CancellationToken cancellationToken = default)
+    {
+        await dbContext.Comments
+            .Where(c => c.AuthorId == @event.UserId)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
+}

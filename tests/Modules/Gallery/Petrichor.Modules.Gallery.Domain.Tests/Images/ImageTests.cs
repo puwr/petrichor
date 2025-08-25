@@ -1,6 +1,5 @@
 using ErrorOr;
 using Petrichor.Modules.Gallery.Domain.Images;
-using Petrichor.Modules.Gallery.Domain.Images.Events;
 using TestUtilities.Images;
 using TestUtilities.Tags;
 
@@ -65,24 +64,9 @@ public class ImageTests
     {
         var image = ImageFactory.CreateImage();
 
-        var removeTagResult = image.RemoveTag(Guid.NewGuid());
+        var removeTagResult = image.RemoveTag(Guid.CreateVersion7());
 
         removeTagResult.IsError.Should().BeTrue();
         removeTagResult.FirstError.Should().Be(ImageErrors.TagNotAssociated);
-    }
-
-    [Fact]
-    public void DeleteImage_AddsImageDeletedDomainEvent()
-    {
-        var image = ImageFactory.CreateImage();
-
-        image.DeleteImage();
-
-        var domainEvents = image.PopDomainEvents();
-        domainEvents.Should().HaveCount(1);
-
-        var deletedEvent = domainEvents.First().Should().BeOfType<ImageDeletedDomainEvent>().Subject;
-        deletedEvent.ImagePath.Should().Be(image.OriginalImage.Path);
-        deletedEvent.ThumbnailPath.Should().Be(image.Thumbnail.Path);
     }
 }

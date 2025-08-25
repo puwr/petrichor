@@ -15,9 +15,11 @@ using Petrichor.Modules.Users.Domain.Users;
 using Petrichor.Modules.Users.Infrastructure.Persistence;
 using Petrichor.Modules.Users.Infrastructure.Services;
 using Petrichor.Modules.Users.Presentation;
-using Petrichor.Shared.Application.Common.Events;
-using Petrichor.Shared.Infrastructure.Inbox;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Shared.Inbox;
+using Petrichor.Shared.IntegrationEvents;
+using Petrichor.Shared.Outbox;
+using Petrichor.Shared.DomainEvents;
+using Petrichor.Shared.Events;
 
 namespace Petrichor.Modules.Users.Presentation;
 
@@ -32,8 +34,12 @@ public static class UsersModule
         services.AddControllers()
             .AddApplicationPart(typeof(UsersModule).Assembly);
 
+        services.AddScoped<EventPublisher<IUsersDbContext>>();
         services.AddDomainEvents();
         services.AddIntegrationEvents();
+
+        services.AddHostedService<InboxBackgroundService<UsersDbContext>>();
+        services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
 
         services.AddScoped<ICookieService, CookieService>();
 
@@ -48,14 +54,10 @@ public static class UsersModule
                     configuration.GetConnectionString("Database"),
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
-                .UseSnakeCaseNamingConvention()
-                .AddInterceptors(sp.GetRequiredService<InsertDomainOutboxMessagesInterceptor>()));
+                .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IUsersDbContext>(provider =>
             provider.GetRequiredService<UsersDbContext>());
-
-        services.AddHostedService<InboxBackgroundService<UsersDbContext>>();
-        services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
 
         return services;
     }
@@ -135,7 +137,6 @@ public static class UsersModule
 
     private static IServiceCollection AddIntegrationEvents(this IServiceCollection services)
     {
-        services.AddScoped<IntegrationEventPublisher<IUsersDbContext>>();
         services.AddScoped<IntegrationEventDispatcher<UsersDbContext>>();
 
         Type[] handlerTypes = Application.AssemblyMarker.Assembly

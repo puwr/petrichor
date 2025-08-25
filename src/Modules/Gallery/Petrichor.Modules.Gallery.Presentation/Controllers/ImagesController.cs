@@ -1,8 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Petrichor.Shared.Contracts.Pagination;
-using Petrichor.Shared.Presentation;
+using Petrichor.Modules.Shared.Presentation;
 using Petrichor.Modules.Gallery.Application.Images.Commands.AddImageTags;
 using Petrichor.Modules.Gallery.Application.Images.Commands.DeleteImage;
 using Petrichor.Modules.Gallery.Application.Images.Commands.DeleteImageTag;
@@ -11,6 +10,7 @@ using Petrichor.Modules.Gallery.Application.Images.Queries.GetImage;
 using Petrichor.Modules.Gallery.Application.Images.Queries.ListImages;
 using Petrichor.Modules.Gallery.Contracts.Images;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization;
+using Petrichor.Shared.Pagination;
 
 namespace Petrichor.Modules.Gallery.Presentation.Controllers;
 

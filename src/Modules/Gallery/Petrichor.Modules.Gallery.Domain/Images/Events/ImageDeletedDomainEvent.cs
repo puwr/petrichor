@@ -1,4 +1,4 @@
-using Petrichor.Shared.Domain.Common;
+using Petrichor.Shared.DomainEvents;
 
 namespace Petrichor.Modules.Gallery.Domain.Images.Events;
 

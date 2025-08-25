@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Gallery.Domain.Images;
 using Petrichor.Modules.Gallery.Domain.Tags;
-using Petrichor.Shared.Infrastructure.Inbox;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Shared.Inbox;
+using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Gallery.Application.Common.Interfaces;
 

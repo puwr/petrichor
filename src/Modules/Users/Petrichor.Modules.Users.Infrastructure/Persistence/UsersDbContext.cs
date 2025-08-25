@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Petrichor.Modules.Users.Application.Common.Interfaces;
 using Petrichor.Modules.Users.Domain.Users;
-using Petrichor.Shared.Infrastructure.Inbox;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Shared.Inbox;
+using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Users.Infrastructure.Persistence;
 
@@ -18,6 +19,12 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options)
     public DbSet<InboxMessageConsumer> InboxMessageConsumers { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<OutboxMessageConsumer> OutboxMessageConsumers { get; set; }
+
+    public Task<IDbContextTransaction> BeginTransactionAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return Database.BeginTransactionAsync(cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

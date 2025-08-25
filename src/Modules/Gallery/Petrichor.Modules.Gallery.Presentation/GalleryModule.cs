@@ -13,10 +13,12 @@ using Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploader
 using Petrichor.Modules.Gallery.Infrastructure.Inbox;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 using Petrichor.Modules.Gallery.Infrastructure.Services;
-using Petrichor.Modules.Users.IntegrationEvents;
-using Petrichor.Shared.Application.Common.Events;
-using Petrichor.Shared.Infrastructure.Inbox;
-using Petrichor.Shared.Infrastructure.Outbox;
+using Petrichor.Shared.Inbox;
+using Petrichor.Shared.IntegrationEvents;
+using Petrichor.Shared.Outbox;
+using Petrichor.Shared.DomainEvents;
+using Petrichor.Shared.Events;
+using Petrichor.Modules.Users.IntegrationMessages;
 namespace Petrichor.Modules.Gallery.Presentation;
 
 public static class GalleryModule
@@ -30,8 +32,12 @@ public static class GalleryModule
         services.AddControllers()
             .AddApplicationPart(typeof(GalleryModule).Assembly);
 
+        services.AddScoped<EventPublisher<IGalleryDbContext>>();
         services.AddDomainEvents();
         services.AddIntegrationEvents();
+
+        services.AddHostedService<InboxBackgroundService<GalleryDbContext>>();
+        services.AddHostedService<OutboxBackgroudService<GalleryDbContext>>();
 
         services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
         services.AddScoped<IImageMetadataProvider, ImageMetadataProvider>();
@@ -52,14 +58,10 @@ public static class GalleryModule
                     configuration.GetConnectionString("Database"),
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "gallery"))
-                .UseSnakeCaseNamingConvention()
-                .AddInterceptors(sp.GetRequiredService<InsertDomainOutboxMessagesInterceptor>()));
+                .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IGalleryDbContext>(provider =>
             provider.GetRequiredService<GalleryDbContext>());
-
-        services.AddHostedService<InboxBackgroundService<GalleryDbContext>>();
-        services.AddHostedService<OutboxBackgroudService<GalleryDbContext>>();
 
         return services;
     }
@@ -95,7 +97,6 @@ public static class GalleryModule
 
     private static IServiceCollection AddIntegrationEvents(this IServiceCollection services)
     {
-        services.AddScoped<IntegrationEventPublisher<IGalleryDbContext>>();
         services.AddScoped<IntegrationEventDispatcher<GalleryDbContext>>();
 
         Type[] handlerTypes = Application.AssemblyMarker.Assembly

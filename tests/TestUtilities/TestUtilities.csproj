@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup>  <UserSecretsId>e94c0165-b8b0-4333-8936-c624ac1f6fd8</UserSecretsId>
+  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Images\test-image.jpg" />

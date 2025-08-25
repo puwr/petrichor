@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Petrichor.Modules.Users.Application\Petrichor.Modules.Users.Application.csproj" />
-    <ProjectReference Include="..\..\..\Shared\Petrichor.Shared.Infrastructure\Petrichor.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Petrichor.Modules.Shared.Infrastructure\Petrichor.Modules.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

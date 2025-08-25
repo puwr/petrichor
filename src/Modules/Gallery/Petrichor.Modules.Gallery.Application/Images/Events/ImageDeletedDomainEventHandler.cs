@@ -1,6 +1,6 @@
-using Petrichor.Shared.Application.Common.Interfaces.Services.Storage;
+using Petrichor.Modules.Shared.Application.Common.Interfaces.Services.Storage;
 using Petrichor.Modules.Gallery.Domain.Images.Events;
-using Petrichor.Shared.Application.Common.Events;
+using Petrichor.Shared.DomainEvents;
 
 namespace Petrichor.Modules.Gallery.Application.Images.Events;
 

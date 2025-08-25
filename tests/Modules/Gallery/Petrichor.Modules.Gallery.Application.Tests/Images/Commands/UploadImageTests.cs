@@ -7,7 +7,7 @@ using NSubstitute;
 using Petrichor.Modules.Gallery.Application.Common;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces.Services;
 using Petrichor.Modules.Gallery.Application.Images.Commands.UploadImage;
-using Petrichor.Shared.Application.Common.Interfaces.Services.Storage;
+using Petrichor.Modules.Shared.Application.Common.Interfaces.Services.Storage;
 
 namespace Petrichor.Modules.Gallery.Application.Tests.Images.Commands;
 
@@ -39,7 +39,7 @@ public class UploadImageTests : IDisposable
             var httpContextAccessorMock = Substitute.For<IHttpContextAccessor>();
             var user = new ClaimsPrincipal(new ClaimsIdentity(
                 [
-                    new Claim(JwtRegisteredClaimNames.Sub, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Sub, Guid.CreateVersion7().ToString())
                 ]));
 
             httpContextAccessorMock.HttpContext!.User.Returns(user);

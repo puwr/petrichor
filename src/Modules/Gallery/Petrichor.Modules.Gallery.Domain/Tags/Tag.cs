@@ -12,7 +12,7 @@ public sealed class Tag
 
     public Tag(string name)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         Name = name;
     }
 
