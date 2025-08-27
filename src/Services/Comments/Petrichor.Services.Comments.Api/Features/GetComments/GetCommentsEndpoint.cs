@@ -9,7 +9,7 @@ public class GetCommentsEndpoint : FeatureEndpoint
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapGet(
-            "api/comments",
+            "comments",
             async ([FromQuery] Guid resourceId, [FromQuery] string? cursor, ISender mediator) =>
             {
                 var paginationParameters = new CursorPaginationParameters(cursor);

@@ -52,7 +52,7 @@ public class OpenApiMerger(
         {
             foreach (var path in document.Paths)
             {
-                targetDocument.Paths.TryAdd(path.Key, path.Value);
+                targetDocument.Paths.TryAdd($"api{path.Key}", path.Value);
             }
         }
 

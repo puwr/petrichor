@@ -12,7 +12,7 @@ using Petrichor.Modules.Users.Contracts.Authentication;
 namespace Petrichor.Modules.Users.Presentation.Controllers;
 
 [AllowAnonymous]
-[Route("api/auth")]
+[Route("auth")]
 public class AuthenticationController(
     ISender mediator,
     IHttpContextAccessor httpContextAccessor) : ApiController

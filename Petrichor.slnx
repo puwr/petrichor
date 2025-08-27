@@ -6,7 +6,9 @@
   </Configurations>
   <Folder Name="/src/">
     <Project Path="src/Petrichor.Api/Petrichor.Api.csproj" />
+    <Project Path="src/Petrichor.AppHost/Petrichor.AppHost.csproj" />
     <Project Path="src/Petrichor.Gateway/Petrichor.Gateway.csproj" />
+    <Project Path="src/Petrichor.ServiceDefaults/Petrichor.ServiceDefaults.csproj" />
     <Project Path="src/Petrichor.Shared/Petrichor.Shared.csproj" />
   </Folder>
   <Folder Name="/src/Modules/" />

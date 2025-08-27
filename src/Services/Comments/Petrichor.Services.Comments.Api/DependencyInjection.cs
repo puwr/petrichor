@@ -1,6 +1,5 @@
 using System.Text;
 using FluentValidation;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -25,69 +24,48 @@ namespace Petrichor.Services.Comments.Api;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static void AddApplication(this WebApplicationBuilder builder)
     {
-        services.AddMediatR(config =>
+        builder.Services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
 
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+        builder.Services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
-        services.AddAuthentication(configuration);
+        builder.Services.AddAuthentication(builder.Configuration);
 
-        services.AddEndpoints();
-
-        return services;
+        builder.Services.AddEndpoints();
     }
 
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static void AddInfrastructure(
+        this WebApplicationBuilder builder)
     {
-        services.AddAuthorization();
+        builder.Services.AddAuthorization();
 
-        services.AddDbContext<CommentsDbContext>(options =>
+        builder.Services.AddDbContext<CommentsDbContext>(options =>
             options.UseNpgsql(
-                configuration.GetConnectionString("Database"),
+                builder.Configuration.GetConnectionString("database"),
                 npgsqlOptions => npgsqlOptions
                     .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "comments"))
             .UseSnakeCaseNamingConvention());
 
-        services.AddMassTransit(configure =>
-        {
-            configure.AddConsumer<IntegrationEventConsumer<UserRegisteredIntegrationEvent>>();
-            configure.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
-
-            configure.SetKebabCaseEndpointNameFormatter();
-
-            var rabbitMqSettings = new RabbitMqSettings();
-            configuration.Bind(RabbitMqSettings.Key, rabbitMqSettings);
-
-            configure.UsingRabbitMq((context, cfg) =>
+        builder.AddMassTransitRabbitMq("rmq",
+            options => options.DisableTelemetry = true,
+            configure =>
             {
-                cfg.Host(new Uri(rabbitMqSettings.Host), h =>
-                {
-                    h.Username(rabbitMqSettings.Username);
-                    h.Password(rabbitMqSettings.Password);
-                });
-
-                cfg.ConfigureEndpoints(context);
+                configure.AddConsumer<IntegrationEventConsumer<UserRegisteredIntegrationEvent>>();
+                configure.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
             });
-        });
 
-        services.AddScoped<EventPublisher<CommentsDbContext>>();
+        builder.Services.AddScoped<EventPublisher<CommentsDbContext>>();
 
-        services.AddDomainEvents();
-        services.AddIntegrationEvents();
+        builder.Services.AddDomainEvents();
+        builder.Services.AddIntegrationEvents();
 
-        services.AddHostedService<InboxBackgroundService<CommentsDbContext>>();
-        services.AddHostedService<OutboxBackgroudService<CommentsDbContext>>();
-
-        return services;
+        builder.Services.AddHostedService<InboxBackgroundService<CommentsDbContext>>();
+        builder.Services.AddHostedService<OutboxBackgroudService<CommentsDbContext>>();
     }
 
     private static IServiceCollection AddAuthorization(this IServiceCollection services)

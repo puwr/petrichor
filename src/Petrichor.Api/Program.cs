@@ -4,30 +4,31 @@ using Petrichor.Modules.Shared.Infrastructure;
 using Petrichor.Modules.Gallery.Presentation;
 using Petrichor.Modules.Users.Presentation;
 using Petrichor.Api.Extensions;
-using Scalar.AspNetCore;
+using Petrichor.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddProblemDetails();
+
+builder.Configuration.AddModuleConfiguration(["users"]);
 
 Assembly[] moduleApplicationAssemblies = [
     Petrichor.Modules.Gallery.Application.AssemblyMarker.Assembly,
     Petrichor.Modules.Users.Application.AssemblyMarker.Assembly
 ];
 
-builder.Services.AddApplication(moduleApplicationAssemblies);
-builder.Services.AddInfrastructure(
-    builder.Configuration,
+builder.AddApplication(moduleApplicationAssemblies);
+builder.AddInfrastructure(
     [
         GalleryModule.ConfigureConsumers
     ]
 );
 
-builder.Configuration.AddModuleConfiguration(["users"]);
-
-builder.Services.AddUsersModule(builder.Configuration);
-builder.Services.AddGalleryModule(builder.Configuration);
+builder.AddUsersModule();
+builder.AddGalleryModule();
 
 builder.Services.AddOpenApi();
 
@@ -36,11 +37,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference(options =>
-    {
-        options.WithTitle("API Reference");
-        options.WithTheme(ScalarTheme.Mars);
-    });
 
     app.ApplyMigrations();
 }

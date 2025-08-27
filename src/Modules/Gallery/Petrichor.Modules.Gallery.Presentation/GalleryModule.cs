@@ -19,30 +19,29 @@ using Petrichor.Shared.Outbox;
 using Petrichor.Shared.DomainEvents;
 using Petrichor.Shared.Events;
 using Petrichor.Modules.Users.IntegrationMessages;
+using Microsoft.AspNetCore.Builder;
 namespace Petrichor.Modules.Gallery.Presentation;
 
 public static class GalleryModule
 {
-    public static IServiceCollection AddGalleryModule(this IServiceCollection services, IConfiguration configuration)
+    public static void AddGalleryModule(this WebApplicationBuilder builder)
     {
-        services
-            .AddPersistence(configuration)
-            .AddAuthorizarion();
+        builder.AddPersistence();
 
-        services.AddControllers()
+        builder.Services.AddAuthorizarion();
+
+        builder.Services.AddControllers()
             .AddApplicationPart(typeof(GalleryModule).Assembly);
 
-        services.AddScoped<EventPublisher<IGalleryDbContext>>();
-        services.AddDomainEvents();
-        services.AddIntegrationEvents();
+        builder.Services.AddScoped<EventPublisher<IGalleryDbContext>>();
+        builder.Services.AddDomainEvents();
+        builder.Services.AddIntegrationEvents();
 
-        services.AddHostedService<InboxBackgroundService<GalleryDbContext>>();
-        services.AddHostedService<OutboxBackgroudService<GalleryDbContext>>();
+        builder.Services.AddHostedService<InboxBackgroundService<GalleryDbContext>>();
+        builder.Services.AddHostedService<OutboxBackgroudService<GalleryDbContext>>();
 
-        services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
-        services.AddScoped<IImageMetadataProvider, ImageMetadataProvider>();
-
-        return services;
+        builder.Services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
+        builder.Services.AddScoped<IImageMetadataProvider, ImageMetadataProvider>();
     }
 
     public static void ConfigureConsumers(IRegistrationConfigurator registrationConfigurator)
@@ -50,20 +49,18 @@ public static class GalleryModule
         registrationConfigurator.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
     }
 
-    private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    private static void AddPersistence(this WebApplicationBuilder builder)
     {
-        services.AddDbContext<GalleryDbContext>((sp, options) =>
+        builder.Services.AddDbContext<GalleryDbContext>((sp, options) =>
             options
                 .UseNpgsql(
-                    configuration.GetConnectionString("Database"),
+                    builder.Configuration.GetConnectionString("database"),
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "gallery"))
                 .UseSnakeCaseNamingConvention());
 
-        services.AddScoped<IGalleryDbContext>(provider =>
+        builder.Services.AddScoped<IGalleryDbContext>(provider =>
             provider.GetRequiredService<GalleryDbContext>());
-
-        return services;
     }
 
     private static IServiceCollection AddAuthorizarion(this IServiceCollection services)

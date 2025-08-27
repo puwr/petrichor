@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.4.1" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UserSecretsId>062591ec-7e0f-4670-9fdb-9bb88d3facf6</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.1" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.4.1" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.4.1" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.Minio" Version="9.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Petrichor.Api\Petrichor.Api.csproj" />
+    <ProjectReference Include="..\Petrichor.Gateway\Petrichor.Gateway.csproj" />
+    <ProjectReference Include="..\Services\Comments\Petrichor.Services.Comments.Api\Petrichor.Services.Comments.Api.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,10 @@
 using Petrichor.Gateway.OpenApi;
+using Petrichor.ServiceDefaults;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<OpenApiMerger>());
@@ -20,7 +23,8 @@ builder.Services.AddCors(options =>
 
 builder.Services
     .AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .AddServiceDiscoveryDestinationResolver();
 
 var app = builder.Build();
 

@@ -8,7 +8,7 @@ namespace Petrichor.Modules.Shared.Presentation;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class ApiController : ControllerBase
 {
     protected IActionResult Problem(List<Error> errors)

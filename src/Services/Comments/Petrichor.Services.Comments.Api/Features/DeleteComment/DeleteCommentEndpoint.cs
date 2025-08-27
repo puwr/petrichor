@@ -8,7 +8,7 @@ public class DeleteCommentEndpoint : FeatureEndpoint
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapDelete(
-            "api/comments/{commentId:guid}",
+            "comments/{commentId:guid}",
             async (Guid commentId, ISender mediator) =>
             {
                 var command = new DeleteCommentCommand(commentId);

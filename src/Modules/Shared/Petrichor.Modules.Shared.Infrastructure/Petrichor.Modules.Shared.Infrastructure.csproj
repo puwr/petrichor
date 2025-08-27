@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Petrichor.ServiceDefaults\Petrichor.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\..\Petrichor.Shared\Petrichor.Shared.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Shared.Application\Petrichor.Modules.Shared.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.2" />
-    <PackageReference Include="Minio" Version="6.0.5" />
+    <PackageReference Include="CommunityToolkit.Aspire.MassTransit.RabbitMQ" Version="9.7.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" Version="9.7.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
   </ItemGroup>

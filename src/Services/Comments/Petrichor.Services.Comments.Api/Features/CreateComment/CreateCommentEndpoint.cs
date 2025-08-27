@@ -10,7 +10,7 @@ public class CreateCommentEndpoint : FeatureEndpoint
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
         endpointRouteBuilder.MapPost(
-            "api/comments",
+            "comments",
             async (CreateCommentRequest request, ISender mediator, HttpContext context) =>
             {
                 var currentUserIdClaim = context.User

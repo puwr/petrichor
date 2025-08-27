@@ -20,46 +20,43 @@ using Petrichor.Shared.IntegrationEvents;
 using Petrichor.Shared.Outbox;
 using Petrichor.Shared.DomainEvents;
 using Petrichor.Shared.Events;
+using Microsoft.AspNetCore.Builder;
 
 namespace Petrichor.Modules.Users.Presentation;
 
 public static class UsersModule
 {
-    public static IServiceCollection AddUsersModule(this IServiceCollection services, IConfiguration configuration)
+    public static void AddUsersModule(this WebApplicationBuilder builder)
     {
-        services
-            .AddPersistence(configuration)
-            .AddAuthentication(configuration);
+        builder.AddPersistence();
 
-        services.AddControllers()
+        builder.Services.AddAuthentication(builder.Configuration);
+
+        builder.Services.AddControllers()
             .AddApplicationPart(typeof(UsersModule).Assembly);
 
-        services.AddScoped<EventPublisher<IUsersDbContext>>();
-        services.AddDomainEvents();
-        services.AddIntegrationEvents();
+        builder.Services.AddScoped<EventPublisher<IUsersDbContext>>();
+        builder.Services.AddDomainEvents();
+        builder.Services.AddIntegrationEvents();
 
-        services.AddHostedService<InboxBackgroundService<UsersDbContext>>();
-        services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
+        builder.Services.AddHostedService<InboxBackgroundService<UsersDbContext>>();
+        builder.Services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
 
-        services.AddScoped<ICookieService, CookieService>();
-
-        return services;
+        builder.Services.AddScoped<ICookieService, CookieService>();
     }
 
-    private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
+    private static void AddPersistence(this WebApplicationBuilder builder)
     {
-        services.AddDbContext<UsersDbContext>((sp, options) =>
+        builder.Services.AddDbContext<UsersDbContext>((sp, options) =>
             options
                 .UseNpgsql(
-                    configuration.GetConnectionString("Database"),
+                    builder.Configuration.GetConnectionString("database"),
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
                 .UseSnakeCaseNamingConvention());
 
-        services.AddScoped<IUsersDbContext>(provider =>
+        builder.Services.AddScoped<IUsersDbContext>(provider =>
             provider.GetRequiredService<UsersDbContext>());
-
-        return services;
     }
 
     private static IServiceCollection AddAuthentication(
