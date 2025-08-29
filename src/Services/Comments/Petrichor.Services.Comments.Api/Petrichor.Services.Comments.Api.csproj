@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Modules\Gallery\Petrichor.Modules.Gallery.IntegrationMessages\Petrichor.Modules.Gallery.IntegrationMessages.csproj" />
     <ProjectReference Include="..\..\..\Modules\Users\Petrichor.Modules.Users.IntegrationMessages\Petrichor.Modules.Users.IntegrationMessages.csproj" />
     <ProjectReference Include="..\..\..\Petrichor.ServiceDefaults\Petrichor.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\..\Petrichor.Shared\Petrichor.Shared.csproj" />

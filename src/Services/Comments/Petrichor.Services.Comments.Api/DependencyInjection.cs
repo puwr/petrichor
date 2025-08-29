@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Petrichor.Modules.Gallery.IntegrationMessages;
 using Petrichor.Modules.Users.IntegrationMessages;
 using Petrichor.Services.Comments.Api.Common.Authorization;
 using Petrichor.Services.Comments.Api.Common.Authorization.MustBeAuthorOrAdmin;
@@ -55,6 +56,8 @@ public static class DependencyInjection
             options => options.DisableTelemetry = true,
             configure =>
             {
+                configure.AddConsumer<IntegrationEventConsumer<ImageDeletedIntegrationEvent>>();
+
                 configure.AddConsumer<IntegrationEventConsumer<UserRegisteredIntegrationEvent>>();
                 configure.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
             });

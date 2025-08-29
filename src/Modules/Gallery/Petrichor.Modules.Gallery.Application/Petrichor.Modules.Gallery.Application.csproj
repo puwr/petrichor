@@ -6,6 +6,7 @@
     <ProjectReference Include="..\Petrichor.Modules.Gallery.Domain\Petrichor.Modules.Gallery.Domain.csproj" />
     <ProjectReference Include="..\Petrichor.Modules.Gallery.Contracts\Petrichor.Modules.Gallery.Contracts.csproj" />
     <ProjectReference Include="..\..\Shared\Petrichor.Modules.Shared.Infrastructure\Petrichor.Modules.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\Petrichor.Modules.Gallery.IntegrationMessages\Petrichor.Modules.Gallery.IntegrationMessages.csproj" />
   </ItemGroup>
 
 </Project>

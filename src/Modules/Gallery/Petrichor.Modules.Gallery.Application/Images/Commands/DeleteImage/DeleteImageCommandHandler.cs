@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces;
 using Petrichor.Modules.Gallery.Domain.Images.Events;
+using Petrichor.Modules.Gallery.IntegrationMessages;
 using Petrichor.Shared.Outbox;
 
 namespace Petrichor.Modules.Gallery.Application.Images.Commands.DeleteImage;
@@ -29,6 +30,8 @@ public class DeleteImageCommandHandler(
         eventPublisher.Publish(new ImageDeletedDomainEvent(
             image.OriginalImage.Path,
             image.Thumbnail.Path));
+
+        eventPublisher.Publish(new ImageDeletedIntegrationEvent(image.Id));
 
         dbContext.Images.Remove(image);
         await dbContext.SaveChangesAsync(cancellationToken);
