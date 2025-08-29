@@ -1,3 +1,3 @@
 namespace Petrichor.Modules.Users.Contracts.Account;
 
-public record GetCurrentUserInfoResponse(string Id, string Email, string UserName);
+public record GetCurrentUserInfoResponse(string Id, string Email, string UserName, List<string> Roles);

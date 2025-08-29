@@ -44,6 +44,10 @@
         }
       </div>
     </div>
+
+    @if (imageId) {
+    <app-comments [resourceId]="imageId" />
+    }
   </section>
   }
 </div>

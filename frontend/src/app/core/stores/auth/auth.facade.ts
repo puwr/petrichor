@@ -59,6 +59,12 @@ export class AuthFacade extends EffectFn {
     { initialValue: false }
   );
 
+  isResourceOwnerOrAdmin(userId: string): boolean {
+    const currentUser = this.currentUser();
+
+    return currentUser?.roles.includes('Admin') || currentUser?.id == userId;
+  }
+
   setAuthState(currentUser: User | null, isAuthenticated: boolean): void {
     this.store.update(
       setProp('currentUser', currentUser),

@@ -48,10 +48,15 @@ public class GetCurrentUserInfoQueryHandler(
                 .ToErrorOr<GetCurrentUserInfoResponse>());
         }
 
+        var roles = user?.FindAll(ClaimTypes.Role)
+            .Select(c => c.Value)
+            .ToList();
+
         return Task.FromResult(new GetCurrentUserInfoResponse(
             id,
             email,
-            userName
+            userName,
+            roles ?? []
         ).ToErrorOr());
     }
 }

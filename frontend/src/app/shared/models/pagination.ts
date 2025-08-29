@@ -5,3 +5,9 @@ export type PagedResponse<T> = {
   pageSize: number;
   totalPages: number;
 };
+
+export type CursorPagedResponse<T> = {
+  items: T[];
+  nextCursor: string;
+  hasMore: boolean;
+};

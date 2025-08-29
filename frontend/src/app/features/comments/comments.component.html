@@ -1,0 +1,47 @@
+<div class="comments">
+  @if (isAuthenticated()) {
+  <form
+    [formGroup]="commentForm"
+    class="comments__form"
+    (ngSubmit)="onSubmit()"
+  >
+    <textarea
+      class="comments__textarea"
+      formControlName="comment"
+      placeholder="Enter your comment…"
+      name="comment"
+      id="comment"
+      rows="3"
+    ></textarea>
+
+    @if (validationErrors) {
+    <app-validation-errors [validationErrors]="validationErrors" />
+    }
+
+    <button
+      class="comments__add-comment btn btn-reset btn--fill"
+      type="submit"
+      [disabled]="commentForm.invalid"
+    >
+      Add Comment
+    </button>
+  </form>
+
+  } @if (comments().length > 0) {
+  <ul class="comments__list list-reset">
+    @for (comment of comments(); track comment.id) {
+    <app-comment
+      [comment]="comment"
+      (commentDeleted)="onCommentDelete($event)"
+    />
+    } @if (hasMore()) {
+    <button
+      class="comments__load-more btn-reset btn btn--text"
+      (click)="loadMore()"
+    >
+      Load more…
+    </button>
+    }
+  </ul>
+  }
+</div>

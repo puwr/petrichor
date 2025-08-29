@@ -20,10 +20,11 @@ import { Dialog } from '@angular/cdk/dialog';
 import { DialogComponent } from '../../shared/components/dialog/dialog.component';
 import { DialogData } from '../../shared/models/dialog';
 import { AuthFacade } from '../../core/stores/auth/auth.facade';
+import { CommentsComponent } from '../../features/comments/comments.component';
 
 @Component({
   selector: 'app-image-page',
-  imports: [TagsComponent, DatePipe],
+  imports: [TagsComponent, DatePipe, CommentsComponent],
   templateUrl: './image-page.component.html',
   styleUrl: './image-page.component.scss',
 })
@@ -42,15 +43,17 @@ export class ImagePageComponent implements OnInit, OnDestroy {
 
   private refreshImage$ = new Subject<void>();
 
+  imageId: string | null = null;
+
   image: Signal<Image | null> = toSignal(
     this.route.paramMap.pipe(
       switchMap((params) => {
-        const imageId = params.get('id');
+        this.imageId = params.get('id');
 
         return this.refreshImage$.pipe(
           startWith(undefined),
           switchMap(() =>
-            imageId ? this.imageService.getImage(imageId) : of(null)
+            this.imageId ? this.imageService.getImage(this.imageId) : of(null)
           )
         );
       })

@@ -16,4 +16,5 @@ export const mockUser: User = {
   id: 'testId',
   email: 'test@test.test',
   userName: 'test',
+  roles: [],
 } as const;
