@@ -4,6 +4,7 @@ import {
   DestroyRef,
   inject,
   input,
+  OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
@@ -32,7 +33,7 @@ import { ValidationErrorsComponent } from '../../shared/components/validation-er
   styleUrl: './comments.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CommentsComponent implements OnInit {
+export class CommentsComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private authFacade = inject(AuthFacade);
   private commentService = inject(CommentService);
@@ -49,14 +50,14 @@ export class CommentsComponent implements OnInit {
   hasMore = signal<boolean>(true);
   validationErrors: string[] | null = null;
 
-  private cursorSubject = new BehaviorSubject<string | null>(null);
-
   commentForm = this.fb.group({
     comment: ['', Validators.required],
   });
 
+  private cursorSubject$ = new BehaviorSubject<string | null>(null);
+
   ngOnInit(): void {
-    combineLatest([this.resourceId$, this.cursorSubject.asObservable()])
+    combineLatest([this.resourceId$, this.cursorSubject$.asObservable()])
       .pipe(
         exhaustMap(([resourceId, cursor]) => {
           if (!this.hasMore()) return of(null);
@@ -77,7 +78,7 @@ export class CommentsComponent implements OnInit {
   }
 
   loadMore(): void {
-    this.cursorSubject.next(this.nextCursor());
+    this.cursorSubject$.next(this.nextCursor());
   }
 
   onSubmit(): void {
@@ -124,5 +125,9 @@ export class CommentsComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.cursorSubject$.complete();
   }
 }
