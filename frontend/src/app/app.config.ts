@@ -4,6 +4,7 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
+  isDevMode,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
@@ -23,7 +24,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAppInitializer(() => {
       const initService = inject(InitService);
-
       return initService.initialize();
     }),
   ],

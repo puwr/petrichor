@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { RouterLink } from '@angular/router';
-import { AuthFacade } from '../../../core/stores/auth/auth.facade';
+import { AuthFacade } from '../../../core/store/auth/auth.facade';
 
 @Component({
   selector: 'app-user-nav',

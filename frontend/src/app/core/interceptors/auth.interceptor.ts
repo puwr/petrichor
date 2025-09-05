@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, EMPTY, switchMap, throwError } from 'rxjs';
-import { AuthFacade } from '../stores/auth/auth.facade';
+import { AuthFacade } from '../store/auth/auth.facade';
 import { Router } from '@angular/router';
 import { SnackbarService } from '../services/snackbar.service';
 

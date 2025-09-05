@@ -17,6 +17,7 @@ import { User } from '../../../shared/models/user';
 import { createStore, select, setProp, withProps } from '@ngneat/elf';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  clearRequestsStatus,
   createRequestsStatusOperator,
   selectRequestStatus,
   updateRequestStatus,
@@ -50,6 +51,7 @@ export class AuthFacade extends EffectFn {
   private readonly trackAuthRequestsStatus = createRequestsStatusOperator(
     this.store
   );
+
   readonly currentUser = toSignal(
     this.store.pipe(select((state) => state.currentUser)),
     { initialValue: null }
@@ -155,6 +157,8 @@ export class AuthFacade extends EffectFn {
       map(() => undefined)
     );
   }
+
+  readonly clearRequestStatus = () => this.store.update(clearRequestsStatus());
 
   private updateCurrentUser(): Observable<void> {
     return this.http.get<User>(`${this.apiUrl}/account/me`).pipe(

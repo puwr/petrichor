@@ -3,12 +3,14 @@ import {
   Component,
   computed,
   inject,
+  OnDestroy,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextInputComponent } from '../../../shared/components/text-input/text-input.component';
 import { LoginRequest } from '../../../shared/models/auth';
 import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
-import { AuthFacade } from '../../../core/stores/auth/auth.facade';
+import { AuthFacade } from '../../../core/store/auth/auth.facade';
+import { clearRequestsResult, clearRequestsStatus } from '@ngneat/elf-requests';
 
 @Component({
   selector: 'app-login-form',
@@ -17,7 +19,7 @@ import { AuthFacade } from '../../../core/stores/auth/auth.facade';
   styleUrl: './login-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginFormComponent {
+export class LoginFormComponent implements OnDestroy {
   private fb = inject(FormBuilder);
   private authFacade = inject(AuthFacade);
 
@@ -33,13 +35,17 @@ export class LoginFormComponent {
   });
 
   loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    email: ['', []],
+    password: [''],
   });
 
   onSubmit(): void {
     const credentials = this.loginForm.getRawValue() as LoginRequest;
 
     this.authFacade.loginEffect(credentials);
+  }
+
+  ngOnDestroy(): void {
+    this.authFacade.clearRequestStatus();
   }
 }

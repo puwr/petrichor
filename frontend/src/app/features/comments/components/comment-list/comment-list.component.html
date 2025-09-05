@@ -1,0 +1,14 @@
+@let comments = commentStore.comments();
+
+<ul class="comment-list list-reset">
+	@for (comment of comments; track comment.id) {
+	<app-comment-item
+		[comment]="comment"
+		(commentDeleted)="commentStore.deleteComment({ commentId: $event })"
+	/>
+	} @if (commentStore.hasMore()) {
+	<button class="comment-list__load-more btn-reset btn btn--text" (click)="commentStore.loadMore()">
+		Load more…
+	</button>
+	}
+</ul>

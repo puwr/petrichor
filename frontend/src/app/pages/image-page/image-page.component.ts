@@ -19,8 +19,9 @@ import { Image } from '../../shared/models/image';
 import { Dialog } from '@angular/cdk/dialog';
 import { DialogComponent } from '../../shared/components/dialog/dialog.component';
 import { DialogData } from '../../shared/models/dialog';
-import { AuthFacade } from '../../core/stores/auth/auth.facade';
+import { AuthFacade } from '../../core/store/auth/auth.facade';
 import { CommentsComponent } from '../../features/comments/comments.component';
+import { CommentStore } from '../../features/comments/store/comment.store';
 
 @Component({
   selector: 'app-image-page',

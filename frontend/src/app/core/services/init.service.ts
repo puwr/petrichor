@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { AuthFacade } from '../stores/auth/auth.facade';
+import { AuthFacade } from '../store/auth/auth.facade';
 import { catchError, EMPTY } from 'rxjs';
 
 @Injectable({

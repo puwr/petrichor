@@ -8,6 +8,6 @@ export type PagedResponse<T> = {
 
 export type CursorPagedResponse<T> = {
   items: T[];
-  nextCursor: string;
+  nextCursor: string | null;
   hasMore: boolean;
 };

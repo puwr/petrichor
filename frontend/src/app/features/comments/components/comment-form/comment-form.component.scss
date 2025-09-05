@@ -1,0 +1,26 @@
+.comment-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-bottom: 2rem;
+
+	&__textarea {
+		background-color: var(--color-background);
+		color: inherit;
+		padding: 1rem;
+		resize: none;
+		border-radius: var(--radius-standard);
+		border: 1px solid var(--color-primary);
+		outline: none;
+
+		&:focus-visible {
+			border-color: var(--color-secondary);
+			box-shadow: var(--shadow-secondary);
+		}
+	}
+
+	&__add-comment {
+		display: block;
+		margin-left: auto;
+	}
+}

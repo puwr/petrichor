@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserNavComponent } from './user-nav/user-nav.component';
-import { AuthFacade } from '../../core/stores/auth/auth.facade';
+import { AuthFacade } from '../../core/store/auth/auth.facade';
 
 @Component({
   selector: 'app-header',
