@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { CommentItemComponent } from './comment-item.component';
-import { AuthFacade } from '../../../../core/store/auth/auth.facade';
 import { makeComment } from '../../../../shared/models/comment';
 import { mockUser } from '../../../../../testing/test-data';
 import { By } from '@angular/platform-browser';
+import { AuthStore } from '../../../../core/store/auth/auth.store';
 
 describe('CommentItemComponent', () => {
 	it('should create', () => {
@@ -29,9 +29,9 @@ describe('CommentItemComponent', () => {
 	});
 
 	it('renders delete button when isAuthorOrAdmin is true', () => {
-		const { fixture, authFacade } = setup();
+		const { fixture, authStore } = setup();
 
-		vi.spyOn(authFacade, 'isResourceOwnerOrAdmin').mockReturnValue(true);
+		vi.spyOn(authStore, 'isResourceOwnerOrAdmin').mockReturnValue(true);
 
 		fixture.componentRef.setInput('comment', makeComment('id1', '1', 'Comment 1', mockUser));
 		fixture.detectChanges();
@@ -42,9 +42,9 @@ describe('CommentItemComponent', () => {
 	});
 
 	it('does not render delete button when isAuthorOrAdmin is false', () => {
-		const { fixture, authFacade } = setup();
+		const { fixture, authStore } = setup();
 
-		vi.spyOn(authFacade, 'isResourceOwnerOrAdmin').mockReturnValue(false);
+		vi.spyOn(authStore, 'isResourceOwnerOrAdmin').mockReturnValue(false);
 
 		fixture.componentRef.setInput('comment', makeComment('id1', '1', 'Comment 1', mockUser));
 		fixture.detectChanges();
@@ -56,7 +56,7 @@ describe('CommentItemComponent', () => {
 });
 
 function setup() {
-	const authFacade = {
+	const authStore = {
 		isResourceOwnerOrAdmin: vi.fn().mockReturnValue(false),
 	};
 
@@ -64,8 +64,8 @@ function setup() {
 		imports: [CommentItemComponent],
 		providers: [
 			{
-				provide: AuthFacade,
-				useValue: authFacade,
+				provide: AuthStore,
+				useValue: authStore,
 			},
 		],
 	}).compileComponents();
@@ -79,6 +79,6 @@ function setup() {
 	return {
 		fixture,
 		commentItemComponent,
-		authFacade,
+		authStore,
 	};
 }

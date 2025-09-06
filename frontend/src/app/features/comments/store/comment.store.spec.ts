@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { CommentStore } from './comment.store';
-import { AuthFacade } from '../../../core/store/auth/auth.facade';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { CommentService } from '../../../core/services/comment.service';
 import { signal } from '@angular/core';
 import { mockUser } from '../../../../testing/test-data';
 import { makeComment } from '../../../shared/models/comment';
+import { AuthStore } from '../../../core/store/auth/auth.store';
 
 describe('CommentStore', () => {
 	it('should be created', () => {
@@ -108,7 +108,7 @@ function setup() {
 				},
 			},
 			{
-				provide: AuthFacade,
+				provide: AuthStore,
 				useValue: {
 					currentUser: signal(mockUser),
 				},

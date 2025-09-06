@@ -1,51 +1,34 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import {
-  AuthStatusResponse,
-  LoginRequest,
-  RegisterRequest,
-} from '../../shared/models/auth';
-import { AccountService } from './account.service';
-import { finalize, Observable } from 'rxjs';
-import { Router } from '@angular/router';
+import { AuthStatusResponse, LoginRequest, RegisterRequest } from '../../shared/models/auth';
+import { Observable } from 'rxjs';
 
-/**
- * @deprecated This service is deprecated.
- * Please use AuthFacade instead.
- */
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private accountService = inject(AccountService);
+	private http = inject(HttpClient);
 
-  private apiUrl = environment.apiUrl;
+	private apiUrl = environment.apiUrl;
 
-  register(userData: RegisterRequest): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/auth/register`, userData);
-  }
+	register(userData: RegisterRequest): Observable<void> {
+		return this.http.post<void>(`${this.apiUrl}/auth/register`, userData);
+	}
 
-  login(credentials: LoginRequest): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/auth/login`, credentials);
-  }
+	login(credentials: LoginRequest): Observable<void> {
+		return this.http.post<void>(`${this.apiUrl}/auth/login`, credentials);
+	}
 
-  refreshToken(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/auth/refresh-token`, {});
-  }
+	refreshToken(): Observable<void> {
+		return this.http.post<void>(`${this.apiUrl}/auth/refresh-token`, {});
+	}
 
-  logout(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/auth/logout`, {}).pipe(
-      finalize(() => {
-        this.accountService.currentUser.set(null);
-        this.router.navigateByUrl('/');
-      })
-    );
-  }
+	logout(): Observable<void> {
+		return this.http.post<void>(`${this.apiUrl}/auth/logout`, {});
+	}
 
-  getAuthStatus(): Observable<AuthStatusResponse> {
-    return this.http.get<AuthStatusResponse>(`${this.apiUrl}/auth/status`);
-  }
+	getAuthStatus(): Observable<AuthStatusResponse> {
+		return this.http.get<AuthStatusResponse>(`${this.apiUrl}/auth/status`);
+	}
 }

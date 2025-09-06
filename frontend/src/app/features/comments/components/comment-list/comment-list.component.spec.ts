@@ -5,8 +5,7 @@ import { Comment, makeComment } from '../../../../shared/models/comment';
 import { mockUser } from '../../../../../testing/test-data';
 import { CommentStore } from '../../store/comment.store';
 import { By } from '@angular/platform-browser';
-import { CommentItemComponent } from '../comment-item/comment-item.component';
-import { AuthFacade } from '../../../../core/store/auth/auth.facade';
+import { AuthStore } from '../../../../core/store/auth/auth.store';
 
 describe('CommentListComponent', () => {
 	it('should create', () => {
@@ -93,7 +92,7 @@ function setup() {
 		imports: [CommentListComponent],
 		providers: [
 			{
-				provide: AuthFacade,
+				provide: AuthStore,
 				useValue: {
 					isResourceOwnerOrAdmin: vi.fn().mockReturnValue(false),
 				},

@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { CommentsComponent } from './comments.component';
 import { Component, signal } from '@angular/core';
-import { AuthFacade } from '../../core/store/auth/auth.facade';
 import { By } from '@angular/platform-browser';
+import { AuthStore } from '../../core/store/auth/auth.store';
 
 describe('Comments', () => {
 	it('should create', () => {
@@ -12,9 +12,9 @@ describe('Comments', () => {
 	});
 
 	it('renders comment-form component when isAuthenticated is true', () => {
-		const { fixture, authFacade } = setup();
+		const { fixture, authStore } = setup();
 
-		authFacade.isAuthenticated.set(true);
+		authStore.isAuthenticated.set(true);
 		fixture.detectChanges();
 
 		const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
@@ -23,9 +23,9 @@ describe('Comments', () => {
 	});
 
 	it('does not render comment-form component when isAuthenticated is false', () => {
-		const { fixture, authFacade } = setup();
+		const { fixture, authStore } = setup();
 
-		authFacade.isAuthenticated.set(false);
+		authStore.isAuthenticated.set(false);
 		fixture.detectChanges();
 
 		const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
@@ -43,7 +43,7 @@ describe('Comments', () => {
 });
 
 function setup() {
-	const authFacade = {
+	const authStore = {
 		isAuthenticated: signal(false),
 	};
 
@@ -51,8 +51,8 @@ function setup() {
 		imports: [CommentsComponent],
 		providers: [
 			{
-				provide: AuthFacade,
-				useValue: authFacade,
+				provide: AuthStore,
+				useValue: authStore,
 			},
 		],
 	})
@@ -71,7 +71,7 @@ function setup() {
 	return {
 		fixture,
 		commentsComponent,
-		authFacade,
+		authStore,
 	};
 }
 

@@ -19,7 +19,7 @@ import { ActivatedRoute } from '@angular/router';
 import { addEntities, prependEntity, removeEntity, withEntities } from '@ngrx/signals/entities';
 import { initialCommentSlice } from './comment.slice';
 import { setNextCursor, setValidationErrors } from './comment.updaters';
-import { AuthFacade } from '../../../core/store/auth/auth.facade';
+import { AuthStore } from '../../../core/store/auth/auth.store';
 
 export const CommentStore = signalStore(
 	withEntities({ entity: type<Comment>(), collection: '_comment' }),
@@ -30,7 +30,7 @@ export const CommentStore = signalStore(
 	})),
 	withProps((_) => ({
 		_commentsService: inject(CommentService),
-		_authFacade: inject(AuthFacade),
+		_authStore: inject(AuthStore),
 	})),
 	withMethods((store) => {
 		const _getComments = rxMethod<void>(
@@ -47,7 +47,7 @@ export const CommentStore = signalStore(
 									setNextCursor(response.nextCursor),
 								);
 							},
-							error: () => console.error,
+							error: console.error,
 						}),
 					),
 				),
@@ -69,7 +69,7 @@ export const CommentStore = signalStore(
 									commentId,
 									store.resourceId()!,
 									message,
-									store._authFacade.currentUser()!,
+									store._authStore.currentUser()!,
 								);
 
 								patchState(
@@ -93,7 +93,7 @@ export const CommentStore = signalStore(
 					store._commentsService.deleteComment(commentId).pipe(
 						tapResponse({
 							next: () => patchState(store, removeEntity(commentId, { collection: '_comment' })),
-							error: () => console.error,
+							error: console.error,
 						}),
 					),
 				),

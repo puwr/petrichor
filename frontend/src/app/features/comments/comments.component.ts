@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AuthFacade } from '../../core/store/auth/auth.facade';
 import { CommentStore } from './store/comment.store';
 import { CommentListComponent } from './components/comment-list/comment-list.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
+import { AuthStore } from '../../core/store/auth/auth.store';
 
 @Component({
 	selector: 'app-comments',
@@ -13,5 +13,5 @@ import { CommentFormComponent } from './components/comment-form/comment-form.com
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentsComponent {
-	readonly authFacade = inject(AuthFacade);
+	readonly authStore = inject(AuthStore);
 }

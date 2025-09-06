@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { AuthFacade } from '../store/auth/auth.facade';
+import { AuthStore } from '../store/auth/auth.store';
 import { catchError, EMPTY } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class InitService {
-  private authFacade = inject(AuthFacade);
+	private authStore = inject(AuthStore);
 
-  initialize() {
-    return this.authFacade.refreshToken().pipe(catchError(() => EMPTY));
-  }
+	initialize() {
+		return this.authStore.refreshToken().pipe(catchError(() => EMPTY));
+	}
 }

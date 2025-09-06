@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { Comment } from '../../../../shared/models/comment';
-import { AuthFacade } from '../../../../core/store/auth/auth.facade';
+import { AuthStore } from '../../../../core/store/auth/auth.store';
 
 @Component({
 	selector: 'app-comment-item',
@@ -11,10 +11,10 @@ import { AuthFacade } from '../../../../core/store/auth/auth.facade';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentItemComponent {
-	private authFacade = inject(AuthFacade);
+	readonly authStore = inject(AuthStore);
 
 	comment = input.required<Comment>();
 	commentDeleted = output<string>();
 
-	isAuthorOrAdmin = computed(() => this.authFacade.isResourceOwnerOrAdmin(this.comment().authorId));
+	isAuthorOrAdmin = computed(() => this.authStore.isResourceOwnerOrAdmin(this.comment().authorId));
 }

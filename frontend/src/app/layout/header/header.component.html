@@ -1,18 +1,18 @@
 <header class="header">
-  <div class="container">
-    <nav class="header__nav">
-      <a class="header__logo-link" routerLink="/">
-        <img class="header__logo" src="/logo.svg" alt="Petrichor logo" />
-      </a>
+	<div class="container">
+		<nav class="header__nav">
+			<a class="header__logo-link" routerLink="/">
+				<img class="header__logo" src="/logo.svg" alt="Petrichor logo" />
+			</a>
 
-      <div class="header__links">
-        @if (currentUser()) {
-        <app-user-nav />
-        } @else {
-        <a routerLink="login" class="header__link btn btn--text">Login</a>
-        <a routerLink="register" class="header__link btn btn--text">Register</a>
-        }
-      </div>
-    </nav>
-  </div>
+			<div class="header__links">
+				@if (authStore.isAuthenticated()) {
+				<app-user-nav />
+				} @else {
+				<a routerLink="login" class="header__link btn btn--text">Login</a>
+				<a routerLink="register" class="header__link btn btn--text">Register</a>
+				}
+			</div>
+		</nav>
+	</div>
 </header>

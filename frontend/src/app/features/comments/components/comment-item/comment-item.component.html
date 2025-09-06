@@ -1,17 +1,19 @@
+@let comment = this.comment();
+
 <li class="comment">
 	<div class="comment__details">
-		<span class="comment__author">{{ comment().authorUserName }}</span>
-		<span class="comment__date">{{ comment().createdAtUtc | date }}</span>
+		<span class="comment__author">{{ comment.authorUserName }}</span>
+		<span class="comment__date">{{ comment.createdAtUtc | date }}</span>
 	</div>
 
 	<article class="comment__message">
-		<pre>{{ comment().message }}</pre>
+		<pre>{{ comment.message }}</pre>
 	</article>
 
 	@if (isAuthorOrAdmin()) {
 	<button
 		class="comment__delete btn-reset btn btn--danger btn--icon"
-		(click)="commentDeleted.emit(comment().id)"
+		(click)="commentDeleted.emit(comment.id)"
 	>
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
