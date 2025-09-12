@@ -1,6 +1,6 @@
 namespace Petrichor.Modules.Gallery.Contracts.Images;
 
-public record ListImagesResponse(
+public record GetImagesResponse(
     Guid Id,
     string ThumbnailUrl,
     int ThumbnailWidth,

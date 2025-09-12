@@ -37,18 +37,13 @@ public sealed class Image
         return Result.Success;
     }
 
-    public ErrorOr<Deleted> RemoveTag(Guid tagId)
+    public void RemoveTag(Guid tagId)
     {
         var tagToRemove = _tags.FirstOrDefault(t => t.Id == tagId);
 
-        if (tagToRemove is null)
-        {
-            return ImageErrors.TagNotAssociated;
-        }
+        if (tagToRemove is null) return;
 
         _tags.Remove(tagToRemove);
-
-        return Result.Deleted;
     }
 
     private Image() { }

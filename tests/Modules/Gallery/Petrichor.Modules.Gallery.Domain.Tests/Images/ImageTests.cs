@@ -1,4 +1,3 @@
-using ErrorOr;
 using Petrichor.Modules.Gallery.Domain.Images;
 using TestUtilities.Images;
 using TestUtilities.Tags;
@@ -51,22 +50,9 @@ public class ImageTests
 
         image.AddTags(tag);
 
-        var removeTagResult = image.RemoveTag(tag[0].Id);
+        image.RemoveTag(tag[0].Id);
 
-        removeTagResult.IsError.Should().BeFalse();
-        removeTagResult.Value.Should().Be(Result.Deleted);
         image.Tags.Should().NotContain(tag[0]);
         image.Tags.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void RemoveTag_WhenTagNotAssociated_ReturnsTagNotAssociatedError()
-    {
-        var image = ImageFactory.CreateImage();
-
-        var removeTagResult = image.RemoveTag(Guid.CreateVersion7());
-
-        removeTagResult.IsError.Should().BeTrue();
-        removeTagResult.FirstError.Should().Be(ImageErrors.TagNotAssociated);
     }
 }

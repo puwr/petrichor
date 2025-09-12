@@ -8,13 +8,13 @@ using Petrichor.Modules.Gallery.Contracts.Images;
 using Petrichor.Shared.Pagination;
 using Petrichor.Shared.Extensions;
 
-namespace Petrichor.Modules.Gallery.Application.Images.Queries.ListImages;
+namespace Petrichor.Modules.Gallery.Application.Images.Queries.GetImages;
 
-public class ListImagesQueryHandler(IGalleryDbContext dbContext)
-    : IRequestHandler<ListImagesQuery, ErrorOr<PagedResponse<ListImagesResponse>>>
+public class GetImagesQueryHandler(IGalleryDbContext dbContext)
+    : IRequestHandler<GetImagesQuery, ErrorOr<PagedResponse<GetImagesResponse>>>
 {
-    public async Task<ErrorOr<PagedResponse<ListImagesResponse>>> Handle(
-        ListImagesQuery request,
+    public async Task<ErrorOr<PagedResponse<GetImagesResponse>>> Handle(
+        GetImagesQuery request,
         CancellationToken cancellationToken)
     {
         var query = dbContext.Images.AsQueryable();

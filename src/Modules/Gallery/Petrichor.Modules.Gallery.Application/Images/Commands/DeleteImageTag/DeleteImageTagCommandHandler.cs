@@ -19,17 +19,9 @@ public class DeleteImageTagCommandHandler(
                 cancellationToken: cancellationToken);
 
         if (image is null)
-        {
-            return Error.NotFound("Image not found.");
-        }
+            return Result.Deleted;
 
-        var removeTagResult = image.RemoveTag(command.TagId);
-
-        if (removeTagResult.IsError)
-        {
-            return removeTagResult.Errors;
-        }
-
+        image.RemoveTag(command.TagId);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Deleted;

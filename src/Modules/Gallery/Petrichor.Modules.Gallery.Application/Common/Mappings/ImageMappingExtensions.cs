@@ -17,9 +17,9 @@ public static class ImageMappingExtensions
             UploadedAt: image.UploadedDateTime);
     }
 
-    public static ListImagesResponse ToListResponse(this Image image)
+    public static GetImagesResponse ToListResponse(this Image image)
     {
-        return new ListImagesResponse(
+        return new GetImagesResponse(
             Id: image.Id,
             ThumbnailUrl: image.Thumbnail.Path,
             ThumbnailWidth: image.Thumbnail.Width,

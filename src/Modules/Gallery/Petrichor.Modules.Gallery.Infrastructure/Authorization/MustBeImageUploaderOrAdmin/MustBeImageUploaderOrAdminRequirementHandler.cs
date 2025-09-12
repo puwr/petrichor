@@ -6,16 +6,19 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 
-namespace Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploader;
+namespace Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploaderOrAdmin;
 
-public class MustBeImageUploaderHandler(GalleryDbContext dbContext)
-        : AuthorizationHandler<MustBeImageUploaderRequirement>
+public class MustBeImageUploaderOrAdminRequirementHandler(GalleryDbContext dbContext)
+        : AuthorizationHandler<MustBeImageUploaderOrAdminRequirement>
 {
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
-        MustBeImageUploaderRequirement requirement)
+        MustBeImageUploaderOrAdminRequirement requirement)
     {
         if (context.Resource is not HttpContext httpContext) return;
+
+        if (httpContext.User.IsInRole("Admin"))
+            context.Succeed(requirement);
 
         var imageIdFromRoute = httpContext.GetRouteValue("imageId")?.ToString();
         if (!Guid.TryParse(imageIdFromRoute, out Guid imageId)) return;

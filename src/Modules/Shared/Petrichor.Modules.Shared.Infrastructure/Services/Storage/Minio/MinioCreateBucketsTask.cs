@@ -14,7 +14,7 @@ public class MinioCreateBucketsTask(IMinioClient minio) : IHostedService
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     private async Task CreateBucket(string bucketName, CancellationToken cancellationToken)

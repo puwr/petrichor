@@ -9,7 +9,6 @@ using Microsoft.Extensions.Options;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces;
 using Petrichor.Modules.Gallery.Application.Common.Interfaces.Services;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization;
-using Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploader;
 using Petrichor.Modules.Gallery.Infrastructure.Inbox;
 using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 using Petrichor.Modules.Gallery.Infrastructure.Services;
@@ -20,6 +19,7 @@ using Petrichor.Shared.DomainEvents;
 using Petrichor.Shared.Events;
 using Petrichor.Modules.Users.IntegrationMessages;
 using Microsoft.AspNetCore.Builder;
+using Petrichor.Modules.Gallery.Infrastructure.Authorization.MustBeImageUploaderOrAdmin;
 namespace Petrichor.Modules.Gallery.Presentation;
 
 public static class GalleryModule
@@ -66,7 +66,7 @@ public static class GalleryModule
     private static IServiceCollection AddAuthorizarion(this IServiceCollection services)
     {
         services.AddSingleton<IPostConfigureOptions<AuthorizationOptions>, GalleryAuthorizationConfiguration>();
-        services.AddScoped<IAuthorizationHandler, MustBeImageUploaderHandler>();
+        services.AddScoped<IAuthorizationHandler, MustBeImageUploaderOrAdminRequirementHandler>();
 
         return services;
     }

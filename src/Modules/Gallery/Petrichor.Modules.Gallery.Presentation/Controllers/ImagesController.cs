@@ -7,7 +7,7 @@ using Petrichor.Modules.Gallery.Application.Images.Commands.DeleteImage;
 using Petrichor.Modules.Gallery.Application.Images.Commands.DeleteImageTag;
 using Petrichor.Modules.Gallery.Application.Images.Commands.UploadImage;
 using Petrichor.Modules.Gallery.Application.Images.Queries.GetImage;
-using Petrichor.Modules.Gallery.Application.Images.Queries.ListImages;
+using Petrichor.Modules.Gallery.Application.Images.Queries.GetImages;
 using Petrichor.Modules.Gallery.Contracts.Images;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization;
 using Petrichor.Shared.Pagination;
@@ -35,13 +35,13 @@ public class ImagesController(ISender mediator) : ApiController
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> ListImages(
+    public async Task<IActionResult> GetImages(
         [FromQuery(Name = "page")] int pageNumber = 1,
         [FromQuery] List<string>? tags = null)
     {
         var pagination = new PaginationParameters(pageNumber, PageSize: 14);
 
-        var query = new ListImagesQuery(pagination, tags);
+        var query = new GetImagesQuery(pagination, tags);
 
         var getImagesResult = await mediator.Send(query);
 
@@ -65,7 +65,7 @@ public class ImagesController(ISender mediator) : ApiController
         );
     }
 
-    [Authorize(Policy = GalleryPolicies.ImageUploader)]
+    [Authorize(Policy = GalleryPolicies.ImageUploaderOrAdmin)]
     [HttpDelete("{imageId:guid}")]
     public async Task<IActionResult> DeleteImage(Guid imageId)
     {
@@ -78,7 +78,7 @@ public class ImagesController(ISender mediator) : ApiController
             Problem);
     }
 
-    [Authorize(Policy = GalleryPolicies.ImageUploader)]
+    [Authorize(Policy = GalleryPolicies.ImageUploaderOrAdmin)]
     [HttpPost("{imageId:guid}/tags")]
     public async Task<IActionResult> AddImageTags(Guid imageId, AddTagsRequest request)
     {
@@ -92,7 +92,7 @@ public class ImagesController(ISender mediator) : ApiController
         );
     }
 
-    [Authorize(Policy = GalleryPolicies.ImageUploader)]
+    [Authorize(Policy = GalleryPolicies.ImageUploaderOrAdmin)]
     [HttpDelete("{imageId:guid}/tags/{tagId:guid}")]
     public async Task<IActionResult> DeleteImageTag(Guid imageId, Guid tagId)
     {

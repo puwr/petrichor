@@ -24,7 +24,7 @@ public class DeleteImageCommandHandler(
 
         if (image is null)
         {
-            return Error.NotFound(description: "Image not found.");
+            return Result.Deleted;
         }
 
         eventPublisher.Publish(new ImageDeletedDomainEvent(
