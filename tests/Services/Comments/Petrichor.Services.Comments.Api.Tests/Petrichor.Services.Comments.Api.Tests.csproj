@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TestUtilities\TestUtilities.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Services\Comments\Petrichor.Services.Comments.Api\Petrichor.Services.Comments.Api.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+</Project>

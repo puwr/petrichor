@@ -29,7 +29,7 @@ public class CreateCommentEndpoint : FeatureEndpoint
                 var createCommentResult = await mediator.Send(command);
 
                 return createCommentResult.Match(
-                    Results.Ok,
+                    commentId => Results.Created($"/comments?resourceId={request.ResourceId}", commentId),
                     Problem
                 );
             })

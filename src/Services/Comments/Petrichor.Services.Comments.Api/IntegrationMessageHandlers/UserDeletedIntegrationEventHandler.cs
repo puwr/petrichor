@@ -15,5 +15,9 @@ public class UserDeletedIntegrationEventHandler(CommentsDbContext dbContext)
         await dbContext.Comments
             .Where(c => c.AuthorId == @event.UserId)
             .ExecuteDeleteAsync(cancellationToken);
+
+        await dbContext.UserSnapshots
+            .Where(c => c.UserId == @event.UserId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 }

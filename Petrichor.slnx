@@ -51,4 +51,7 @@
   <Folder Name="/tests/Modules/Shared/">
     <Project Path="tests/Modules/Shared/Petrichor.Modules.Shared.Infrastructure.Tests/Petrichor.Modules.Shared.Infrastructure.Tests.csproj" />
   </Folder>
+  <Folder Name="/tests/Services/Comments/">
+    <Project Path="tests/Services/Comments/Petrichor.Services.Comments.Api.Tests/Petrichor.Services.Comments.Api.Tests.csproj" />
+  </Folder>
 </Solution>
