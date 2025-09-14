@@ -7,11 +7,11 @@ namespace TestUtilities.Authentication;
 
 public static class TestAuthenticationExtensions
 {
-    public static void SetFakeClaims(this HttpClient client, string? userId = null, string? role = null)
+    public static void SetFakeClaims(this HttpClient client, Guid? userId = null, string? role = null)
     {
         var claims = new Dictionary<string, object>
         {
-            { JwtRegisteredClaimNames.Sub, userId ?? Guid.NewGuid().ToString()},
+            { JwtRegisteredClaimNames.Sub, userId?.ToString() ?? Guid.NewGuid().ToString()},
             { ClaimTypes.Role, role ?? "" }
         };
 
