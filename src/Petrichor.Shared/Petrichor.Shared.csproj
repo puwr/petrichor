@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 <ItemGroup>
-  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.8" />
-  <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
-  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  <PackageReference Include="MassTransit" Version="8.5.2" />
-  <PackageReference Include="ErrorOr" Version="2.0.1" />
-  <PackageReference Include="FluentValidation" Version="12.0.0" />
-  <PackageReference Include="MediatR" Version="12.5.0" />
+  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+  <PackageReference Include="Microsoft.Extensions.Hosting" />
+  <PackageReference Include="Newtonsoft.Json" />
+  <PackageReference Include="MassTransit" />
+  <PackageReference Include="ErrorOr" />
+  <PackageReference Include="FluentValidation" />
+  <PackageReference Include="MediatR" />
 </ItemGroup>
 
 </Project>

@@ -7,10 +7,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Aspire.MassTransit.RabbitMQ" Version="9.7.0" />
-    <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" Version="9.7.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
+    <PackageReference Include="CommunityToolkit.Aspire.MassTransit.RabbitMQ" />
+    <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="EFCore.NamingConventions" />
   </ItemGroup>
 
 </Project>
