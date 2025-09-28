@@ -1,5 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +11,6 @@ namespace Petrichor.Modules.Gallery.Application.Images.Commands.UploadImage;
 
 public class UploadImageCommandHandler(
     IGalleryDbContext dbContext,
-    IHttpContextAccessor httpContextAccessor,
     IFileStorage fileStorage,
     IThumbnailGenerator thumbnailGenerator,
     IImageMetadataProvider imageMetadataProvider
@@ -23,17 +20,9 @@ public class UploadImageCommandHandler(
         UploadImageCommand command,
         CancellationToken cancellationToken)
     {
-        var currentUserIdClaim = httpContextAccessor.HttpContext!.User
-            .FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-        if (!Guid.TryParse(currentUserIdClaim, out Guid currentUserId))
-        {
-            return UploadImageCommandErrors.UserIdClaimIsMissingOrInvalid;
-        }
-
         var (originalImage, thumbnail) = await ProcessImageAsync(command.ImageFile);
 
-        var image = new Image(originalImage, thumbnail, currentUserId);
+        var image = new Image(originalImage, thumbnail, command.UploaderId);
 
         dbContext.Images.Add(image);
         await dbContext.SaveChangesAsync(cancellationToken);

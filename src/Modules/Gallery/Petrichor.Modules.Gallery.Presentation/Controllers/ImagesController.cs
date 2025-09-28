@@ -11,6 +11,9 @@ using Petrichor.Modules.Gallery.Application.Images.Queries.GetImages;
 using Petrichor.Modules.Gallery.Contracts.Images;
 using Petrichor.Modules.Gallery.Infrastructure.Authorization;
 using Petrichor.Shared.Pagination;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using ErrorOr;
 
 namespace Petrichor.Modules.Gallery.Presentation.Controllers;
 
@@ -19,7 +22,17 @@ public class ImagesController(ISender mediator) : ApiController
     [HttpPost]
     public async Task<IActionResult> UploadImage([FromForm] UploadImageRequest request)
     {
-        var uploadImageCommand = new UploadImageCommand(request.ImageFile);
+        var currentUserIdClaim = User
+            .FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+        if (!Guid.TryParse(currentUserIdClaim, out Guid uploaderId))
+        {
+            return Problem(Error.Unauthorized());
+        }
+
+        var uploadImageCommand = new UploadImageCommand(
+            ImageFile: request.ImageFile,
+            UploaderId: uploaderId);
 
         var uploadImageResult = await mediator.Send(uploadImageCommand);
 

@@ -34,49 +34,16 @@ public class UploadImageTests : IDisposable
     [Fact]
     public async Task Handle_ReturnsImageId()
     {
-        var mediator = _mediatorFactory.Create(services =>
-        {
-            var httpContextAccessorMock = Substitute.For<IHttpContextAccessor>();
-            var user = new ClaimsPrincipal(new ClaimsIdentity(
-                [
-                    new Claim(JwtRegisteredClaimNames.Sub, Guid.CreateVersion7().ToString())
-                ]));
-
-            httpContextAccessorMock.HttpContext!.User.Returns(user);
-
-            services.AddSingleton(httpContextAccessorMock);
-        });
+        var mediator = _mediatorFactory.Create();
 
         var imageFile = CreateTestFile(JpegSignature, "test.jpg");
 
-        var uploadImageResult = await mediator.Send(new UploadImageCommand(imageFile));
+        var uploadImageResult = await mediator.Send(new UploadImageCommand(
+            ImageFile: imageFile,
+            UploaderId: Guid.NewGuid()));
 
         uploadImageResult.IsError.Should().BeFalse();
         uploadImageResult.Value.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    public async Task Handle_WhenUserIdClaimIsMissingOrInvalid_ReturnsUserIdClaimIsMissingOrInvalidError()
-    {
-        var mediator = _mediatorFactory.Create(services =>
-        {
-            var httpContextAccessorMock = Substitute.For<IHttpContextAccessor>();
-            var user = new ClaimsPrincipal(new ClaimsIdentity(
-                [
-                    new Claim(JwtRegisteredClaimNames.Sub, "test")
-                ]));
-
-            httpContextAccessorMock.HttpContext!.User.Returns(user);
-
-            services.AddSingleton(httpContextAccessorMock);
-        });
-
-        var imageFile = CreateTestFile(JpegSignature, "test.jpg");
-
-        var uploadImageResult = await mediator.Send(new UploadImageCommand(imageFile));
-
-        uploadImageResult.IsError.Should().BeTrue();
-        uploadImageResult.FirstError.Should().Be(UploadImageCommandErrors.UserIdClaimIsMissingOrInvalid);
     }
 
     [Fact]
@@ -91,7 +58,9 @@ public class UploadImageTests : IDisposable
 
         var imageFile = CreateTestFile(fileContent, "test.jpg");
 
-        var uploadImageResult = await mediator.Send(new UploadImageCommand(imageFile));
+        var uploadImageResult = await mediator.Send(new UploadImageCommand(
+            ImageFile: imageFile,
+            UploaderId: Guid.NewGuid()));
 
         uploadImageResult.IsError.Should().BeTrue();
         uploadImageResult.FirstError.Type.Should().BeOneOf(ErrorType.Validation);
@@ -106,7 +75,9 @@ public class UploadImageTests : IDisposable
 
         var imageFile = CreateTestFile(JpegSignature, "test.pdf");
 
-        var uploadImageResult = await mediator.Send(new UploadImageCommand(imageFile));
+        var uploadImageResult = await mediator.Send(new UploadImageCommand(
+            ImageFile: imageFile,
+            UploaderId: Guid.NewGuid()));
 
         uploadImageResult.IsError.Should().BeTrue();
         uploadImageResult.FirstError.Type.Should().BeOneOf(ErrorType.Validation);
@@ -120,8 +91,9 @@ public class UploadImageTests : IDisposable
         var mediator = _mediatorFactory.Create();
 
         var imageFile = CreateTestFile([], "test.jpg");
-
-        var uploadImageResult = await mediator.Send(new UploadImageCommand(imageFile));
+        var uploadImageResult = await mediator.Send(new UploadImageCommand(
+            ImageFile: imageFile,
+            UploaderId: Guid.NewGuid()));
 
         uploadImageResult.IsError.Should().BeTrue();
         uploadImageResult.FirstError.Type.Should().BeOneOf(ErrorType.Validation);
