@@ -9,6 +9,7 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
     public void Configure(EntityTypeBuilder<Tag> builder)
     {
         builder.HasKey(t => t.Id);
+        builder.HasIndex(t => t.Id).IsUnique();
         builder
             .Property(t => t.Id)
             .ValueGeneratedNever();
@@ -19,7 +20,6 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
 
         builder
             .HasMany(t => t.Images)
-            .WithMany(i => i.Tags)
-            .UsingEntity("ImageTags");
+            .WithMany(i => i.Tags);
     }
 }

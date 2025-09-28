@@ -113,22 +113,22 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                 schema: "gallery",
                 columns: table => new
                 {
-                    images_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    tags_id = table.Column<Guid>(type: "uuid", nullable: false)
+                    image_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tag_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_image_tags", x => new { x.images_id, x.tags_id });
+                    table.PrimaryKey("pk_image_tags", x => new { x.image_id, x.tag_id });
                     table.ForeignKey(
-                        name: "fk_image_tags_images_images_id",
-                        column: x => x.images_id,
+                        name: "fk_image_tags_images_image_id",
+                        column: x => x.image_id,
                         principalSchema: "gallery",
                         principalTable: "images",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_image_tags_tags_tags_id",
-                        column: x => x.tags_id,
+                        name: "fk_image_tags_tags_tag_id",
+                        column: x => x.tag_id,
                         principalSchema: "gallery",
                         principalTable: "tags",
                         principalColumn: "id",
@@ -136,10 +136,23 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_image_tags_tags_id",
+                name: "ix_image_tags_tag_id_image_id",
                 schema: "gallery",
                 table: "image_tags",
-                column: "tags_id");
+                columns: new[] { "tag_id", "image_id" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_images_id",
+                schema: "gallery",
+                table: "images",
+                column: "id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_tags_id",
+                schema: "gallery",
+                table: "tags",
+                column: "id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_name",

@@ -12,7 +12,7 @@ using Petrichor.Modules.Gallery.Infrastructure.Persistence;
 namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(GalleryDbContext))]
-    [Migration("20250820083103_InitialCreate")]
+    [Migration("20250928185437_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -21,26 +21,26 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("gallery")
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ImageTags", b =>
+            modelBuilder.Entity("ImageTag", b =>
                 {
-                    b.Property<Guid>("ImagesId")
+                    b.Property<Guid>("ImageId")
                         .HasColumnType("uuid")
-                        .HasColumnName("images_id");
+                        .HasColumnName("image_id");
 
-                    b.Property<Guid>("TagsId")
+                    b.Property<Guid>("TagId")
                         .HasColumnType("uuid")
-                        .HasColumnName("tags_id");
+                        .HasColumnName("tag_id");
 
-                    b.HasKey("ImagesId", "TagsId")
+                    b.HasKey("ImageId", "TagId")
                         .HasName("pk_image_tags");
 
-                    b.HasIndex("TagsId")
-                        .HasDatabaseName("ix_image_tags_tags_id");
+                    b.HasIndex("TagId", "ImageId")
+                        .HasDatabaseName("ix_image_tags_tag_id_image_id");
 
                     b.ToTable("image_tags", "gallery");
                 });
@@ -62,6 +62,9 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_images");
 
+                    b.HasIndex("Id")
+                        .HasDatabaseName("ix_images_id");
+
                     b.ToTable("images", "gallery");
                 });
 
@@ -79,6 +82,10 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_tags");
 
+                    b.HasIndex("Id")
+                        .IsUnique()
+                        .HasDatabaseName("ix_tags_id");
+
                     b.HasIndex("Name")
                         .IsUnique()
                         .HasDatabaseName("ix_tags_name");
@@ -86,7 +93,7 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("tags", "gallery");
                 });
 
-            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Inbox.InboxMessage", b =>
+            modelBuilder.Entity("Petrichor.Shared.Inbox.InboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,7 +129,7 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("inbox_messages", "gallery");
                 });
 
-            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Inbox.InboxMessageConsumer", b =>
+            modelBuilder.Entity("Petrichor.Shared.Inbox.InboxMessageConsumer", b =>
                 {
                     b.Property<Guid>("InboxMessageId")
                         .HasColumnType("uuid")
@@ -139,7 +146,7 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("inbox_message_consumers", "gallery");
                 });
 
-            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("Petrichor.Shared.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,7 +186,7 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("outbox_messages", "gallery");
                 });
 
-            modelBuilder.Entity("Petrichor.Modules.Shared.Infrastructure.Outbox.OutboxMessageConsumer", b =>
+            modelBuilder.Entity("Petrichor.Shared.Outbox.OutboxMessageConsumer", b =>
                 {
                     b.Property<Guid>("OutboxMessageId")
                         .HasColumnType("uuid")
@@ -196,21 +203,21 @@ namespace Petrichor.Modules.Gallery.Infrastructure.Persistence.Migrations
                     b.ToTable("outbox_message_consumers", "gallery");
                 });
 
-            modelBuilder.Entity("ImageTags", b =>
+            modelBuilder.Entity("ImageTag", b =>
                 {
                     b.HasOne("Petrichor.Modules.Gallery.Domain.Images.Image", null)
                         .WithMany()
-                        .HasForeignKey("ImagesId")
+                        .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_image_tags_images_images_id");
+                        .HasConstraintName("fk_image_tags_images_image_id");
 
                     b.HasOne("Petrichor.Modules.Gallery.Domain.Tags.Tag", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_image_tags_tags_tags_id");
+                        .HasConstraintName("fk_image_tags_tags_tag_id");
                 });
 
             modelBuilder.Entity("Petrichor.Modules.Gallery.Domain.Images.Image", b =>
