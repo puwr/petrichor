@@ -7,6 +7,8 @@ using Petrichor.Modules.Users.Application.Users.Queries.ListUsers;
 using Petrichor.Modules.Users.Contracts.Users;
 using Petrichor.Modules.Shared.Presentation;
 using Petrichor.Shared.Pagination;
+using Microsoft.AspNetCore.Http;
+using Petrichor.Modules.Users.Contracts.Account;
 
 namespace Petrichor.Modules.Users.Presentation.Controllers;
 
@@ -14,6 +16,10 @@ public class UsersController(ISender mediator) : ApiController
 {
     [Authorize(Roles = "Admin")]
     [HttpGet]
+    [EndpointSummary("List users")]
+    [ProducesResponseType<PagedResponse<ListUsersResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ListUsers([FromQuery(Name = "page")] int pageNumber = 1)
     {
         var pagination = new PaginationParameters(pageNumber);
@@ -30,6 +36,9 @@ public class UsersController(ISender mediator) : ApiController
 
     [AllowAnonymous]
     [HttpGet("{userId:guid}")]
+    [EndpointSummary("Get user")]
+    [ProducesResponseType<GetUserResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUser(Guid userId)
     {
         var query = new GetUserQuery(userId);
@@ -44,6 +53,10 @@ public class UsersController(ISender mediator) : ApiController
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{userId:guid}")]
+    [EndpointSummary("Delete user")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteUser(Guid userId, DeleteUserRequest request)
     {
         var command = new DeleteUserCommand(userId, request.DeleteUploadedImages);

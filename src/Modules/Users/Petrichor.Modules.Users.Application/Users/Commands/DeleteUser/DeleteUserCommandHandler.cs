@@ -21,7 +21,7 @@ public class DeleteUserCommandHandler(
 
         if (user is null)
         {
-            return Error.NotFound(description: "User not found.");
+            return Result.Deleted;
         }
 
         user.IsDeleted = true;

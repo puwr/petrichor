@@ -20,6 +20,10 @@ public class AuthenticationController(
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
 
     [HttpPost("register")]
+    [EndpointSummary("Register")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
         var command = new RegisterCommand(request.Email, request.UserName, request.Password);
@@ -27,12 +31,15 @@ public class AuthenticationController(
         var registerResult = await mediator.Send(command);
 
         return registerResult.Match(
-            success => Ok(),
+            success => NoContent(),
             Problem
         );
     }
 
     [HttpPost("login")]
+    [EndpointSummary("Login")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var query = new LoginCommand(request.Email, request.Password);
@@ -40,12 +47,15 @@ public class AuthenticationController(
         var loginResult = await mediator.Send(query);
 
         return loginResult.Match(
-            success => Ok(),
+            success => NoContent(),
             Problem
         );
     }
 
     [HttpPost("refresh-token")]
+    [EndpointSummary("Refresh token")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RefreshToken()
     {
         var refreshToken = _httpContext.Request.Cookies["REFRESH_TOKEN"];
@@ -55,12 +65,14 @@ public class AuthenticationController(
         var refreshTokenResult = await mediator.Send(command);
 
         return refreshTokenResult.Match(
-            success => Ok(),
+            success => NoContent(),
             Problem
         );
     }
 
     [HttpPost("logout")]
+    [EndpointSummary("Logout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Logout()
     {
         var refreshToken = _httpContext.Request.Cookies["REFRESH_TOKEN"];
@@ -76,6 +88,8 @@ public class AuthenticationController(
     }
 
     [HttpGet("status")]
+    [EndpointSummary("Get auth status")]
+    [ProducesResponseType<AuthenticationStatusResponse>(StatusCodes.Status200OK)]
     public IActionResult GetAuthenticationStatus()
     {
         return Ok(new AuthenticationStatusResponse(
