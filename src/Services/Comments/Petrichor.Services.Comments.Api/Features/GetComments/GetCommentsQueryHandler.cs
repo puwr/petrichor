@@ -32,13 +32,6 @@ public class GetCommentsQueryHandler(CommentsDbContext dbContext)
                 userSnapshot => userSnapshot.UserId,
                 (comment, userSnapshots) => new
                     { Comment = comment, UserSnapshot = userSnapshots.FirstOrDefault() })
-            // .Select(c => new
-            // {
-            //     Comment = c,
-            //     UserSnapshot = dbContext.UserSnapshots
-            //         .Where(us => us.UserId == c.AuthorId)
-            //         .FirstOrDefault()
-            // })
             .Select(x => CommentResponse.From(x.Comment, x.UserSnapshot))
             .ToListAsync(cancellationToken);
 

@@ -34,6 +34,9 @@ public class CreateCommentEndpoint : FeatureEndpoint
                 );
             })
             .RequireAuthorization()
-            .WithTags(Tags.Comments);
+            .WithTags(Tags.Comments)
+            .WithSummary("Create comment")
+            .Produces<Guid>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status401Unauthorized);
     }
 }

@@ -21,6 +21,10 @@ public class DeleteCommentEndpoint : FeatureEndpoint
             }
         )
         .RequireAuthorization(CommentsPolicies.AuthorOrAdmin)
-        .WithTags(Tags.Comments);
+        .WithTags(Tags.Comments)
+        .WithSummary("Delete comment")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .Produces(StatusCodes.Status403Forbidden);
     }
 }

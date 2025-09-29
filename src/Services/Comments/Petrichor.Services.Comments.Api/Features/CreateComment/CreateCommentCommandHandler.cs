@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
 using ErrorOr;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Api.Common.Domain;
 using Petrichor.Services.Comments.Api.Common.Persistence;
 

@@ -23,6 +23,8 @@ public class GetCommentsEndpoint : FeatureEndpoint
                 );
             }
         )
-        .WithTags(Tags.Comments);
+        .WithTags(Tags.Comments)
+        .WithSummary("Get comments")
+        .Produces<CursorPagedResponse<CommentResponse>>(StatusCodes.Status200OK);
     }
 }
