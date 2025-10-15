@@ -1,0 +1,45 @@
+var builder = DistributedApplication.CreateBuilder(args);
+
+var database = builder.AddPostgres("pg")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .AddDatabase("database");
+
+var rmq = builder.AddRabbitMQ("rmq")
+    .WithLifetime(ContainerLifetime.Persistent);
+
+var minio = builder.AddMinioContainer("minio")
+    .WithLifetime(ContainerLifetime.Persistent);
+
+var users = builder.
+    AddProject<Projects.Petrichor_Services_Users>("usersservice")
+    .WaitFor(database)
+    .WaitFor(rmq)
+    .WithReference(database)
+    .WithReference(rmq);
+
+var gallery = builder
+    .AddProject<Projects.Petrichor_Services_Gallery>("galleryservice")
+    .WaitFor(database)
+    .WaitFor(rmq)
+    .WaitFor(minio)
+    .WithReference(database)
+    .WithReference(rmq)
+    .WithReference(minio);
+
+var comments = builder
+    .AddProject<Projects.Petrichor_Services_Comments>("commentsservice")
+    .WaitFor(database)
+    .WaitFor(rmq)
+    .WithReference(database)
+    .WithReference(rmq);
+
+builder.AddProject<Projects.Petrichor_Gateway>("gateway")
+    .WithReference(users)
+    .WithReference(gallery)
+    .WithReference(comments)
+    .WaitFor(users)
+    .WaitFor(gallery)
+    .WaitFor(comments)
+    .WithExternalHttpEndpoints();
+
+builder.Build().Run();

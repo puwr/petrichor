@@ -1,0 +1,12 @@
+namespace Petrichor.Shared.Extensions;
+
+public static class StreamExtensions
+{
+    public static void Reset(this Stream stream)
+    {
+        if (stream.CanSeek && stream.Position > 0)
+        {
+            stream.Position = 0;
+        }
+    }
+}

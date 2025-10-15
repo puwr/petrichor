@@ -1,0 +1,38 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Petrichor.Services.Gallery.Common.Persistence;
+
+namespace Petrichor.Services.Gallery.Common.Authorization.MustBeImageUploaderOrAdmin;
+
+public class MustBeImageUploaderOrAdminRequirementHandler(GalleryDbContext dbContext)
+        : AuthorizationHandler<MustBeImageUploaderOrAdminRequirement>
+{
+    protected override async Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        MustBeImageUploaderOrAdminRequirement requirement)
+    {
+        if (context.Resource is not HttpContext httpContext) return;
+
+        if (httpContext.User.IsInRole("Admin"))
+            context.Succeed(requirement);
+
+        var imageIdFromRoute = httpContext.GetRouteValue("imageId")?.ToString();
+        if (!Guid.TryParse(imageIdFromRoute, out Guid imageId)) return;
+
+        var currentUserIdClaim = httpContext.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        if (!Guid.TryParse(currentUserIdClaim, out Guid currentUserId)) return;
+
+        var uploaderId = await dbContext.Images
+            .AsNoTracking()
+            .Where(i => i.Id == imageId)
+            .Select(i => i.UploaderId)
+            .FirstOrDefaultAsync();
+
+        if (uploaderId == currentUserId)
+        {
+            context.Succeed(requirement);
+        }
+    }
+}

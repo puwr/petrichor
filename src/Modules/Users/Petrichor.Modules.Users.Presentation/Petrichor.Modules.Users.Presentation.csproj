@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Petrichor.Modules.Shared.Presentation\Petrichor.Modules.Shared.Presentation.csproj" />
-    <ProjectReference Include="..\Petrichor.Modules.Users.Infrastructure\Petrichor.Modules.Users.Infrastructure.csproj" />
-    <ProjectReference Include="..\Petrichor.Modules.Users.Contracts\Petrichor.Modules.Users.Contracts.csproj" />
-  </ItemGroup>
-
-</Project>
