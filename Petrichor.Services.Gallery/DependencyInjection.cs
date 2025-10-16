@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Petrichor.Services.Gallery.Common.Authorization;
@@ -23,6 +24,8 @@ using Petrichor.Shared.Outbox;
 using Petrichor.Shared.Services.Storage;
 using Petrichor.Shared.Services.Storage.Minio;
 using Petrichor.Shared.Settings;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace Petrichor.Services.Gallery;
 
@@ -61,6 +64,29 @@ public static class DependencyInjection
             {
                 configure.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
             });
+
+        builder.Services.AddFusionCache()
+            .WithDefaultEntryOptions(options =>
+            {
+                options.Duration = TimeSpan.FromMinutes(2);
+
+                options.FactorySoftTimeout = TimeSpan.FromMilliseconds(500);
+                options.FactoryHardTimeout = TimeSpan.FromSeconds(2);
+
+                options.IsFailSafeEnabled = true;
+                options.FailSafeMaxDuration = TimeSpan.FromMinutes(20);
+                options.FailSafeThrottleDuration = TimeSpan.FromMinutes(1);
+
+                options.DistributedCacheSoftTimeout = TimeSpan.FromSeconds(1);
+                options.DistributedCacheHardTimeout = TimeSpan.FromSeconds(2);
+
+                options.JitterMaxDuration = TimeSpan.FromSeconds(2);
+            })
+            .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+            .WithDistributedCache(new RedisCache(new RedisCacheOptions()
+            {
+              Configuration = builder.Configuration.GetConnectionString("cache")
+            }));
 
         builder.Services.AddScoped<EventPublisher<GalleryDbContext>>();
 

@@ -1,3 +1,6 @@
+using System.IO.Hashing;
+using System.Text;
+
 namespace Petrichor.Services.Gallery.Common.Utilities;
 
 public static class TagHelpers
@@ -9,4 +12,20 @@ public static class TagHelpers
             .Distinct()
             .ToList()
         ?? [];
+
+    public static string Hash(IEnumerable<string>? tags)
+    {
+        if (tags is null || !tags.Any())
+        {
+            return "null";
+        }
+
+        var tagsString = string.Join(',', tags.OrderBy(t => t));
+        var tagsData = Encoding.UTF8.GetBytes(tagsString);
+
+        var hashBytes = XxHash64.Hash(tagsData);
+        var hashHex = Convert.ToHexStringLower(hashBytes);
+
+        return hashHex;
+    }
 }

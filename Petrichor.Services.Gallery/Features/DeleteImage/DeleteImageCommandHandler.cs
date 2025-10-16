@@ -5,12 +5,14 @@ using Petrichor.Services.Gallery.Common.Domain.Images.Events;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.IntegrationMessages;
 using Petrichor.Shared.Outbox;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.DeleteImage;
 
 public class DeleteImageCommandHandler(
     GalleryDbContext dbContext,
-    EventPublisher<GalleryDbContext> eventPublisher)
+    EventPublisher<GalleryDbContext> eventPublisher,
+    IFusionCache cache)
     : IRequestHandler<DeleteImageCommand, ErrorOr<Deleted>>
 {
     public async Task<ErrorOr<Deleted>> Handle(
@@ -35,6 +37,9 @@ public class DeleteImageCommandHandler(
 
         dbContext.Images.Remove(image);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await cache.RemoveAsync($"image:{image.Id}", token: cancellationToken);
+        await cache.RemoveByTagAsync("images", token: cancellationToken);
 
         return Result.Deleted;
     }

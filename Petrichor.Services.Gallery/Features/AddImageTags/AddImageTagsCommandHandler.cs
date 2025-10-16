@@ -4,10 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Domain;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.Common.Utilities;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.AddImageTags;
 
-public class AddImageTagsCommandHandler(GalleryDbContext dbContext)
+public class AddImageTagsCommandHandler(
+    GalleryDbContext dbContext,
+    IFusionCache cache)
     : IRequestHandler<AddImageTagsCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(
@@ -39,6 +42,8 @@ public class AddImageTagsCommandHandler(GalleryDbContext dbContext)
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await cache.ExpireAsync($"image:{image.Id}", token: cancellationToken);
 
         return Result.Success;
     }

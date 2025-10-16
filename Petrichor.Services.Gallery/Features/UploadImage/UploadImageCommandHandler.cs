@@ -6,6 +6,7 @@ using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.Common.Services;
 using Petrichor.Services.Gallery.Common.Storage;
 using Petrichor.Shared.Services.Storage;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.UploadImage;
 
@@ -13,7 +14,8 @@ public class UploadImageCommandHandler(
     GalleryDbContext dbContext,
     IFileStorage fileStorage,
     IThumbnailGenerator thumbnailGenerator,
-    IImageMetadataProvider imageMetadataProvider
+    IImageMetadataProvider imageMetadataProvider,
+    IFusionCache cache
 ) : IRequestHandler<UploadImageCommand, ErrorOr<Guid>>
 {
     public async Task<ErrorOr<Guid>> Handle(
@@ -26,6 +28,8 @@ public class UploadImageCommandHandler(
 
         dbContext.Images.Add(image);
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await cache.RemoveByTagAsync("images", token: cancellationToken);
 
         return image.Id;
     }

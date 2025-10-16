@@ -7,25 +7,21 @@ using Petrichor.TestUtilities.Authentication;
 using Testcontainers.Minio;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
+using Testcontainers.Redis;
 
 namespace Petrichor.Services.Gallery.Tests.TestUtilities;
 
 public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:latest")
-        .WithDatabase("petrichor")
-        .WithUsername("postgres")
-        .WithPassword("postgres")
-        .Build();
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder().Build();
+    private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
     private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder().Build();
-    private readonly MinioContainer _minioContainer = new MinioBuilder()
-        .WithImage("minio/minio:latest")
-        .Build();
+    private readonly MinioContainer _minioContainer = new MinioBuilder().Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable("ConnectionStrings:database", _dbContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("ConnectionStrings:cache", _redisContainer.GetConnectionString());
         Environment.SetEnvironmentVariable("ConnectionStrings:rmq", _rmqContainer.GetConnectionString());
         Environment.SetEnvironmentVariable("ConnectionStrings:minio",
             $"Endpoint={_minioContainer.GetConnectionString()};AccessKey=minioadmin;SecretKey=minioadmin");
@@ -40,6 +36,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
+        await _redisContainer.StartAsync();
         await _rmqContainer.StartAsync();
         await _minioContainer.StartAsync();
     }
@@ -48,6 +45,7 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
         await base.DisposeAsync();
         await _dbContainer.DisposeAsync();
+        await _redisContainer.DisposeAsync();
         await _rmqContainer.DisposeAsync();
         await _minioContainer.DisposeAsync();
     }

@@ -4,12 +4,14 @@ using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.Shared.Events;
 using Petrichor.Shared.Outbox;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.IntegrationMessageHandlers;
 
 public class UserDeletedIntegrationEventHandler(
     GalleryDbContext dbContext,
-    EventPublisher<GalleryDbContext> eventPublisher)
+    EventPublisher<GalleryDbContext> eventPublisher,
+    IFusionCache cache)
     : IIntegrationEventHandler<UserDeletedIntegrationEvent>
 {
     public async Task Handle(UserDeletedIntegrationEvent @event, CancellationToken cancellationToken)
@@ -30,6 +32,13 @@ public class UserDeletedIntegrationEventHandler(
             }
 
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            foreach (var image in images)
+            {
+                await cache.RemoveAsync($"image:{image.Id}", token: cancellationToken);
+            }
+
+            await cache.RemoveByTagAsync("images", token: cancellationToken);
         }
     }
 }
