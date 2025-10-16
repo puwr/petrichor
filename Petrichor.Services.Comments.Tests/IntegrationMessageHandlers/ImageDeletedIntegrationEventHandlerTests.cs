@@ -54,7 +54,7 @@ public class ImageDeletedIntegrationEventHandlerTests : IDisposable
             getCommentsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var comments = await getCommentsResponse.Content
-                .ReadFromJsonAsync<CursorPagedResponse<CommentResponse>>();
+                .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
 
             return comments!.Items.Count == 0;
         });

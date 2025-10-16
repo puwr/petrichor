@@ -33,7 +33,8 @@ public class DeleteCommentEndpointTests(ApiFactory apiFactory)
         var getCommentsResponse = await client.GetAsync($"/comments?resourceId={testResourceId}");
         getCommentsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var comments = await getCommentsResponse.Content.ReadFromJsonAsync<CursorPagedResponse<CommentResponse>>();
+        var comments = await getCommentsResponse.Content
+            .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
         comments.Should().NotBeNull();
         comments.Items.Count.Should().Be(0);
     }

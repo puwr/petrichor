@@ -5,6 +5,7 @@
     <PackageReference Include="CommunityToolkit.Aspire.MassTransit.RabbitMQ" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="EFCore.NamingConventions" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
@@ -15,6 +16,8 @@
     <PackageReference Include="ErrorOr" />
     <PackageReference Include="MassTransit" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,10 +3,11 @@ using ErrorOr;
 using MediatR;
 using Petrichor.Services.Comments.Common.Domain;
 using Petrichor.Services.Comments.Common.Persistence;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Comments.Features.CreateComment;
 
-public class CreateCommentCommandHandler(CommentsDbContext dbContext)
+public class CreateCommentCommandHandler(CommentsDbContext dbContext, IFusionCache cache)
     : IRequestHandler<CreateCommentCommand, ErrorOr<Guid>>
 {
     public async Task<ErrorOr<Guid>> Handle(
@@ -21,8 +22,11 @@ public class CreateCommentCommandHandler(CommentsDbContext dbContext)
             message: normalizedMessage);
 
         dbContext.Comments.Add(comment);
-
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        await cache.RemoveByTagAsync(
+            $"comments:{comment.ResourceId}",
+            token: cancellationToken);
 
         return comment.Id;
     }

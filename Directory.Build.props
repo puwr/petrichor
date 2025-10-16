@@ -20,6 +20,7 @@
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="Testcontainers.Minio" />
     <PackageReference Include="Testcontainers.RabbitMq" />
+    <PackageReference Include="Testcontainers.Redis" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsTestProject)' == 'true'">

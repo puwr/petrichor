@@ -2,7 +2,7 @@ using Petrichor.Services.Comments.Common.Domain;
 
 namespace Petrichor.Services.Comments.Features.GetComments;
 
-public record CommentResponse
+public record GetCommentsResponse
 {
     public Guid Id { get; init; }
     public Guid ResourceId { get; init; }
@@ -11,9 +11,9 @@ public record CommentResponse
     public string Message { get; init; }
     public DateTime CreatedAtUtc { get; init; }
 
-    public static CommentResponse From(Comment comment, UserSnapshot? userSnapshot)
+    public static GetCommentsResponse From(Comment comment, UserSnapshot? userSnapshot)
     {
-        return new CommentResponse
+        return new GetCommentsResponse
         {
             Id = comment.Id,
             ResourceId = comment.ResourceId,

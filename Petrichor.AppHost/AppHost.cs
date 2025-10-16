@@ -4,6 +4,8 @@ var database = builder.AddPostgres("pg")
     .WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase("database");
 
+var cache = builder.AddRedis("cache");
+
 var rmq = builder.AddRabbitMQ("rmq")
     .WithLifetime(ContainerLifetime.Persistent);
 
@@ -29,8 +31,10 @@ var gallery = builder
 var comments = builder
     .AddProject<Projects.Petrichor_Services_Comments>("commentsservice")
     .WaitFor(database)
+    .WaitFor(cache)
     .WaitFor(rmq)
     .WithReference(database)
+    .WithReference(cache)
     .WithReference(rmq);
 
 builder.AddProject<Projects.Petrichor_Gateway>("gateway")

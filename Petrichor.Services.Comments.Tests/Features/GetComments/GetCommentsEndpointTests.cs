@@ -30,7 +30,8 @@ public class GetCommentsEndpointTests(ApiFactory apiFactory)
         var response = await client.GetAsync($"/comments?resourceId={testResourceId}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var comments = await response.Content.ReadFromJsonAsync<CursorPagedResponse<CommentResponse>>();
+        var comments = await response.Content
+            .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
         comments.Should().NotBeNull();
 
         comments.Items.Count.Should().BeGreaterThan(0);

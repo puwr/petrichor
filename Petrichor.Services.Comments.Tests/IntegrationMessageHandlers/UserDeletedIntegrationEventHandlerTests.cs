@@ -76,7 +76,8 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
 
         var getComments = await client.GetAsync($"/comments?resourceId={testResourceId}");
         getComments.StatusCode.Should().Be(HttpStatusCode.OK);
-        var comments = await getComments.Content.ReadFromJsonAsync<CursorPagedResponse<CommentResponse>>();
+        var comments = await getComments.Content
+            .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
         comments.Should().NotBeNull();
         comments.Items.Count.Should().Be(0);
     }
