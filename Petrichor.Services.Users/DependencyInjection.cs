@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +20,8 @@ using Petrichor.Shared.Inbox;
 using Petrichor.Shared.IntegrationEvents;
 using Petrichor.Shared.Outbox;
 using Petrichor.Shared.Settings;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
 namespace Petrichor.Services.Users;
 
@@ -51,6 +54,29 @@ public static class DependencyInjection
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
                 .UseSnakeCaseNamingConvention());
+
+        builder.Services.AddFusionCache()
+            .WithDefaultEntryOptions(options =>
+            {
+                options.Duration = TimeSpan.FromMinutes(2);
+
+                options.FactorySoftTimeout = TimeSpan.FromMilliseconds(500);
+                options.FactoryHardTimeout = TimeSpan.FromSeconds(2);
+
+                options.IsFailSafeEnabled = true;
+                options.FailSafeMaxDuration = TimeSpan.FromMinutes(20);
+                options.FailSafeThrottleDuration = TimeSpan.FromMinutes(1);
+
+                options.DistributedCacheSoftTimeout = TimeSpan.FromSeconds(1);
+                options.DistributedCacheHardTimeout = TimeSpan.FromSeconds(2);
+
+                options.JitterMaxDuration = TimeSpan.FromSeconds(2);
+            })
+            .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+            .WithDistributedCache(new RedisCache(new RedisCacheOptions()
+            {
+              Configuration = builder.Configuration.GetConnectionString("cache")
+            }));
 
         builder.AddMassTransitRabbitMq("rmq",
             options => options.DisableTelemetry = true);

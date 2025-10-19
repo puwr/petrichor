@@ -15,8 +15,10 @@ var minio = builder.AddMinioContainer("minio")
 var users = builder.
     AddProject<Projects.Petrichor_Services_Users>("usersservice")
     .WaitFor(database)
+    .WaitFor(cache)
     .WaitFor(rmq)
     .WithReference(database)
+    .WithReference(cache)
     .WithReference(rmq);
 
 var gallery = builder

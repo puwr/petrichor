@@ -5,12 +5,14 @@ using Petrichor.Services.Users.Common.Domain;
 using Petrichor.Services.Users.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.Shared.Outbox;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Users.Features.Users.DeleteUser;
 
 public class DeleteUserCommandHandler(
     UserManager<User> userManager,
-    EventPublisher<UsersDbContext> eventPublisher)
+    EventPublisher<UsersDbContext> eventPublisher,
+    IFusionCache cache)
     : IRequestHandler<DeleteUserCommand, ErrorOr<Deleted>>
 {
     public async Task<ErrorOr<Deleted>> Handle(
@@ -31,6 +33,8 @@ public class DeleteUserCommandHandler(
             command.DeleteUploadedImages));
 
         await userManager.UpdateAsync(user);
+
+        await cache.RemoveAsync($"user:{user.Id}", token: cancellationToken);
 
         return Result.Deleted;
     }
