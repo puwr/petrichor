@@ -23,7 +23,7 @@ public static class TagHelpers
         var tagsString = string.Join(',', tags.OrderBy(t => t));
         var tagsData = Encoding.UTF8.GetBytes(tagsString);
 
-        var hashBytes = XxHash64.Hash(tagsData);
+        var hashBytes = XxHash3.Hash(tagsData);
         var hashHex = Convert.ToHexStringLower(hashBytes);
 
         return hashHex;
