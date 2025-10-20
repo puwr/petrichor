@@ -1,10 +1,13 @@
 using Petrichor.Gateway.OpenApi;
+using Petrichor.Gateway.Transforms;
 using Petrichor.ServiceDefaults;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.AddAntiforgery(options => options.HeaderName = "XSRF-TOKEN");
 
 builder.Services.AddOpenApi(options =>
     options.AddDocumentTransformer<OpenApiMerger>());
@@ -21,9 +24,20 @@ builder.Services.AddCors(options =>
             .WithExposedHeaders("Location"));
 });
 
+builder.Services.AddSingleton<AddAntiforgeryTokenResponseTransform>();
+builder.Services.AddSingleton<ValidateAntiforgeryTokenRequestTransform>();
+
 builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .AddTransforms(builderContext =>
+    {
+        builderContext.ResponseTransforms
+            .Add(builderContext.Services.GetRequiredService<AddAntiforgeryTokenResponseTransform>());
+
+        builderContext.RequestTransforms
+            .Add(builderContext.Services.GetRequiredService<ValidateAntiforgeryTokenRequestTransform>());
+    })
     .AddServiceDiscoveryDestinationResolver();
 
 var app = builder.Build();
