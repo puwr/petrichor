@@ -12,6 +12,7 @@
   <Project Path="Petrichor.Services.Gallery/Petrichor.Services.Gallery.csproj" />
   <Project Path="Petrichor.Services.Gallery.Tests/Petrichor.Services.Gallery.Tests.csproj" />
   <Project Path="Petrichor.Services.Users.IntegrationMessages/Petrichor.Services.Users.IntegrationMessages.csproj" />
+  <Project Path="Petrichor.Services.Users.Tests/Petrichor.Services.Users.Tests.csproj" />
   <Project Path="Petrichor.Services.Users/Petrichor.Services.Users.csproj" />
   <Project Path="Petrichor.Shared/Petrichor.Shared.csproj" />
   <Project Path="Petrichor.Services.Comments/Petrichor.Services.Comments.csproj" />
