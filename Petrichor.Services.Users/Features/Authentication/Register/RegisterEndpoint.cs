@@ -16,13 +16,13 @@ public class RegisterEndpoint : FeatureEndpoint
                 var registerResult = await mediator.Send(command);
 
                 return registerResult.Match(
-                    _ => Results.NoContent(),
+                    userId => Results.Created($"/users/{userId}", userId),
                     Problem
                 );
             })
             .WithTags(Tags.Authentication)
             .WithSummary("Register")
-            .Produces(StatusCodes.Status204NoContent)
+            .Produces<Guid>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status409Conflict);
     }

@@ -13,22 +13,27 @@ public class RegisterCommandHandler(
     UserManager<User> userManager,
     UsersDbContext dbContext,
     EventPublisher<UsersDbContext> eventPublisher)
-    : IRequestHandler<RegisterCommand, ErrorOr<Success>>
+    : IRequestHandler<RegisterCommand, ErrorOr<Guid>>
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public async Task<ErrorOr<Guid>> Handle(
         RegisterCommand command,
         CancellationToken cancellationToken)
     {
-        var userExists = await dbContext.Users
+        var existingUser = await dbContext.Users
             .AsNoTracking()
             .IgnoreQueryFilters()
             .Where(u => u.Email == command.Email || u.UserName == command.UserName)
-            .FirstOrDefaultAsync(cancellationToken) is not null;
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (userExists)
+        if (existingUser is not null)
         {
-            return Error
-                .Conflict(description: "User already exists.");
+            if (existingUser.Email == command.Email)
+                return Error
+                    .Conflict(description: "Email is already taken.");
+
+            if (existingUser.UserName == command.UserName)
+                return Error
+                    .Conflict(description: "Username is already taken.");
         }
 
         var isFirstUser = !await userManager.Users.AnyAsync(cancellationToken);
@@ -61,6 +66,6 @@ public class RegisterCommandHandler(
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Result.Success;
+        return user.Id;
     }
 }
