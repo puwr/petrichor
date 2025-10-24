@@ -15,6 +15,11 @@ public static class TestAuthenticationExtensions
             { ClaimTypes.Role, role ?? "" }
         };
 
+        client.SetFakeClaims(claims);
+    }
+
+    public static void SetFakeClaims(this HttpClient client, Dictionary<string, object> claims)
+    {
         var token = JsonSerializer.Serialize(claims);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
