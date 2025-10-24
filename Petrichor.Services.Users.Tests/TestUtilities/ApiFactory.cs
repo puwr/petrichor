@@ -23,8 +23,12 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 
         builder.ConfigureServices(services =>
         {
-            services.AddAuthentication("Test")
-                .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("Test", options => { });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Test";
+                options.DefaultChallengeScheme = "Test";
+            })
+            .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("Test", options => { });
         });
     }
 

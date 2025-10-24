@@ -11,9 +11,9 @@ public class DeleteUserEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapDelete(
             "users/{userId:guid}",
-            async (Guid userId, [FromBody] DeleteUserRequest request, ISender mediator) =>
+            async (Guid userId, ISender mediator, [FromQuery] bool deleteUploadedImages = false) =>
         {
-            var command = new DeleteUserCommand(userId, request.DeleteUploadedImages);
+            var command = new DeleteUserCommand(userId, deleteUploadedImages);
 
             var deleteUserResult = await mediator.Send(command);
 
