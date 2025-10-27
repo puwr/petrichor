@@ -8,10 +8,17 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-tags',
-  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent, ButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    TextInputComponent,
+    ValidationErrorsComponent,
+    ButtonComponent,
+    IconComponent,
+  ],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.scss',
 })

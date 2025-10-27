@@ -3,10 +3,11 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { Comment } from '../../../../shared/models/comment';
 import { AuthStore } from '../../../../core/store/auth/auth.store';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { IconComponent } from '../../../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-comment-item',
-  imports: [DatePipe, ButtonComponent],
+  imports: [DatePipe, ButtonComponent, IconComponent],
   templateUrl: './comment-item.component.html',
   styleUrl: './comment-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

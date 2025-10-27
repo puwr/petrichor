@@ -21,15 +21,7 @@
       <span class="tags__name">{{ tag.name }}</span>
       @if (isUploader()) {
       <app-button variant="fill" (click)="deleteTag(tag.id)">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-        </svg>
+        <app-icon name="delete" />
       </app-button>
       }
     </li>
@@ -39,15 +31,7 @@
   <p class="tags__not-found">No tags found.</p>
   } @if (isUploader()) {
   <app-button variant="fill" (click)="showAddTagInput = true">
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke-width="1.5"
-      stroke="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M11 11v-11h1v11h11v1h-11v11h-1v-11h-11v-1h11z" />
-    </svg>
+    <app-icon name="plus" />
   </app-button>
   } }
 </div>

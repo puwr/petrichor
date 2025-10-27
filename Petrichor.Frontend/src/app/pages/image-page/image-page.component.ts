@@ -14,10 +14,11 @@ import { DialogData } from '../../shared/models/dialog';
 import { CommentsComponent } from '../../features/comments/comments.component';
 import { AuthStore } from '../../core/store/auth/auth.store';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-image-page',
-  imports: [TagsComponent, DatePipe, CommentsComponent, ButtonComponent],
+  imports: [TagsComponent, DatePipe, CommentsComponent, ButtonComponent, IconComponent],
   templateUrl: './image-page.component.html',
   styleUrl: './image-page.component.scss',
 })
