@@ -1,12 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  inject,
-  input,
-  OnDestroy,
-  OnInit,
-  output,
-} from '@angular/core';
+import { Component, DestroyRef, inject, input, OnDestroy, OnInit, output } from '@angular/core';
 import { Tag } from '../../../shared/models/image';
 import { ImageService } from '../../../core/services/image.service';
 import { exhaustMap, Subject } from 'rxjs';
@@ -15,10 +7,11 @@ import { TextInputComponent } from '../../../shared/components/text-input/text-i
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-tags',
-  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent],
+  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent, ButtonComponent],
   templateUrl: './tags.component.html',
   styleUrl: './tags.component.scss',
 })
@@ -48,10 +41,8 @@ export class TagsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.addTags$
       .pipe(
-        exhaustMap((tags) =>
-          this.imageService.addImageTags(this.imageId(), tags)
-        ),
-        takeUntilDestroyed(this.destroyRef)
+        exhaustMap((tags) => this.imageService.addImageTags(this.imageId(), tags)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -63,10 +54,8 @@ export class TagsComponent implements OnInit, OnDestroy {
 
     this.deleteTag$
       .pipe(
-        exhaustMap((tagId) =>
-          this.imageService.deleteImageTag(this.imageId(), tagId)
-        ),
-        takeUntilDestroyed(this.destroyRef)
+        exhaustMap((tagId) => this.imageService.deleteImageTag(this.imageId(), tagId)),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.tagsChanged.emit());
   }

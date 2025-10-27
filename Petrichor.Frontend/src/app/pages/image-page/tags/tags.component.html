@@ -1,11 +1,6 @@
 <div class="tags">
   @if (showAddTagInput) {
-  <form
-    class="tags__form"
-    [formGroup]="addTagsForm"
-    (ngSubmit)="onSubmit()"
-    (reset)="onReset()"
-  >
+  <form class="tags__form" [formGroup]="addTagsForm" (ngSubmit)="onSubmit()" (reset)="onReset()">
     <app-text-input label="Tags" controlName="tags" [autoFocus]="true" />
 
     @if (validationErrors) {
@@ -15,8 +10,8 @@
     }
 
     <div class="tags__actions">
-      <button class="btn-reset btn btn--fill" type="reset">Cancel</button>
-      <button class="btn-reset btn btn--fill" type="submit">Save</button>
+      <app-button variant="neutral" type="reset">Cancel</app-button>
+      <app-button variant="fill" type="submit">Save</app-button>
     </div>
   </form>
   } @else { @if (tags() && tags().length > 0) {
@@ -25,10 +20,7 @@
     <li class="tags__item">
       <span class="tags__name">{{ tag.name }}</span>
       @if (isUploader()) {
-      <button
-        class="btn-reset btn btn--fill btn--icon tags__delete-icon"
-        (click)="deleteTag(tag.id)"
-      >
+      <app-button variant="fill" (click)="deleteTag(tag.id)">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -36,13 +28,9 @@
           stroke-width="1.5"
           stroke="currentColor"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6 18 18 6M6 6l12 12"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>
-      </button>
+      </app-button>
       }
     </li>
     }
@@ -50,10 +38,7 @@
   } @else {
   <p class="tags__not-found">No tags found.</p>
   } @if (isUploader()) {
-  <button
-    class="btn-reset btn btn--fill btn--icon"
-    (click)="showAddTagInput = true"
-  >
+  <app-button variant="fill" (click)="showAddTagInput = true">
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -63,6 +48,6 @@
     >
       <path d="M11 11v-11h1v11h11v1h-11v11h-1v-11h-11v-1h11z" />
     </svg>
-  </button>
+  </app-button>
   } }
 </div>

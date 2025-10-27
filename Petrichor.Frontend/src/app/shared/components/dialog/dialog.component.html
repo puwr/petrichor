@@ -5,12 +5,9 @@
   </p>
   <div class="dialog__actions">
     @for (action of data.actions; track action.text) {
-    <button
-      class="btn-reset btn btn--{{ action.style }}"
-      (click)="dialogRef.close(action.result)"
-    >
+    <app-button [variant]="action.style" (click)="dialogRef.close(action.result)">
       {{ action.text }}
-    </button>
+    </app-button>
     }
   </div>
 </div>

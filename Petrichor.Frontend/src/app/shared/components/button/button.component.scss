@@ -1,0 +1,93 @@
+.button {
+  border: none;
+  border-radius: var(--radius-standard);
+  background-color: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+
+  &:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+    opacity: 0.6;
+  }
+
+  &:active:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  &--fill {
+    background-color: var(--color-secondary);
+    box-shadow: var(--shadow-secondary);
+
+    &:focus-visible {
+      background-color: var(--color-secondary-hover);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-secondary-hover);
+      }
+    }
+  }
+
+  &--text {
+    color: var(--color-text-primary);
+
+    &:focus-visible {
+      background-color: var(--color-secondary);
+      box-shadow: var(--shadow-secondary);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-secondary);
+        box-shadow: var(--shadow-secondary);
+      }
+    }
+  }
+
+  &--danger {
+    background-color: var(--color-danger);
+    box-shadow: var(--shadow-danger);
+
+    &:focus-visible {
+      background-color: var(--color-danger-hover);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-danger-hover);
+      }
+    }
+  }
+
+  &--neutral {
+    background-color: var(--color-neutral);
+    box-shadow: var(--shadow-neutral);
+
+    &:focus-visible {
+      background-color: var(--color-neutral-hover);
+    }
+
+    @media (any-hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--color-neutral-hover);
+      }
+    }
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+}
+
+:host ::ng-deep svg {
+  width: 1rem;
+  height: 1rem;
+}

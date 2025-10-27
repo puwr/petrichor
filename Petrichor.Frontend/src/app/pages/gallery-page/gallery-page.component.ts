@@ -9,6 +9,7 @@ import { TextInputComponent } from '../../shared/components/text-input/text-inpu
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { distinctUntilChanged, Observable, switchMap, tap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-gallery-page',
@@ -18,6 +19,7 @@ import { AsyncPipe } from '@angular/common';
     TextInputComponent,
     ReactiveFormsModule,
     AsyncPipe,
+    ButtonComponent,
   ],
   templateUrl: './gallery-page.component.html',
   styleUrl: './gallery-page.component.scss',
@@ -46,7 +48,7 @@ export class GalleryPageComponent {
       this.searchTags = params.getAll('tags');
 
       return this.loadGalleryData(pageNumber);
-    })
+    }),
   );
 
   onSearch(): void {
@@ -66,9 +68,7 @@ export class GalleryPageComponent {
     }
   }
 
-  private loadGalleryData(
-    pageNumber: number
-  ): Observable<PagedResponse<GalleryItem>> {
+  private loadGalleryData(pageNumber: number): Observable<PagedResponse<GalleryItem>> {
     return this.imageService.getImages(pageNumber, this.searchTags).pipe(
       tap((response) => {
         if (response.totalPages > 0 && pageNumber > response.totalPages) {
@@ -77,7 +77,7 @@ export class GalleryPageComponent {
             queryParamsHandling: 'merge',
           });
         }
-      })
+      }),
     );
   }
 
@@ -90,8 +90,6 @@ export class GalleryPageComponent {
       return false;
     }
 
-    return a.every(
-      (tag, index) => tag.toLowerCase() === b[index].toLowerCase()
-    );
+    return a.every((tag, index) => tag.toLowerCase() === b[index].toLowerCase());
   }
 }

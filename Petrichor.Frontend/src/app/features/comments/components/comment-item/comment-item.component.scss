@@ -23,6 +23,10 @@
     font-size: 1rem;
   }
 
+  &__delete {
+    margin-left: auto;
+  }
+
   &__message {
     width: 100%;
     font-size: 1.2rem;
@@ -33,9 +37,5 @@
       word-break: break-word;
       font-family: inherit;
     }
-  }
-
-  &__delete {
-    align-self: flex-end;
   }
 }

@@ -4,44 +4,45 @@ import { TextInputComponent } from '../../../shared/components/text-input/text-i
 import { RegisterRequest } from '../../../shared/models/auth';
 import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
 import { AuthStore } from '../../../core/store/auth/auth.store';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
-	selector: 'app-register-form',
-	imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent],
-	templateUrl: './register-form.component.html',
-	styleUrl: './register-form.component.scss',
-	changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-register-form',
+  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent, ButtonComponent],
+  templateUrl: './register-form.component.html',
+  styleUrl: './register-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterFormComponent {
-	private fb = inject(FormBuilder);
-	private authStore = inject(AuthStore);
+  private fb = inject(FormBuilder);
+  private authStore = inject(AuthStore);
 
-	validationErrors = signal<string[] | null>(null);
+  validationErrors = signal<string[] | null>(null);
 
-	onSubmit(): void {
-		this.authStore.register({
-			userData: this.registerForm.getRawValue() as RegisterRequest,
-			onError: (errors: string[] | null) => this.validationErrors.set(errors),
-		});
-	}
+  onSubmit(): void {
+    this.authStore.register({
+      userData: this.registerForm.getRawValue() as RegisterRequest,
+      onError: (errors: string[] | null) => this.validationErrors.set(errors),
+    });
+  }
 
-	private userNamePattern =
-		'^' +
-		'[a-zA-Z0-9_]{3,30}' + // letters, digits, underscores, 3-30 chars
-		'$';
+  private userNamePattern =
+    '^' +
+    '[a-zA-Z0-9_]{3,30}' + // letters, digits, underscores, 3-30 chars
+    '$';
 
-	private passwordPattern =
-		'^' +
-		'(?=.*[a-z])' + // lowercase letter
-		'(?=.*[A-Z])' + // uppercase letter
-		'(?=.*\\d)' + // digit
-		'(?=.*\\W)' + // non-alphanumeric char
-		'[A-Za-z\\d\\W]{8,128}' + // 8-128 chars
-		'$';
+  private passwordPattern =
+    '^' +
+    '(?=.*[a-z])' + // lowercase letter
+    '(?=.*[A-Z])' + // uppercase letter
+    '(?=.*\\d)' + // digit
+    '(?=.*\\W)' + // non-alphanumeric char
+    '[A-Za-z\\d\\W]{8,128}' + // 8-128 chars
+    '$';
 
-	registerForm = this.fb.group({
-		email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
-		userName: ['', [Validators.required, Validators.pattern(this.userNamePattern)]],
-		password: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
-	});
+  registerForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
+    userName: ['', [Validators.required, Validators.pattern(this.userNamePattern)]],
+    password: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
+  });
 }

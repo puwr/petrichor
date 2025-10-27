@@ -1,0 +1,7 @@
+<button
+  [class]="`button button--${variant()} ${fullWidth() ? 'button--full-width' : ''}`"
+  [disabled]="disabled()"
+  [type]="type()"
+>
+  <ng-content />
+</button>
