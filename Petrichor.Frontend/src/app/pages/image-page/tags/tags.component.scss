@@ -21,8 +21,16 @@
     background-color: var(--color-primary);
   }
 
-  &__delete-icon {
-    border-radius: 0;
+  &__delete {
+    background-color: var(--color-danger);
+    padding: 0.5rem;
+    color: inherit;
+    outline: none;
+
+    &:hover,
+    &:focus-visible {
+      background-color: var(--color-danger-hover);
+    }
   }
 
   &__not-found {
@@ -31,8 +39,7 @@
 
   &__form {
     width: 100%;
-    animation: fadeInDown var(--duration-standard) var(--animation-standard)
-      both;
+    animation: fadeInDown var(--duration-standard) var(--animation-standard) both;
   }
 
   &__errors {

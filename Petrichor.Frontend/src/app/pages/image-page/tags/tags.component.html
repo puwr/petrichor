@@ -20,9 +20,9 @@
     <li class="tags__item">
       <span class="tags__name">{{ tag.name }}</span>
       @if (isUploader()) {
-      <app-button variant="fill" (click)="deleteTag(tag.id)">
+      <button class="btn-reset tags__delete" (click)="deleteTag(tag.id)">
         <app-icon name="delete" />
-      </app-button>
+      </button>
       }
     </li>
     }

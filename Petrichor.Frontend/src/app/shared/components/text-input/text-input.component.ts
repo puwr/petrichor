@@ -8,11 +8,7 @@ import {
   OnDestroy,
   ViewChild,
 } from '@angular/core';
-import {
-  ControlContainer,
-  FormControl,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { ControlContainer, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-text-input',
@@ -28,7 +24,7 @@ import {
 })
 export class TextInputComponent implements AfterViewInit, OnDestroy {
   type = input<'text' | 'email' | 'password'>('text');
-  label = input.required();
+  label = input<string>();
   controlName = input.required<string>();
   autoFocus = input<boolean>(false);
 

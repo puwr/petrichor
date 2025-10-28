@@ -2,7 +2,7 @@
 <section class="gallery-page">
   <div class="container">
     <form class="gallery-page__search" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-      <app-text-input label="Search by tags" controlName="tags" />
+      <app-text-input controlName="tags" />
       <app-button variant="fill" type="submit">Search</app-button>
     </form>
     @if (searchTags.length > 0) {

@@ -1,5 +1,8 @@
 <div class="text-input">
+  @if (label()) {
   <label class="text-input__label" [for]="controlName()">{{ label() }}</label>
+  }
+
   <input
     #input
     class="text-input__field"
