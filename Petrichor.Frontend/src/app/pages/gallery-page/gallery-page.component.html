@@ -1,17 +1,22 @@
-@if (galleryData$ | async; as data) {
+@if (galleryPageStore.galleryItems(); as galleryItems) {
 <section class="gallery-page">
   <div class="container">
     <form class="gallery-page__search" [formGroup]="searchForm" (ngSubmit)="onSearch()">
       <app-text-input controlName="tags" />
       <app-button variant="fill" type="submit">Search</app-button>
     </form>
-    @if (searchTags.length > 0) {
-    <span class="gallery-page__results"> Search results for: {{ searchTags.join(', ') }} </span>
+    @if (galleryPageStore.searchTags().length > 0) {
+    <span class="gallery-page__results">
+      Search results for: {{ galleryPageStore.searchTags().join(', ') }}
+    </span>
     }
     <div class="gallery-page__gallery-wrapper">
-      <app-gallery [galleryItems]="data.items" />
+      <app-gallery [galleryItems]="galleryItems" />
     </div>
-    <app-pagination [pageNumber]="data.pageNumber" [totalPages]="data.totalPages" />
+    <app-pagination
+      [pageNumber]="galleryPageStore.pageNumber()"
+      [totalPages]="galleryPageStore.totalPages()"
+    />
   </div>
 </section>
 }
