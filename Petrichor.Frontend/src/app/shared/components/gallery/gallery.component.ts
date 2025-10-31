@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
-import { environment } from '../../../../environments/environment';
-import { GalleryItem } from '../../models/image';
 import { RouterLink } from '@angular/router';
+import { GalleryItem } from '@app/features/gallery/image.models';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-gallery',

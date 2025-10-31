@@ -1,6 +1,6 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { LoadingService } from '../../../core/services/loading.service';
+import { Component, inject, input, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { LoadingService } from '@app/core/loading/loading.service';
 
 @Component({
   selector: 'app-progress-bar',
@@ -21,9 +21,6 @@ export class ProgressBarComponent {
   isIndeterminate = computed(() => this.mode() === 'indeterminate');
 
   progressTransform = computed(
-    () =>
-      `translateX(${
-        Math.min(Math.max(this.progressPercentage(), 0), 100) - 100
-      }%)`
+    () => `translateX(${Math.min(Math.max(this.progressPercentage(), 0), 100) - 100}%)`,
   );
 }

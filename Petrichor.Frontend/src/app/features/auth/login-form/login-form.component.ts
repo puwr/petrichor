@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TextInputComponent } from '../../../shared/components/text-input/text-input.component';
-import { LoginRequest } from '../../../shared/models/auth';
-import { ValidationErrorsComponent } from '../../../shared/components/validation-errors/validation-errors.component';
-import { AuthStore } from '../../../core/store/auth/auth.store';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { AuthStore, LoginRequest } from '@app/core/auth';
+import {
+  TextInputComponent,
+  ValidationErrorsComponent,
+  ButtonComponent,
+} from '@app/shared/components';
 
 @Component({
   selector: 'app-login-form',

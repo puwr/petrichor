@@ -1,11 +1,8 @@
 import { Routes } from '@angular/router';
-import { GalleryPageComponent } from './pages/gallery-page/gallery-page.component';
-import { ImagePageComponent } from './pages/image-page/image-page.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { RegisterPageComponent } from './pages/register-page/register-page.component';
-import { NotFoundPageComponent } from './pages/not-found-page/not-found-page.component';
-import { UploadPageComponent } from './pages/upload-page/upload-page.component';
-import { authGuard } from './core/guards/auth.guard';
+import { authGuard } from './core/auth';
+import { RegisterPageComponent, LoginPageComponent } from './features/auth';
+import { GalleryPageComponent, ImagePageComponent, UploadPageComponent } from './features/gallery';
+import { NotFoundPageComponent } from './pages';
 
 export const routes: Routes = [
   { path: '', component: GalleryPageComponent },

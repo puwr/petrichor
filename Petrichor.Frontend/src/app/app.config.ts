@@ -1,27 +1,27 @@
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
-	ApplicationConfig,
-	inject,
-	provideAppInitializer,
-	provideBrowserGlobalErrorListeners,
-	provideZoneChangeDetection,
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+  provideAppInitializer,
+  inject,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { loadingInterceptor } from './core/interceptors/loading.interceptor';
-import { errorInterceptor } from './core/interceptors/error.interceptor';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { InitService } from './core/services/init.service';
+import { authInterceptor } from './core/auth';
+import { errorInterceptor } from './core/error.interceptor';
+import { InitService } from './core/init.service';
+import { loadingInterceptor } from './core/loading/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
-	providers: [
-		provideBrowserGlobalErrorListeners(),
-		provideZoneChangeDetection({ eventCoalescing: true }),
-		provideRouter(routes),
-		provideHttpClient(withInterceptors([errorInterceptor, loadingInterceptor, authInterceptor])),
-		provideAppInitializer(() => {
-			const initService = inject(InitService);
-			return initService.initialize();
-		}),
-	],
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(withInterceptors([errorInterceptor, loadingInterceptor, authInterceptor])),
+    provideAppInitializer(() => {
+      const initService = inject(InitService);
+      return initService.initialize();
+    }),
+  ],
 };

@@ -1,0 +1,48 @@
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+import { SnackbarService } from './snackbar.service';
+
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+  const snackbar = inject(SnackbarService);
+
+  return next(req).pipe(
+    catchError((err: HttpErrorResponse) => {
+      if (err.status === 0) {
+        snackbar.error('Network error. Please check your connection.');
+      }
+
+      if (err.status === 400) {
+        if (err.error?.errors) {
+          const validationErrors = Object.values(err.error.errors).flat();
+
+          if (validationErrors.length) {
+            return throwError(() => validationErrors);
+          }
+        }
+
+        snackbar.error(err.error?.title || err.error);
+      }
+
+      if (err.status === 403) {
+        snackbar.error('Access denied.');
+      }
+
+      if (err.status === 404) {
+        router.navigateByUrl('/not-found');
+      }
+
+      if (err.status === 409) {
+        return throwError(() => [err.error?.title || 'Conflict occured.']);
+      }
+
+      if (err.status >= 500) {
+        snackbar.error('Server error. Please try again later.');
+      }
+
+      return throwError(() => err);
+    }),
+  );
+};

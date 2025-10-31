@@ -1,88 +1,89 @@
+import { Component } from '@angular/core';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { CommentsComponent } from './comments.component';
-import { Component, signal } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { AuthStore } from '../../core/store/auth/auth.store';
+import { AuthStore } from '@app/core/auth';
+import { CommentsComponent } from './comments.component';
 
 describe('Comments', () => {
-	it('should create', () => {
-		const { commentsComponent } = setup();
+  it('should create', () => {
+    const { commentsComponent } = setup();
 
-		expect(commentsComponent).toBeTruthy();
-	});
+    expect(commentsComponent).toBeTruthy();
+  });
 
-	it('renders comment-form component when isAuthenticated is true', () => {
-		const { fixture, authStore } = setup();
+  it('renders comment-form component when isAuthenticated is true', () => {
+    const { fixture, authStore } = setup();
 
-		authStore.isAuthenticated.set(true);
-		fixture.detectChanges();
+    authStore.isAuthenticated.set(true);
+    fixture.detectChanges();
 
-		const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
+    const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
 
-		expect(commentFormComponent).toBeTruthy();
-	});
+    expect(commentFormComponent).toBeTruthy();
+  });
 
-	it('does not render comment-form component when isAuthenticated is false', () => {
-		const { fixture, authStore } = setup();
+  it('does not render comment-form component when isAuthenticated is false', () => {
+    const { fixture, authStore } = setup();
 
-		authStore.isAuthenticated.set(false);
-		fixture.detectChanges();
+    authStore.isAuthenticated.set(false);
+    fixture.detectChanges();
 
-		const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
+    const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
 
-		expect(commentFormComponent).toBeNull();
-	});
+    expect(commentFormComponent).toBeNull();
+  });
 
-	it('renders comment-list component', () => {
-		const { fixture } = setup();
+  it('renders comment-list component', () => {
+    const { fixture } = setup();
 
-		const commentListComponent = fixture.debugElement.query(By.directive(MockCommentListComponent));
+    const commentListComponent = fixture.debugElement.query(By.directive(MockCommentListComponent));
 
-		expect(commentListComponent).toBeTruthy();
-	});
+    expect(commentListComponent).toBeTruthy();
+  });
 });
 
 function setup() {
-	const authStore = {
-		isAuthenticated: signal(false),
-	};
+  const authStore = {
+    isAuthenticated: signal(false),
+  };
 
-	TestBed.configureTestingModule({
-		imports: [CommentsComponent],
-		providers: [
-			{
-				provide: AuthStore,
-				useValue: authStore,
-			},
-		],
-	})
-		.overrideComponent(CommentsComponent, {
-			set: {
-				imports: [MockCommentFormComponent, MockCommentListComponent],
-			},
-		})
-		.compileComponents();
+  TestBed.configureTestingModule({
+    imports: [CommentsComponent],
+    providers: [
+      {
+        provide: AuthStore,
+        useValue: authStore,
+      },
+    ],
+  })
+    .overrideComponent(CommentsComponent, {
+      set: {
+        imports: [MockCommentFormComponent, MockCommentListComponent],
+      },
+    })
+    .compileComponents();
 
-	const fixture = TestBed.createComponent(CommentsComponent);
-	const commentsComponent = fixture.componentInstance;
+  const fixture = TestBed.createComponent(CommentsComponent);
+  const commentsComponent = fixture.componentInstance;
 
-	fixture.detectChanges();
+  fixture.detectChanges();
 
-	return {
-		fixture,
-		commentsComponent,
-		authStore,
-	};
+  return {
+    fixture,
+    commentsComponent,
+    authStore,
+  };
 }
 
 @Component({
-	selector: 'app-comment-form',
-	template: '',
+  selector: 'app-comment-form',
+  template: '',
 })
 export class MockCommentFormComponent {}
 
 @Component({
-	selector: 'app-comment-list',
-	template: '',
+  selector: 'app-comment-list',
+  template: '',
 })
 export class MockCommentListComponent {}

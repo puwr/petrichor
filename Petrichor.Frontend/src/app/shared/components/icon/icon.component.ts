@@ -4,8 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-icon',
   template: '<span class="icon" [innerHTML]="svg"></span>',
-  styles:
-    '.icon { display: flex; align-items: center; } .icon svg { width: 0.9rem; height: 0.9rem; }',
+  styleUrl: 'icon.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class IconComponent {

@@ -1,7 +1,7 @@
-import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { Component, inject } from '@angular/core';
-import { DialogData } from '../../models/dialog';
 import { ButtonComponent } from '../button/button.component';
+import { DialogData } from './dialog.models';
 
 @Component({
   selector: 'app-dialog',

@@ -1,9 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './layout/header/header.component';
-import { LoadingService } from './core/services/loading.service';
-import { AsyncPipe } from '@angular/common';
-import { ProgressBarComponent } from './shared/components/progress-bar/progress-bar.component';
+import { LoadingService } from './core/loading/loading.service';
+import { HeaderComponent } from './layout';
+import { ProgressBarComponent } from './shared/components';
 
 @Component({
   selector: 'app-root',
