@@ -3,8 +3,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": ["vitest/globals"],
-    "target": "es2016"
+    "target": "es2022"
   },
-  "include": ["src/**/*.ts"],
-  "files": ["src/test-setup.ts"]
+  "include": ["src/**/*.spec.ts"]
 }
