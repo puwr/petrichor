@@ -1,89 +1,51 @@
 import { Component } from '@angular/core';
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { AuthStore } from '@app/core/auth';
 import { CommentsComponent } from './comments.component';
+import { render, screen } from '@testing-library/angular';
 
-describe('Comments', () => {
-  it('should create', () => {
-    const { commentsComponent } = setup();
+describe('CommentsComponent', () => {
+  it('renders comment-form component when isAuthenticated is true', async () => {
+    await setup({ isAuthenticated: true });
 
-    expect(commentsComponent).toBeTruthy();
+    expect(screen.getByTestId('comment-form')).toBeInTheDocument();
   });
 
-  it('renders comment-form component when isAuthenticated is true', () => {
-    const { fixture, authStore } = setup();
+  it('does not render comment-form component when isAuthenticated is false', async () => {
+    await setup();
 
-    authStore.isAuthenticated.set(true);
-    fixture.detectChanges();
-
-    const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
-
-    expect(commentFormComponent).toBeTruthy();
+    expect(screen.queryByTestId('comment-form')).not.toBeInTheDocument();
   });
 
-  it('does not render comment-form component when isAuthenticated is false', () => {
-    const { fixture, authStore } = setup();
+  it('renders comment-list component', async () => {
+    await setup();
 
-    authStore.isAuthenticated.set(false);
-    fixture.detectChanges();
-
-    const commentFormComponent = fixture.debugElement.query(By.directive(MockCommentFormComponent));
-
-    expect(commentFormComponent).toBeNull();
-  });
-
-  it('renders comment-list component', () => {
-    const { fixture } = setup();
-
-    const commentListComponent = fixture.debugElement.query(By.directive(MockCommentListComponent));
-
-    expect(commentListComponent).toBeTruthy();
+    expect(screen.getByTestId('comment-list')).toBeInTheDocument();
   });
 });
 
-function setup() {
-  const authStore = {
-    isAuthenticated: signal(false),
-  };
+async function setup(config: { isAuthenticated?: boolean } = {}) {
+  const authStore = { isAuthenticated: signal<boolean>(config.isAuthenticated ?? false) };
 
-  TestBed.configureTestingModule({
-    imports: [CommentsComponent],
+  await render(CommentsComponent, {
     providers: [
       {
         provide: AuthStore,
         useValue: authStore,
       },
     ],
-  })
-    .overrideComponent(CommentsComponent, {
-      set: {
-        imports: [MockCommentFormComponent, MockCommentListComponent],
-      },
-    })
-    .compileComponents();
-
-  const fixture = TestBed.createComponent(CommentsComponent);
-  const commentsComponent = fixture.componentInstance;
-
-  fixture.detectChanges();
-
-  return {
-    fixture,
-    commentsComponent,
-    authStore,
-  };
+    componentImports: [MockCommentFormComponent, MockCommentListComponent],
+  });
 }
 
 @Component({
   selector: 'app-comment-form',
-  template: '',
+  template: '<div data-testid="comment-form">app-comment-form</div>',
 })
 export class MockCommentFormComponent {}
 
 @Component({
   selector: 'app-comment-list',
-  template: '',
+  template: '<div data-testid="comment-list">app-comment-list</div>',
 })
 export class MockCommentListComponent {}

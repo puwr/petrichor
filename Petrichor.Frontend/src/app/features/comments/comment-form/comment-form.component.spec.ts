@@ -1,80 +1,63 @@
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { ButtonComponent, ValidationErrorsComponent } from '@app/shared/components';
 import { CommentStore } from '../store/comment.store';
 import { CommentFormComponent } from './comment-form.component';
+import { render, screen, waitFor } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 
 describe('CommentFormComponent', () => {
-  it('should create', () => {
-    const { commentFormComponent } = setup();
+  it('enables submit button when form is valid', async () => {
+    const { user } = await setup();
 
-    expect(commentFormComponent).toBeTruthy();
+    await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message');
+
+    const btn = screen.getByRole('button', { name: /add comment/i });
+
+    expect(btn).not.toBeDisabled();
   });
 
-  it('enables submit button when form is valid', () => {
-    const { fixture, commentFormComponent } = setup();
+  it('disables submit button when form is invalid', async () => {
+    await setup();
 
-    commentFormComponent.commentForm.patchValue({ comment: 'Comment' });
-    fixture.detectChanges();
+    const btn = screen.getByRole('button', { name: /add comment/i });
 
-    const btn = fixture.debugElement.query(By.directive(ButtonComponent));
-
-    expect(btn.componentInstance.disabled()).toBe(false);
+    expect(btn).toBeDisabled();
   });
 
-  it('disables submit button when form is invalid', () => {
-    const { fixture, commentFormComponent } = setup();
+  it('renders validation-errors component when errors are present', async () => {
+    const { commentStore } = await setup();
 
-    commentFormComponent.commentForm.patchValue({ comment: '' });
-    fixture.detectChanges();
+    commentStore.validationErrors.set(['error 1']);
 
-    const btn = fixture.debugElement.query(By.directive(ButtonComponent));
-
-    expect(btn.componentInstance.disabled()).toBe(true);
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText(/error 1/i)).toBeInTheDocument();
+    });
   });
 
-  it('renders validation-errors component when errors are present', () => {
-    const { fixture, commentStore } = setup();
-
-    commentStore.validationErrors.set(['Error 1']);
-    fixture.detectChanges();
-
-    var validationErrorsComponent = fixture.debugElement.query(
-      By.directive(ValidationErrorsComponent),
-    );
-
-    expect(validationErrorsComponent).toBeTruthy();
-  });
-
-  it('does not render validation-errors component when errors are absent', () => {
-    const { fixture, commentStore } = setup();
+  it('does not render validation-errors component when errors are absent', async () => {
+    const { commentStore } = await setup();
 
     commentStore.validationErrors.set(null);
-    fixture.detectChanges();
 
-    var validationErrorsComponent = fixture.debugElement.query(
-      By.directive(ValidationErrorsComponent),
-    );
-
-    expect(validationErrorsComponent).toBeNull();
+    await waitFor(() => {
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
   });
 
-  describe('onSubmit', () => {
-    it('resets form on successful submission', () => {
-      const { fixture, commentFormComponent } = setup();
+  it('resets form on successful submission', async () => {
+    const { user } = await setup();
 
-      commentFormComponent.commentForm.patchValue({ comment: 'Comment' });
-      fixture.detectChanges();
+    await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message');
 
-      commentFormComponent.onSubmit();
+    await user.click(screen.getByRole('button', { name: /add comment/i }));
 
-      expect(commentFormComponent.commentForm.value.comment).toBeNull();
-    });
+    expect(screen.queryByText(/comment message/i)).not.toBeInTheDocument();
   });
 });
 
-function setup() {
+async function setup() {
+  const user = userEvent.setup();
+
   const commentStore = {
     validationErrors: signal<string[] | null>(null),
     createComment: vi.fn().mockImplementation(({ _, onSuccess }) => {
@@ -82,23 +65,17 @@ function setup() {
     }),
   };
 
-  TestBed.configureTestingModule({
-    imports: [CommentFormComponent],
+  await render(CommentFormComponent, {
     providers: [
       {
         provide: CommentStore,
         useValue: commentStore,
       },
     ],
-  }).compileComponents();
-
-  const fixture = TestBed.createComponent(CommentFormComponent);
-  const commentFormComponent = fixture.componentInstance;
-  fixture.detectChanges();
+  });
 
   return {
-    fixture,
-    commentFormComponent,
+    user,
     commentStore,
   };
 }

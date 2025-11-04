@@ -1,84 +1,58 @@
-import { TestBed } from '@angular/core/testing';
 import { CommentItemComponent } from './comment-item.component';
 import { mockCurrentUser } from '../../../../test/account.mocks';
-import { By } from '@angular/platform-browser';
 import { AuthStore } from '../../../core/auth/store/auth.store';
 import { makeComment } from '@app/features/comments/comment.models';
+import { inputBinding, outputBinding } from '@angular/core';
+import { render, screen } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 
 describe('CommentItemComponent', () => {
-  it('should create', () => {
-    const { commentItemComponent } = setup();
+  it('displays comment message and details', async () => {
+    await setup();
 
-    expect(commentItemComponent).toBeTruthy();
+    expect(screen.getByText(mockCurrentUser.userName)).toBeInTheDocument();
+    expect(screen.getByText(/comment message/i)).toBeInTheDocument();
   });
 
-  it('displays comment details', () => {
-    const { fixture } = setup();
+  it('renders delete button when isAuthorOrAdmin is true', async () => {
+    await setup({ isAuthorOrAdmin: true });
 
-    const commentDetails = fixture.debugElement.query(By.css('.comment__details'));
-
-    expect(commentDetails.nativeElement.textContent).toContain(mockCurrentUser.userName);
+    expect(screen.getByRole('button', { name: /delete comment/i })).toBeInTheDocument();
   });
 
-  it('displays comment message', () => {
-    const { fixture } = setup();
+  it('does not render delete button when isAuthorOrAdmin is false', async () => {
+    await setup();
 
-    const commentDetails = fixture.debugElement.query(By.css('.comment__message'));
-
-    expect(commentDetails.nativeElement.textContent).toEqual('Comment 1');
+    expect(screen.queryByRole('button', { name: /delete comment/i })).not.toBeInTheDocument();
   });
 
-  it('renders delete button when isAuthorOrAdmin is true', () => {
-    const { fixture, authStore } = setup();
+  it('emits commentDeleted event with commentId', async () => {
+    const { user, commentDeletedSpy } = await setup({ isAuthorOrAdmin: true });
 
-    vi.spyOn(authStore, 'isResourceOwnerOrAdmin').mockReturnValue(true);
+    await user.click(screen.getByRole('button', { name: /delete comment/i }));
 
-    fixture.componentRef.setInput('comment', makeComment('id1', '1', 'Comment 1', mockCurrentUser));
-    fixture.detectChanges();
-
-    const btn = fixture.debugElement.query(By.css('.comment__delete'));
-
-    expect(btn).toBeTruthy();
-  });
-
-  it('does not render delete button when isAuthorOrAdmin is false', () => {
-    const { fixture, authStore } = setup();
-
-    vi.spyOn(authStore, 'isResourceOwnerOrAdmin').mockReturnValue(false);
-
-    fixture.componentRef.setInput('comment', makeComment('id1', '1', 'Comment 1', mockCurrentUser));
-    fixture.detectChanges();
-
-    const btn = fixture.debugElement.query(By.css('.comment__delete'));
-
-    expect(btn).toBeNull();
+    expect(commentDeletedSpy).toHaveBeenCalledWith('id1');
   });
 });
 
-function setup() {
-  const authStore = {
-    isResourceOwnerOrAdmin: vi.fn().mockReturnValue(false),
-  };
+async function setup(config: { isAuthorOrAdmin?: boolean } = {}) {
+  const commentDeletedSpy = vi.fn();
+  const user = userEvent.setup();
 
-  TestBed.configureTestingModule({
-    imports: [CommentItemComponent],
+  await render(CommentItemComponent, {
     providers: [
       {
         provide: AuthStore,
-        useValue: authStore,
+        useValue: {
+          isResourceOwnerOrAdmin: vi.fn().mockReturnValue(config.isAuthorOrAdmin ?? false),
+        },
       },
     ],
-  }).compileComponents();
+    bindings: [
+      inputBinding('comment', () => makeComment('id1', '1', 'comment message', mockCurrentUser)),
+      outputBinding('commentDeleted', commentDeletedSpy),
+    ],
+  });
 
-  const fixture = TestBed.createComponent(CommentItemComponent);
-  const commentItemComponent = fixture.componentInstance;
-
-  fixture.componentRef.setInput('comment', makeComment('id1', '1', 'Comment 1', mockCurrentUser));
-  fixture.detectChanges();
-
-  return {
-    fixture,
-    commentItemComponent,
-    authStore,
-  };
+  return { user, commentDeletedSpy };
 }

@@ -1,87 +1,76 @@
-import { Component } from '@angular/core';
-import { signal, input, output } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { signal } from '@angular/core';
 import { AuthStore } from '@app/core/auth';
 import { mockCurrentUser } from 'src/test/account.mocks';
 import { Comment, makeComment } from '../comment.models';
 import { CommentStore } from '../store/comment.store';
 import { CommentListComponent } from './comment-list.component';
+import { render, waitFor, screen } from '@testing-library/angular';
+import { CommentItemComponent } from '../comment-item/comment-item.component';
+import userEvent from '@testing-library/user-event';
 
 describe('CommentListComponent', () => {
-  it('should create', () => {
-    const { commentListcomponent } = setup();
+  it('renders comment-item component for each comment', async () => {
+    const { commentStore } = await setup();
 
-    expect(commentListcomponent).toBeTruthy();
+    commentStore.comments.set([
+      makeComment('id1', '1', 'comment message 1', mockCurrentUser),
+      makeComment('id2', '1', 'comment message 2', mockCurrentUser),
+    ]);
+
+    await waitFor(() => {
+      expect(screen.getByText(/comment message 1/i)).toBeInTheDocument();
+      expect(screen.getByText(/comment message 2/i)).toBeInTheDocument();
+    });
   });
 
-  it('renders comment-item component for each comment', () => {
-    const { fixture, commentStore } = setup();
+  it('calls commentStore.deleteComment when commentDeleted is emitted', async () => {
+    const { user, commentStore } = await setup();
 
-    const comments: Comment[] = [
-      makeComment('id1', '1', 'Comment 1', mockCurrentUser),
-      makeComment('id2', '1', 'Comment 2', mockCurrentUser),
-    ];
+    commentStore.comments.set([makeComment('id1', '1', 'comment message 1', mockCurrentUser)]);
 
-    commentStore.comments.set(comments);
-    fixture.detectChanges();
+    await waitFor(() => expect(screen.getByText(/comment message 1/i)).toBeInTheDocument());
 
-    const commentItems = fixture.debugElement.queryAll(By.directive(MockCommentItemComponent));
-
-    expect(commentItems.length).toBe(2);
-    expect(commentItems[0].componentInstance.comment()).toEqual(comments[0]);
-    expect(commentItems[1].componentInstance.comment()).toEqual(comments[1]);
-  });
-
-  it('calls commentStore.deleteComment when commentDeleted is emitted', () => {
-    const { fixture, commentStore } = setup();
-
-    commentStore.comments.set([makeComment('id1', '1', 'Comment 1', mockCurrentUser)]);
-    fixture.detectChanges();
-
-    const commentItem = fixture.debugElement.query(By.directive(MockCommentItemComponent));
-    commentItem.componentInstance.commentDeleted.emit('id1');
-    fixture.detectChanges();
+    await user.click(screen.getByRole('button', { name: /delete comment/i }));
 
     expect(commentStore.deleteComment).toHaveBeenCalledWith({ commentId: 'id1' });
   });
 
-  it('renders "Load more" button when hasMore is true', () => {
-    const { fixture, commentStore } = setup();
+  it('renders "Load more" button when hasMore is true', async () => {
+    const { commentStore } = await setup();
 
     commentStore.hasMore.set(true);
-    fixture.detectChanges();
 
-    const btn = fixture.debugElement.query(By.directive(MockButtonComponent));
-    expect(btn.nativeElement.textContent).toContain('Load more');
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /load more/i })).toBeInTheDocument(),
+    );
   });
 
-  it('does not render "Load more" button when hasMore is false', () => {
-    const { fixture, commentStore } = setup();
+  it('does not render "Load more" button when hasMore is false', async () => {
+    const { commentStore } = await setup();
 
     commentStore.hasMore.set(false);
-    fixture.detectChanges();
 
-    const btn = fixture.debugElement.query(By.directive(MockButtonComponent));
-    expect(btn).toBeNull();
+    await waitFor(() =>
+      expect(screen.queryByRole('button', { name: /load more/i })).not.toBeInTheDocument(),
+    );
   });
 
-  it('calls commentStore.loadMore when "Load more" button is clicked', () => {
-    const { fixture, commentStore } = setup();
+  it('calls commentStore.loadMore when "Load more" button is clicked', async () => {
+    const { user, commentStore } = await setup();
 
     commentStore.hasMore.set(true);
-    fixture.detectChanges();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /load more/i })).toBeInTheDocument(),
+    );
 
-    const btn = fixture.debugElement.query(By.directive(MockButtonComponent));
-
-    btn.triggerEventHandler('click');
-    fixture.detectChanges();
+    await user.click(screen.getByRole('button', { name: /load more/i }));
 
     expect(commentStore.loadMore).toHaveBeenCalled();
   });
 });
 
-function setup() {
+async function setup() {
+  const user = userEvent.setup();
   const commentStore = {
     comments: signal<Comment[]>([]),
     hasMore: signal(false),
@@ -89,52 +78,25 @@ function setup() {
     loadMore: vi.fn(),
   };
 
-  TestBed.configureTestingModule({
-    imports: [CommentListComponent],
+  await render(CommentListComponent, {
     providers: [
-      {
-        provide: AuthStore,
-        useValue: {
-          isResourceOwnerOrAdmin: vi.fn().mockReturnValue(false),
-        },
-      },
       {
         provide: CommentStore,
         useValue: commentStore,
       },
     ],
-  })
-    .overrideComponent(CommentListComponent, {
-      set: {
-        imports: [MockCommentItemComponent, MockButtonComponent],
+    childComponentOverrides: [
+      {
+        component: CommentItemComponent,
+        providers: [
+          {
+            provide: AuthStore,
+            useValue: { isResourceOwnerOrAdmin: vi.fn().mockReturnValue(true) },
+          },
+        ],
       },
-    })
-    .compileComponents();
+    ],
+  });
 
-  const fixture = TestBed.createComponent(CommentListComponent);
-  const commentListcomponent = fixture.componentInstance;
-  fixture.detectChanges();
-
-  return {
-    fixture,
-    commentListcomponent,
-    commentStore,
-  };
-}
-
-@Component({
-  selector: 'app-comment-item',
-  template: '',
-})
-export class MockCommentItemComponent {
-  comment = input.required<Comment>();
-  commentDeleted = output<void>();
-}
-
-@Component({
-  selector: 'app-button',
-  template: '<button (click)="click.emit()"><ng-content></ng-content></button>',
-})
-export class MockButtonComponent {
-  click = output<void>();
+  return { user, commentStore };
 }

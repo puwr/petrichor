@@ -7,7 +7,11 @@
 
     @if (isAuthorOrAdmin()) {
     <div class="comment__delete">
-      <app-button variant="danger" (click)="commentDeleted.emit(comment.id)">
+      <app-button
+        variant="danger"
+        (click)="commentDeleted.emit(comment.id)"
+        ariaLabel="Delete comment"
+      >
         <app-icon name="delete" />
       </app-button>
     </div>

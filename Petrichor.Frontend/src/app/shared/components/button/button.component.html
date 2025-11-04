@@ -2,6 +2,7 @@
   [class]="`button button--${variant()} ${fullWidth() ? 'button--full-width' : ''}`"
   [disabled]="disabled()"
   [type]="type()"
+  [aria-label]="ariaLabel()"
 >
   <ng-content />
 </button>
