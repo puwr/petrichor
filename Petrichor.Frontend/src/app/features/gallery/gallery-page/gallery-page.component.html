@@ -1,8 +1,9 @@
-@if (galleryPageStore.galleryItems(); as galleryItems) {
+@let galleryItems = galleryPageStore.galleryItems();
+
 <section class="gallery-page">
   <div class="container">
     <form class="gallery-page__search" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-      <app-text-input controlName="tags" />
+      <app-text-input controlName="tags" placeholderText="Search by tags" />
       <app-button variant="fill" type="submit">Search</app-button>
     </form>
     @if (galleryPageStore.searchTags().length > 0) {
@@ -19,4 +20,3 @@
     />
   </div>
 </section>
-}

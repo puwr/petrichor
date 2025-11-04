@@ -1,68 +1,71 @@
 import { signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
-import { Router, ActivatedRoute, convertToParamMap } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 import { GalleryItem } from '../image.models';
 import { GalleryPageComponent } from './gallery-page.component';
 import { GalleryPageStore } from './store/gallery-page.store';
+import { render, screen, waitFor } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
 
 describe('GalleryPageComponent', () => {
-  let component: GalleryPageComponent;
-  let fixture: ComponentFixture<GalleryPageComponent>;
+  it('renders "search results for" message when searchTags are present', async () => {
+    const { galleryPageStore } = await setup();
 
-  let router: Router;
+    galleryPageStore.searchTags.set(['tag1', 'tag2']);
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [GalleryPageComponent],
-      providers: [
-        FormBuilder,
-        {
-          provide: ActivatedRoute,
-          useValue: new BehaviorSubject(
-            convertToParamMap({ page: '1', tags: ['tag1', 'tag2'] }),
-          ).asObservable(),
-        },
-      ],
-    })
-      .overrideProvider(GalleryPageStore, {
-        useValue: {
-          galleryItems: signal<GalleryItem[]>([]),
-          searchTags: signal<string[]>([]),
-          pageNumber: signal<number>(1),
-          totalPages: signal<number>(1),
-        },
-      })
-      .compileComponents();
-
-    fixture = TestBed.createComponent(GalleryPageComponent);
-    component = fixture.componentInstance;
-
-    router = TestBed.inject(Router);
-    vi.spyOn(router, 'navigate');
-
-    fixture.detectChanges();
+    await waitFor(() => {
+      expect(screen.getByText(/search results for: tag1, tag2/i)).toBeInTheDocument();
+    });
   });
 
-  describe('onSearch', () => {
-    it('should process tags correctly on search submission', () => {
-      component.searchForm.setValue({ tags: '  tag1,  tag2,  ' });
-      component.onSearch();
+  it('does not render "search results for" message when searchTags are absent', async () => {
+    await setup();
 
-      expect(router.navigate).toHaveBeenCalledTimes(1);
-      expect(router.navigate).toHaveBeenCalledWith([], {
-        queryParams: { page: null, tags: ['tag1', 'tag2'] },
-        queryParamsHandling: 'merge',
-      });
-      expect(component.searchForm.value.tags).toBeNull();
+    expect(screen.queryByText(/search results for: tag1, tag2/i)).not.toBeInTheDocument();
+  });
+
+  it('processes tags correctly on search submission', async () => {
+    const { user, router } = await setup();
+
+    await user.type(screen.getByPlaceholderText(/search by tags/i), '  tag1,  tag2   ');
+    await user.click(screen.getByRole('button', { name: /search/i }));
+
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      queryParams: { page: null, tags: ['tag1', 'tag2'] },
+      queryParamsHandling: 'merge',
     });
+    expect(screen.getByPlaceholderText(/search by tags/i)).toHaveValue('');
+  });
 
-    it('should ignore empty or whitespace-only tag submissions', () => {
-      component.searchForm.setValue({ tags: ' ' });
-      component.onSearch();
+  it('ignores empty or whitespace-only tag submissions', async () => {
+    const { user, router } = await setup();
 
-      expect(router.navigate).not.toHaveBeenCalled();
-    });
+    await user.type(screen.getByPlaceholderText(/search by tags/i), '  ');
+    await user.click(screen.getByRole('button', { name: /search/i }));
+
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });
+
+async function setup() {
+  const user = userEvent.setup();
+  const galleryPageStore = {
+    galleryItems: signal<GalleryItem[]>([]),
+    searchTags: signal<string[]>([]),
+    pageNumber: signal<number>(1),
+    totalPages: signal<number>(1),
+  };
+  const router = { navigate: vi.fn() };
+
+  await render(GalleryPageComponent, {
+    providers: [
+      {
+        provide: Router,
+        useValue: router,
+      },
+    ],
+    configureTestBed: (testBed) =>
+      testBed.overrideProvider(GalleryPageStore, { useValue: galleryPageStore }),
+  });
+
+  return { user, galleryPageStore, router };
+}
