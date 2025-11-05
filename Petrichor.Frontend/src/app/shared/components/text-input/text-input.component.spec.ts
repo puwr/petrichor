@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { TextInputComponent } from './text-input.component';
 import {
   ControlContainer,
@@ -7,113 +7,94 @@ import {
   FormGroupDirective,
   Validators,
 } from '@angular/forms';
-import { Mock } from 'vitest';
 import { FocusMonitor } from '@angular/cdk/a11y';
-import { By } from '@angular/platform-browser';
+import { render, screen, waitFor } from '@testing-library/angular';
+import userEvent from '@testing-library/user-event';
+import { inputBinding } from '@angular/core';
 
 describe('TextInputComponent', () => {
-  let component: TextInputComponent;
-  let fixture: ComponentFixture<TextInputComponent>;
-  let inputElement: HTMLInputElement;
+  it('displays correct label', async () => {
+    await setup();
 
-  let formGroup: FormGroup;
-  let formGroupDirective: FormGroupDirective;
-  let focusMonitor: { focusVia: Mock; stopMonitoring: Mock };
-
-  beforeEach(() => {
-    formGroup = new FormGroup({
-      testControl: new FormControl('', Validators.required),
-    });
-
-    formGroupDirective = new FormGroupDirective([], []);
-    formGroupDirective.form = formGroup;
-
-    focusMonitor = { focusVia: vi.fn(), stopMonitoring: vi.fn() };
-
-    TestBed.configureTestingModule({
-      imports: [TextInputComponent],
-      providers: [
-        { provide: ControlContainer, useValue: formGroupDirective },
-        { provide: FocusMonitor, useValue: focusMonitor },
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(TextInputComponent);
-    component = fixture.componentInstance;
-
-    fixture.componentRef.setInput('label', 'Test Label');
-    fixture.componentRef.setInput('controlName', 'testControl');
-
-    fixture.detectChanges();
-
-    inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
+    expect(screen.getByText(/test label/i)).toBeInTheDocument();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('focuses input when label is clicked', async () => {
+    const { user } = await setup();
+
+    await user.click(screen.getByText(/test label/i));
+
+    expect(screen.getByRole('textbox', { name: /test label/i })).toHaveFocus();
   });
 
-  it('should display correct label', () => {
-    const label = fixture.debugElement.query(By.css('.text-input__label'));
+  it('does not display error when control is untouched', async () => {
+    await setup();
 
-    expect(label.nativeElement.textContent).toBe('Test Label');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
-  it('should set input id to match control name', () => {
-    expect(inputElement.id).toBe('testControl');
-  });
+  it('displays error when control is invalid after interaction', async () => {
+    const { user } = await setup();
 
-  it('should not display error when control is untouched', () => {
-    component.control.setValue('');
-    fixture.detectChanges();
+    const inputEl = screen.getByRole('textbox', { name: /test label/i });
 
-    const error = fixture.debugElement.query(By.css('.text-input__error'));
+    await user.type(inputEl, 'test');
+    await user.clear(inputEl);
+    await user.tab();
 
-    expect(component.showError()).toBe(false);
-    expect(error).toBeNull();
-  });
-
-  it('should display error when control is invalid after interaction', () => {
-    component.control.markAsTouched();
-    component.control.markAsDirty();
-    component.control.setValue('');
-    fixture.detectChanges();
-
-    const error = fixture.debugElement.query(By.css('.text-input__error'));
-
-    expect(component.showError()).toBe(true);
-    expect(error.nativeElement.textContent).toContain('required');
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/required/i)).toBeInTheDocument();
   });
 
   describe('autoFocus', () => {
-    it('should be disabled by default', () => {
-      expect(component.autoFocus()).toBe(false);
+    it('does not focus input by default', async () => {
+      await setup();
+
+      expect(screen.getByRole('textbox', { name: /test label/i })).not.toHaveFocus();
     });
 
-    it('should not focus input when disabled', () => {
-      component.ngAfterViewInit();
+    it('focuses input when enabled', async () => {
+      await setup({ autoFocus: true });
 
-      expect(focusMonitor.focusVia).not.toHaveBeenCalled();
-    });
-
-    it('should focus input when enabled', () => {
-      fixture.componentRef.setInput('autoFocus', true);
-      fixture.detectChanges();
-
-      component.ngAfterViewInit();
-
-      expect(focusMonitor.focusVia).toHaveBeenCalledTimes(1);
-      expect(focusMonitor.focusVia).toHaveBeenCalledWith(
-        inputElement,
-        'program'
+      await waitFor(() =>
+        expect(screen.getByRole('textbox', { name: /test label/i })).toHaveFocus(),
       );
     });
 
-    it('should clean up focus monitoring on component destruction', () => {
-      component.ngOnDestroy();
+    it('cleans up focus monitoring on component destruction', async () => {
+      const { fixture } = await setup();
 
-      expect(focusMonitor.stopMonitoring).toHaveBeenCalledTimes(1);
-      expect(focusMonitor.stopMonitoring).toHaveBeenCalledWith(inputElement);
+      const inputEl = screen.getByRole('textbox', { name: /test label/i });
+      const focusMonitor = TestBed.inject(FocusMonitor);
+      vi.spyOn(focusMonitor, 'stopMonitoring');
+
+      fixture.destroy();
+
+      expect(focusMonitor.stopMonitoring).toHaveBeenCalledWith(inputEl);
     });
   });
 });
+
+async function setup(config: { autoFocus?: boolean } = {}) {
+  const user = userEvent.setup();
+  const formGroupDirective = new FormGroupDirective([], []);
+  formGroupDirective.form = new FormGroup({
+    testControl: new FormControl('', Validators.required),
+  });
+
+  const { fixture } = await render(TextInputComponent, {
+    bindings: [
+      inputBinding('controlName', () => 'testControl'),
+      inputBinding('label', () => 'test label'),
+      inputBinding('autoFocus', () => config.autoFocus ?? false),
+    ],
+    providers: [
+      {
+        provide: ControlContainer,
+        useValue: formGroupDirective,
+      },
+    ],
+  });
+
+  return { user, fixture };
+}

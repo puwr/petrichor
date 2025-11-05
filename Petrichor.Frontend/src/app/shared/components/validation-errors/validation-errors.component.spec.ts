@@ -1,32 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ValidationErrorsComponent } from './validation-errors.component';
-import { By } from '@angular/platform-browser';
+import { render, screen } from '@testing-library/angular';
+import { inputBinding } from '@angular/core';
 
 describe('ValidationErrorsComponent', () => {
-  let component: ValidationErrorsComponent;
-  let fixture: ComponentFixture<ValidationErrorsComponent>;
+  it('displays validation errors if errors are present', async () => {
+    await render(ValidationErrorsComponent, {
+      bindings: [
+        inputBinding('validationErrors', () => ['validation error 1', 'validation error 2']),
+      ],
+    });
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [ValidationErrorsComponent],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(ValidationErrorsComponent);
-    component = fixture.componentInstance;
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/validation error 1/i)).toBeInTheDocument();
+    expect(screen.getByText(/validation error 2/i)).toBeInTheDocument();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('does not display validation errors if errors are absent', async () => {
+    await render(ValidationErrorsComponent, {
+      bindings: [inputBinding('validationErrors', () => [])],
+    });
 
-  it('should display validation errors', () => {
-    fixture.componentRef.setInput('validationErrors', ['Error 1', 'Error 2']);
-    fixture.detectChanges();
-
-    const errorElements = fixture.debugElement.queryAll(
-      By.css('.validation-errors__item')
-    );
-
-    expect(errorElements.length).toBe(2);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

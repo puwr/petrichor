@@ -1,5 +1,7 @@
+@let validationErrors = this.validationErrors(); @if(validationErrors.length) {
 <ul class="list-reset validation-errors" role="alert">
-  @for (error of validationErrors(); track $index) {
+  @for (error of validationErrors; track $index) {
   <li class="validation-errors__item">{{ error }}</li>
   }
 </ul>
+}
