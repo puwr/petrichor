@@ -4,17 +4,11 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { AuthStore } from '@app/core/auth';
 import { throwError, of, BehaviorSubject } from 'rxjs';
 import { mockCurrentUser } from 'src/test/account.mocks';
-import { makeComment } from '../comment.models';
-import { CommentService } from '../comment.service';
+import { makeComment } from './comment.models';
+import { CommentService } from './comment.service';
 import { CommentStore } from './comment.store';
 
 describe('CommentStore', () => {
-  it('should be created', () => {
-    const { store } = setup();
-
-    expect(store).toBeTruthy();
-  });
-
   it('initializes with correct resourceId and loads comments', () => {
     const { store } = setup();
 

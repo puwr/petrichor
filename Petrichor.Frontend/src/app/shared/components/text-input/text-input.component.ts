@@ -26,7 +26,7 @@ export class TextInputComponent implements AfterViewInit, OnDestroy {
   type = input<'text' | 'email' | 'password'>('text');
   label = input<string>();
   controlName = input.required<string>();
-  placeholderText = input<string | null>(null);
+  placeholderText = input<string | undefined>(undefined);
   autoFocus = input<boolean>(false);
 
   private parentContainer = inject(ControlContainer);

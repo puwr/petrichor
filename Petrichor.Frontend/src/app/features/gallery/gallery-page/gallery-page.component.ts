@@ -7,7 +7,7 @@ import {
   TextInputComponent,
   ButtonComponent,
 } from '@app/shared/components';
-import { GalleryPageStore } from './store/gallery-page.store';
+import { GalleryPageStore } from './gallery-page.store';
 
 @Component({
   selector: 'app-gallery-page',

@@ -16,10 +16,20 @@ import {
 import { withEntities, addEntities, prependEntity, removeEntity } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, exhaustMap, of, map, tap } from 'rxjs';
-import { Comment, CreateCommentRequest, makeComment } from '../comment.models';
-import { CommentService } from '../comment.service';
-import { initialCommentSlice } from './comment.slice';
-import { setNextCursor, setValidationErrors } from './comment.updaters';
+import { Comment, CreateCommentRequest, makeComment } from './comment.models';
+import { CommentService } from './comment.service';
+
+interface CommentSlice {
+  resourceId: string | null;
+  nextCursor: string | null;
+  validationErrors: string[] | null;
+}
+
+const initialCommentSlice: CommentSlice = {
+  resourceId: null,
+  nextCursor: null,
+  validationErrors: null,
+};
 
 export const CommentStore = signalStore(
   withEntities({ entity: type<Comment>(), collection: '_comment' }),
@@ -44,7 +54,7 @@ export const CommentStore = signalStore(
                   addEntities([...response.items], {
                     collection: '_comment',
                   }),
-                  setNextCursor(response.nextCursor),
+                  { nextCursor: response.nextCursor },
                 );
               },
               error: console.error,
@@ -72,15 +82,13 @@ export const CommentStore = signalStore(
                   store._authStore.currentUser()!,
                 );
 
-                patchState(
-                  store,
-                  prependEntity(newComment, { collection: '_comment' }),
-                  setValidationErrors(null),
-                );
+                patchState(store, prependEntity(newComment, { collection: '_comment' }), {
+                  validationErrors: null,
+                });
 
                 onSuccess();
               },
-              error: (errors: string[] | null) => patchState(store, setValidationErrors(errors)),
+              error: (errors: string[] | null) => patchState(store, { validationErrors: errors }),
             }),
           );
         }),

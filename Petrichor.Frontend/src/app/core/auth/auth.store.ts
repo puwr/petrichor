@@ -14,11 +14,18 @@ import {
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, exhaustMap, finalize, tap } from 'rxjs';
-import { authGuard } from '../auth.guard';
-import { RegisterRequest, LoginRequest } from '../auth.models';
-import { AuthService } from '../auth.service';
-import { initialAuthSlice } from './auth.slice';
-import { setCurrentUser } from './auth.updaters';
+import { authGuard } from './auth.guard';
+import { RegisterRequest, LoginRequest } from './auth.models';
+import { AuthService } from './auth.service';
+import { CurrentUser } from '@app/core/account/account.models';
+
+interface AuthSlice {
+  currentUser: CurrentUser | null;
+}
+
+const initialAuthSlice: AuthSlice = {
+  currentUser: null,
+};
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -62,7 +69,7 @@ export const AuthStore = signalStore(
           return store._authService.login(credentials).pipe(
             exhaustMap(() => store._accountService.updateCurrentUser()),
             tapResponse({
-              next: (user) => patchState(store, setCurrentUser(user)),
+              next: (user) => patchState(store, { currentUser: user }),
               error: (errors: string[] | null) => onError(errors),
               complete: () => {
                 const returnUrl = store._route.snapshot.queryParams['returnUrl'] ?? '/';
@@ -87,7 +94,7 @@ export const AuthStore = signalStore(
 
           return store._authService.logout().pipe(
             finalize(() => {
-              patchState(store, setCurrentUser(null));
+              patchState(store, { currentUser: null });
 
               if (isRouteProtected()) {
                 store._router.navigateByUrl('/');
@@ -102,7 +109,7 @@ export const AuthStore = signalStore(
       return store._authService.refreshToken().pipe(
         exhaustMap(() => store._accountService.updateCurrentUser()),
         tap({
-          next: (user) => patchState(store, setCurrentUser(user)),
+          next: (user) => patchState(store, { currentUser: user }),
           error: () => logout(),
         }),
       );

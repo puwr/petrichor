@@ -7,7 +7,7 @@ import {
   Router,
 } from '@angular/router';
 import { authGuard } from './auth.guard';
-import { AuthStore } from './store/auth.store';
+import { AuthStore } from './auth.store';
 
 describe('authGuard', () => {
   it('should be created', () => {

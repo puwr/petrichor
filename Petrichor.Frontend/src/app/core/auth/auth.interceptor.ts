@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, EMPTY, throwError } from 'rxjs';
 import { SnackbarService } from '../snackbar.service';
-import { AuthStore } from './store/auth.store';
+import { AuthStore } from './auth.store';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);

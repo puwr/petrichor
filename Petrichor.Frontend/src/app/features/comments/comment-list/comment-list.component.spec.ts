@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { AuthStore } from '@app/core/auth';
 import { mockCurrentUser } from 'src/test/account.mocks';
 import { Comment, makeComment } from '../comment.models';
-import { CommentStore } from '../store/comment.store';
+import { CommentStore } from '../comment.store';
 import { CommentListComponent } from './comment-list.component';
 import { render, waitFor, screen } from '@testing-library/angular';
 import { CommentItemComponent } from '../comment-item/comment-item.component';

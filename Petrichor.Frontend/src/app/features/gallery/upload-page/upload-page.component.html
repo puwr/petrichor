@@ -1,21 +1,15 @@
 <section class="upload">
-  <input
-    #fileInput
-    type="file"
-    accept="image/*"
-    (change)="onFileSeleted($event)"
-    hidden
-  />
+  <input #fileInput type="file" accept="image/*" (change)="onFileSeleted($event)" hidden />
 
-  @if (previewUrl) {
+  @if (uploadPageStore.previewUrl()) {
   <div class="container">
-    <img class="upload__preview" [src]="previewUrl" alt="Upload preview" />
+    <img class="upload__preview" [src]="uploadPageStore.previewUrl()" alt="Upload preview" />
     <div class="upload__progress">
       <app-progress-bar
         mode="determinate"
-        [progressPercentage]="uploadPercentage"
+        [progressPercentage]="uploadPageStore.uploadProgress()"
       />
-      <span class="upload__percentage">{{ uploadPercentage }}%</span>
+      <span class="upload__percentage">{{ uploadPageStore.uploadProgress() }}%</span>
     </div>
   </div>
 
@@ -36,7 +30,7 @@
         <p>or click to browse files</p>
       </div>
 
-      @if (validationErrors) {
+      @if (uploadPageStore.validationErrors(); as validationErrors) {
       <app-validation-errors [validationErrors]="validationErrors" />
       }
     </div>

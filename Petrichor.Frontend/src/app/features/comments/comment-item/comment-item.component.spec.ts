@@ -1,6 +1,6 @@
 import { CommentItemComponent } from './comment-item.component';
 import { mockCurrentUser } from '../../../../test/account.mocks';
-import { AuthStore } from '../../../core/auth/store/auth.store';
+import { AuthStore } from '../../../core/auth/auth.store';
 import { makeComment } from '@app/features/comments/comment.models';
 import { inputBinding, outputBinding } from '@angular/core';
 import { render, screen } from '@testing-library/angular';

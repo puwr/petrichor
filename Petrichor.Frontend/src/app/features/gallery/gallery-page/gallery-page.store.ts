@@ -16,10 +16,20 @@ import {
 import { withEntities, setAllEntities } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, distinctUntilChanged, map } from 'rxjs';
-import { GalleryItem } from '../../image.models';
-import { ImageService } from '../../image.service';
-import { initialGalleryPageSlice } from './gallery-page.slice';
-import { setTotalPages, setPageNumber, setSearchTags } from './gallery-page.updaters';
+import { GalleryItem } from '../image.models';
+import { ImageService } from '../image.service';
+
+interface GalleryPageSlice {
+  pageNumber: number;
+  totalPages: number;
+  searchTags: string[];
+}
+
+const initialGalleryPageSlice: GalleryPageSlice = {
+  pageNumber: 1,
+  totalPages: 0,
+  searchTags: [],
+};
 
 export const GalleryPageStore = signalStore(
   withEntities({ entity: type<GalleryItem>(), collection: '_galleryItem' }),
@@ -50,7 +60,7 @@ export const GalleryPageStore = signalStore(
                     setAllEntities([...response.items], { collection: '_galleryItem' }),
                   );
 
-                  patchState(store, setTotalPages(response.totalPages));
+                  patchState(store, { totalPages: response.totalPages });
                 }
               },
               error: console.error,
@@ -81,12 +91,12 @@ export const GalleryPageStore = signalStore(
           takeUntilDestroyed(),
         )
         .subscribe(({ pageNumber, searchTags }) => {
-          patchState(store, setPageNumber(pageNumber), setSearchTags(searchTags));
+          patchState(store, { pageNumber, searchTags });
           store._getImages();
         });
     },
   }),
-  withDevtools('gallery'),
+  withDevtools('gallery-page'),
 );
 
 function areTagsEqual(a: string[], b: string[]): boolean {

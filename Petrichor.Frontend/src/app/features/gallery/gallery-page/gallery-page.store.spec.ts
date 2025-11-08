@@ -2,17 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { PagedResponse } from '@app/core/pagination.models';
 import { BehaviorSubject, of } from 'rxjs';
-import { GalleryItem } from '../../image.models';
-import { ImageService } from '../../image.service';
+import { GalleryItem } from '../image.models';
+import { ImageService } from '../image.service';
 import { GalleryPageStore } from './gallery-page.store';
 
-describe('GalleryStore', () => {
-  it('should be created', () => {
-    const { store } = setup();
-
-    expect(store).toBeTruthy();
-  });
-
+describe('GalleryPageStore', () => {
   it('initializes with correct pageNumber and searchTags and loads galleryItems', () => {
     const { store, imageService } = setup();
 

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ValidationErrorsComponent, ButtonComponent } from '@app/shared/components';
-import { CommentStore } from '../store/comment.store';
+import { CommentStore } from '../comment.store';
 
 @Component({
   selector: 'app-comment-form',

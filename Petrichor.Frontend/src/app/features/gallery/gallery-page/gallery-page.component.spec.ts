@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { GalleryItem } from '../image.models';
 import { GalleryPageComponent } from './gallery-page.component';
-import { GalleryPageStore } from './store/gallery-page.store';
+import { GalleryPageStore } from './gallery-page.store';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
