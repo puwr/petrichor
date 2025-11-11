@@ -37,7 +37,7 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task Handle_DeletesUsersSnapshotAndComments()
+    public async Task Handle_DeletesUserSnapshotAndComments()
     {
         var testUserId = Guid.NewGuid();
         var userRegisteredEvent = new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}");

@@ -14,27 +14,33 @@ public class GetImageQueryHandler(IServiceScopeFactory scopeFactory, IFusionCach
         GetImageQuery request,
         CancellationToken cancellationToken)
     {
-        var response = await cache.GetOrSetAsync(
+        var response = await cache.GetOrSetAsync<ErrorOr<GetImageResponse>>(
             $"image:{request.ImageId}",
             async _ =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
 
-                var image = await dbContext.Images
+                var data = await dbContext.Images
                     .AsNoTracking()
+                    .Where(i => i.Id == request.ImageId)
                     .Include(i => i.Tags)
-                    .FirstOrDefaultAsync(i => i.Id == request.ImageId, cancellationToken);
+                    .Select(i => new
+                    {
+                        Image = i,
+                        UserSnapshot = dbContext.UserSnapshots
+                            .FirstOrDefault(us => us.UserId == i.UploaderId)
+                    })
+                    .FirstOrDefaultAsync(cancellationToken);
 
-                return image is null ? null : GetImageResponse.From(image);
+                Console.WriteLine(data?.UserSnapshot?.UserName);
+
+                if (data?.Image is null) return Error.NotFound(description: "Image not found.");
+
+                return GetImageResponse.From(data.Image, data.UserSnapshot);
             },
             token: cancellationToken
         );
-
-        if (response is null)
-        {
-            return Error.NotFound(description: "Image not found.");
-        }
 
         return response;
     }

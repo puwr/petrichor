@@ -14,6 +14,7 @@ public class GalleryDbContext(
 {
     public DbSet<Image> Images { get; set; }
     public DbSet<Tag> Tags { get; set; }
+    public DbSet<UserSnapshot> UserSnapshots { get; set; }
     public DbSet<InboxMessage> InboxMessages { get; set; }
     public DbSet<InboxMessageConsumer> InboxMessageConsumers { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
@@ -35,6 +36,7 @@ public class GalleryDbContext(
         modelBuilder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());
         modelBuilder.ApplyConfiguration(new ImageConfiguration());
         modelBuilder.ApplyConfiguration(new TagConfiguration());
+        modelBuilder.ApplyConfiguration(new UserSnapshotConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

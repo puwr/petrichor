@@ -11,11 +11,18 @@ public class GetImagesEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapGet(
             "images",
-            async (ISender mediator, [FromQuery(Name = "page")] int pageNumber = 1, [FromQuery] string[]? tags = null) =>
+            async (
+                ISender mediator,
+                [FromQuery(Name = "page")] int pageNumber = 1,
+                [FromQuery] string[]? tags = null,
+                [FromQuery] string? uploader = null) =>
             {
-                var pagination = new PaginationParameters(pageNumber, PageSize: 14);
+                var pagination = new PaginationParameters(pageNumber, PageSize: 20);
 
-                var query = new GetImagesQuery(pagination, tags?.ToList() ?? null);
+                var query = new GetImagesQuery(
+                    Pagination: pagination,
+                    Tags: tags?.ToList() ?? null,
+                    Uploader: uploader?.ToLowerInvariant());
 
                 var getImagesResult = await mediator.Send(query);
 

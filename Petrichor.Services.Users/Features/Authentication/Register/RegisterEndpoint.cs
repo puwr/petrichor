@@ -11,7 +11,10 @@ public class RegisterEndpoint : FeatureEndpoint
             "auth/register",
             async (RegisterRequest request, ISender mediator) =>
             {
-                var command = new RegisterCommand(request.Email, request.UserName, request.Password);
+                var command = new RegisterCommand(
+                    request.Email.ToLowerInvariant(),
+                    request.UserName.ToLowerInvariant(),
+                    request.Password);
 
                 var registerResult = await mediator.Send(command);
 

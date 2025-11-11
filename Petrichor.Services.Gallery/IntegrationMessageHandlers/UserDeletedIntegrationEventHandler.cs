@@ -16,6 +16,10 @@ public class UserDeletedIntegrationEventHandler(
 {
     public async Task Handle(UserDeletedIntegrationEvent @event, CancellationToken cancellationToken)
     {
+        await dbContext.UserSnapshots
+            .Where(c => c.UserId == @event.UserId)
+            .ExecuteDeleteAsync(cancellationToken);
+
         if (@event.DeleteUploadedImages)
         {
             var images = await dbContext.Images

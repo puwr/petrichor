@@ -18,7 +18,7 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("gallery")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -62,6 +62,9 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                     b.HasIndex("Id")
                         .HasDatabaseName("ix_images_id");
 
+                    b.HasIndex("UploaderId")
+                        .HasDatabaseName("ix_images_uploader_id");
+
                     b.ToTable("images", "gallery");
                 });
 
@@ -88,6 +91,29 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                         .HasDatabaseName("ix_tags_name");
 
                     b.ToTable("tags", "gallery");
+                });
+
+            modelBuilder.Entity("Petrichor.Services.Gallery.Common.Domain.UserSnapshot", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_name");
+
+                    b.HasKey("UserId")
+                        .HasName("pk_user_snapshots");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_snapshots_user_id");
+
+                    b.HasIndex("UserName")
+                        .HasDatabaseName("ix_user_snapshots_user_name");
+
+                    b.ToTable("user_snapshots", "gallery");
                 });
 
             modelBuilder.Entity("Petrichor.Shared.Inbox.InboxMessage", b =>

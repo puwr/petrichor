@@ -20,13 +20,13 @@ public class GetImagesQueryHandler(IServiceScopeFactory scopeFactory, IFusionCac
         var tagsHash = TagHelpers.Hash(normalizedTags);
 
         var response = await cache.GetOrSetAsync(
-            $"images:page-{request.Pagination.PageNumber}:tags-{tagsHash}",
+            $"images:page-{request.Pagination.PageNumber}:tags-{tagsHash}:uploader-{request.Uploader ?? "all"}",
             async _ =>
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
 
-                var query = dbContext.Images.AsQueryable();
+                var query = dbContext.Images.AsNoTracking().AsQueryable();
 
                 query = query.WhereIf(
                     condition: normalizedTags?.Count > 0,
@@ -34,11 +34,17 @@ public class GetImagesQueryHandler(IServiceScopeFactory scopeFactory, IFusionCac
                         .All(nt => image.Tags.Any(t => t.Name.Contains(nt)))
                 );
 
+                query = query.WhereIf(
+                    condition: !string.IsNullOrWhiteSpace(request.Uploader),
+                    predicate: image => dbContext.UserSnapshots
+                        .Any(us => us.UserName == request.Uploader && us.UserId == image.UploaderId)
+                );
+
                 var images = await query
                     .AsNoTracking()
                     .OrderByDescending(i => i.UploadedDateTime)
                     .Select(image => GetImagesResponse.From(image))
-                    .ToPagedResponseAsync(request.Pagination, cancellationToken: cancellationToken);
+                    .ToPagedResponseAsync(request.Pagination, cancellationToken);
 
                 return images;
             },

@@ -18,7 +18,7 @@ public record GetCommentsResponse
             Id = comment.Id,
             ResourceId = comment.ResourceId,
             AuthorId = comment.AuthorId,
-            AuthorUserName = userSnapshot?.UserName ?? "Unknown",
+            AuthorUserName = userSnapshot?.UserName ?? "Deleted",
             Message = comment.Message,
             CreatedAtUtc = comment.CreatedAtUtc
         };

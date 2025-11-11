@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.TestUtilities;
@@ -15,12 +17,14 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
 {
     private readonly ApiFactory _apiFactory;
     private readonly IServiceScope _scope;
+    private readonly GalleryDbContext _dbContext;
     private readonly IBus _bus;
 
     public UserDeletedIntegrationEventHandlerTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _scope = _apiFactory.Services.CreateScope();
+        _dbContext = _scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
         _bus = _scope.ServiceProvider.GetRequiredService<IBus>();
     }
 
@@ -30,7 +34,34 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task Handle_DeletesImages()
+    public async Task Handle_DeleteUsersSnapshot()
+    {
+        var testUserId = Guid.NewGuid();
+
+        await _bus.Publish(new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}"));
+        await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
+        {
+            var userSnapshot = await _dbContext.UserSnapshots
+                .AsNoTracking()
+                .FirstOrDefaultAsync(us => us.UserId == testUserId);
+
+            return userSnapshot is not null;
+        });
+
+        await _bus.Publish(new UserDeletedIntegrationEvent(testUserId, false));
+
+        await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
+        {
+            var userSnapshot = await _dbContext.UserSnapshots
+                .AsNoTracking()
+                .FirstOrDefaultAsync(us => us.UserId == testUserId);
+
+            return userSnapshot is null;
+        });
+    }
+
+    [Fact]
+    public async Task Handle_WhenDeleteUploadedImagesIsTrue_DeletesImages()
     {
         var testUserId = Guid.NewGuid();
 

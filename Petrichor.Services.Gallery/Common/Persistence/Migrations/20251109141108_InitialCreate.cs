@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -108,6 +109,19 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user_snapshots",
+                schema: "gallery",
+                columns: table => new
+                {
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_user_snapshots", x => x.user_id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "image_tags",
                 schema: "gallery",
                 columns: table => new
@@ -147,6 +161,12 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                 column: "id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_images_uploader_id",
+                schema: "gallery",
+                table: "images",
+                column: "uploader_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_tags_id",
                 schema: "gallery",
                 table: "tags",
@@ -159,6 +179,18 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                 table: "tags",
                 column: "name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_snapshots_user_id",
+                schema: "gallery",
+                table: "user_snapshots",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_snapshots_user_name",
+                schema: "gallery",
+                table: "user_snapshots",
+                column: "user_name");
         }
 
         /// <inheritdoc />
@@ -182,6 +214,10 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "outbox_messages",
+                schema: "gallery");
+
+            migrationBuilder.DropTable(
+                name: "user_snapshots",
                 schema: "gallery");
 
             migrationBuilder.DropTable(

@@ -13,6 +13,7 @@ public class ImageConfiguration : IEntityTypeConfiguration<Image>
         builder
             .Property(i => i.Id)
             .ValueGeneratedNever();
+        builder.HasIndex(i => i.UploaderId);
 
         builder.OwnsOne(i => i.OriginalImage, originalImage =>
         {

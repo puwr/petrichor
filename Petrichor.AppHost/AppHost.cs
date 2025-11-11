@@ -24,9 +24,11 @@ var users = builder.
 var gallery = builder
     .AddProject<Projects.Petrichor_Services_Gallery>("galleryservice")
     .WaitFor(database)
+    .WaitFor(cache)
     .WaitFor(rmq)
     .WaitFor(minio)
     .WithReference(database)
+    .WithReference(cache)
     .WithReference(rmq)
     .WithReference(minio);
 

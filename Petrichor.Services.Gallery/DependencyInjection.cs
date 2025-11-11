@@ -1,5 +1,6 @@
 using System.Text;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -58,12 +59,19 @@ public static class DependencyInjection
                     .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "gallery"))
             .UseSnakeCaseNamingConvention());
 
-        builder.AddMassTransitRabbitMq("rmq",
-            options => options.DisableTelemetry = true,
-            configure =>
+        builder.Services.AddMassTransit(configure =>
+        {
+            configure.DisableUsageTelemetry();
+
+            configure.UsingRabbitMq((context, cfg) =>
             {
-                configure.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
+                cfg.Host(builder.Configuration.GetConnectionString("rmq"));
+                cfg.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(prefix: "gallery"));
             });
+
+            configure.AddConsumer<IntegrationEventConsumer<UserRegisteredIntegrationEvent>>();
+            configure.AddConsumer<IntegrationEventConsumer<UserDeletedIntegrationEvent>>();
+        });
 
         builder.Services.AddFusionCache()
             .WithDefaultEntryOptions(options =>

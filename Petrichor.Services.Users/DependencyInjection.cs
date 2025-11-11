@@ -1,5 +1,6 @@
 using System.Text;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -75,11 +76,19 @@ public static class DependencyInjection
             .WithSerializer(new FusionCacheSystemTextJsonSerializer())
             .WithDistributedCache(new RedisCache(new RedisCacheOptions()
             {
-              Configuration = builder.Configuration.GetConnectionString("cache")
+                Configuration = builder.Configuration.GetConnectionString("cache")
             }));
 
-        builder.AddMassTransitRabbitMq("rmq",
-            options => options.DisableTelemetry = true);
+        builder.Services.AddMassTransit(configure =>
+        {
+            configure.DisableUsageTelemetry();
+
+            configure.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(builder.Configuration.GetConnectionString("rmq"));
+                cfg.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(prefix: "users"));
+            });
+        });
 
         builder.Services.AddScoped<EventPublisher<UsersDbContext>>();
 
