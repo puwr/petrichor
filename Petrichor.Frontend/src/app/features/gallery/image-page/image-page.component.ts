@@ -2,7 +2,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, OnDestroy, inject, DestroyRef, Signal, computed } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthStore } from '@app/core/auth';
 import { LoadingService } from '@app/core/loading/loading.service';
 import { CommentsComponent } from '@app/features/comments/comments.component';
@@ -16,7 +16,7 @@ import { Image } from '../image.models';
 
 @Component({
   selector: 'app-image-page',
-  imports: [TagsComponent, DatePipe, CommentsComponent, ButtonComponent, IconComponent],
+  imports: [TagsComponent, DatePipe, CommentsComponent, ButtonComponent, IconComponent, RouterLink],
   templateUrl: './image-page.component.html',
   styleUrl: './image-page.component.scss',
 })

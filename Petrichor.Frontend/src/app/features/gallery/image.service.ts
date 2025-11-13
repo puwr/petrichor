@@ -57,12 +57,20 @@ export class ImageService {
       );
   }
 
-  getImages(pageNumber: number, tags: string[]): Observable<PagedResponse<GalleryItem>> {
+  getImages(
+    pageNumber: number,
+    tags: string[],
+    uploader: string | null,
+  ): Observable<PagedResponse<GalleryItem>> {
     let params = new HttpParams().set('page', pageNumber);
 
     tags.forEach((tag) => {
       params = params.append('tags', tag);
     });
+
+    if (uploader) {
+      params = params.append('uploader', uploader);
+    }
 
     return this.http.get<PagedResponse<GalleryItem>>(`${this.apiUrl}/images`, {
       params,

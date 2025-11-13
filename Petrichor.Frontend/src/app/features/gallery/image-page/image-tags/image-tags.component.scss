@@ -9,23 +9,6 @@
     gap: 0.5rem;
   }
 
-  &__link {
-    color: var(--color-secondary);
-    text-decoration: none;
-    outline: none;
-    transition: color var(--duration-standard) var(--animation-standard);
-
-    &:focus-visible {
-      color: var(--color-secondary-hover);
-    }
-
-    @media (any-hover: hover) {
-      &:hover {
-        color: var(--color-secondary-hover);
-      }
-    }
-  }
-
   &__not-found {
     margin: 0;
   }

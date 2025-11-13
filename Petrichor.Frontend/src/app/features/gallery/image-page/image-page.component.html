@@ -21,7 +21,14 @@
         />
       </div>
       <div class="image-page__meta">
-        <span>Uploaded at: {{ img.uploadedAt | date : 'longDate' }}</span>
+        <span>
+          Uploaded by
+          <a class="link" routerLink="/" [queryParams]="{ uploader: img.uploader }">{{
+            img.uploader
+          }}</a>
+          at:
+          {{ img.uploadedAt | date : 'longDate' }}
+        </span>
         @if (isUploaderOrAdmin()) {
         <app-button variant="danger" (click)="onImageDelete()">
           <app-icon name="delete" />

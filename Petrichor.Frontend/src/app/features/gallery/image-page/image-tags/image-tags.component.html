@@ -18,7 +18,7 @@
   <ul class="tags__list list-reset">
     @for (tag of tags(); track tag) {
     <li>
-      <a class="tags__link" routerLink="/" [queryParams]="{ tags: tag }">#{{ tag }}</a>
+      <a class="link" routerLink="/" [queryParams]="{ tags: tag }">#{{ tag }}</a>
     </li>
     }
   </ul>

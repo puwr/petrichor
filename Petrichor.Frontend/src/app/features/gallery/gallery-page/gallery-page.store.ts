@@ -1,5 +1,5 @@
 import { withDevtools } from '@angular-architects/ngrx-toolkit';
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute } from '@angular/router';
 import { tapResponse } from '@ngrx/operators';
@@ -23,19 +23,35 @@ interface GalleryPageSlice {
   pageNumber: number;
   totalPages: number;
   searchTags: string[];
+  selectedUploader: string | null;
 }
 
 const initialGalleryPageSlice: GalleryPageSlice = {
   pageNumber: 1,
   totalPages: 0,
   searchTags: [],
+  selectedUploader: null,
 };
 
 export const GalleryPageStore = signalStore(
   withEntities({ entity: type<GalleryItem>(), collection: '_galleryItem' }),
   withState(initialGalleryPageSlice),
-  withComputed(({ _galleryItemEntities }) => ({
-    galleryItems: _galleryItemEntities,
+  withComputed((store) => ({
+    galleryItems: store._galleryItemEntities,
+    filterMessage: computed(() => {
+      const searchTags = store.searchTags();
+      const uploader = store.selectedUploader();
+
+      if (uploader && searchTags.length > 0) {
+        return `Images uploaded by ${uploader} with tags: ${searchTags.join(', ')}`;
+      } else if (uploader) {
+        return `All images uploaded by ${uploader}`;
+      } else if (searchTags.length > 0) {
+        return `Search results for: ${searchTags.join(', ')}`;
+      }
+
+      return '';
+    }),
   })),
   withProps(() => ({
     _imageService: inject(ImageService),
@@ -46,26 +62,28 @@ export const GalleryPageStore = signalStore(
     const _getImages = rxMethod<void>(
       pipe(
         switchMap(() =>
-          store._imageService.getImages(store.pageNumber(), store.searchTags()).pipe(
-            tapResponse({
-              next: (response) => {
-                if (response.totalPages > 0 && store.pageNumber() > response.totalPages) {
-                  store._router.navigate([], {
-                    queryParams: { page: response.totalPages },
-                    queryParamsHandling: 'merge',
-                  });
-                } else {
-                  patchState(
-                    store,
-                    setAllEntities([...response.items], { collection: '_galleryItem' }),
-                  );
+          store._imageService
+            .getImages(store.pageNumber(), store.searchTags(), store.selectedUploader())
+            .pipe(
+              tapResponse({
+                next: (response) => {
+                  if (response.totalPages > 0 && store.pageNumber() > response.totalPages) {
+                    store._router.navigate([], {
+                      queryParams: { page: response.totalPages },
+                      queryParamsHandling: 'merge',
+                    });
+                  } else {
+                    patchState(
+                      store,
+                      setAllEntities([...response.items], { collection: '_galleryItem' }),
+                    );
 
-                  patchState(store, { totalPages: response.totalPages });
-                }
-              },
-              error: console.error,
-            }),
-          ),
+                    patchState(store, { totalPages: response.totalPages });
+                  }
+                },
+                error: console.error,
+              }),
+            ),
         ),
       ),
     );
@@ -79,19 +97,21 @@ export const GalleryPageStore = signalStore(
           distinctUntilChanged((prev, curr) => {
             return (
               prev.get('page') === curr.get('page') &&
-              areTagsEqual(prev.getAll('tags'), curr.getAll('tags'))
+              areTagsEqual(prev.getAll('tags'), curr.getAll('tags')) &&
+              prev.get('uploader') === curr.get('uploader')
             );
           }),
           map((params) => {
             const pageNumber = Number(params.get('page')) || 1;
             const searchTags = params.getAll('tags');
+            const uploader = params.get('uploader');
 
-            return { pageNumber, searchTags };
+            return { pageNumber, searchTags, uploader };
           }),
           takeUntilDestroyed(),
         )
-        .subscribe(({ pageNumber, searchTags }) => {
-          patchState(store, { pageNumber, searchTags });
+        .subscribe(({ pageNumber, searchTags, uploader }) => {
+          patchState(store, { pageNumber, searchTags, selectedUploader: uploader });
           store._getImages();
         });
     },

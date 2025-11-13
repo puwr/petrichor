@@ -7,20 +7,14 @@ import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 
 describe('GalleryPageComponent', () => {
-  it('renders "search results for" message when searchTags are present', async () => {
+  it('renders filter message when its present', async () => {
     const { galleryPageStore } = await setup();
 
-    galleryPageStore.searchTags.set(['tag1', 'tag2']);
+    galleryPageStore.filterMessage.set('Search results for: tag1, tag2');
 
     await waitFor(() => {
       expect(screen.getByText(/search results for: tag1, tag2/i)).toBeInTheDocument();
     });
-  });
-
-  it('does not render "search results for" message when searchTags are absent', async () => {
-    await setup();
-
-    expect(screen.queryByText(/search results for: tag1, tag2/i)).not.toBeInTheDocument();
   });
 
   it('processes tags correctly on search submission', async () => {
@@ -50,9 +44,9 @@ async function setup() {
   const user = userEvent.setup();
   const galleryPageStore = {
     galleryItems: signal<GalleryItem[]>([]),
-    searchTags: signal<string[]>([]),
     pageNumber: signal<number>(1),
     totalPages: signal<number>(1),
+    filterMessage: signal<string>(''),
   };
   const router = { navigate: vi.fn() };
 

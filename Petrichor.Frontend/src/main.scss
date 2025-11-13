@@ -66,3 +66,20 @@ body {
   gap: 1rem;
   width: min(90vw, 30rem);
 }
+
+.link {
+  color: var(--color-secondary);
+  text-decoration: none;
+  outline: none;
+  transition: color var(--duration-standard) var(--animation-standard);
+
+  &:focus-visible {
+    color: var(--color-secondary-hover);
+  }
+
+  @media (any-hover: hover) {
+    &:hover {
+      color: var(--color-secondary-hover);
+    }
+  }
+}
