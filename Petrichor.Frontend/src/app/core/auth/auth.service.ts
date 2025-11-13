@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { RegisterRequest, LoginRequest, AuthStatusResponse } from './auth.models';
+import { RegisterRequest, LoginRequest } from './auth.models';
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +26,5 @@ export class AuthService {
 
   logout(): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/auth/logout`, {});
-  }
-
-  getAuthStatus(): Observable<AuthStatusResponse> {
-    return this.http.get<AuthStatusResponse>(`${this.apiUrl}/auth/status`);
   }
 }

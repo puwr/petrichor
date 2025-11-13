@@ -12,7 +12,7 @@ export class AccountService {
 
   private apiUrl = environment.apiUrl;
 
-  updateCurrentUser(): Observable<CurrentUser> {
+  getCurrentUser(): Observable<CurrentUser> {
     return this.http.get<CurrentUser>(`${this.apiUrl}/account/me`);
   }
 }

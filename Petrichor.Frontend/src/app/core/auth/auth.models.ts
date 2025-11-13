@@ -8,7 +8,3 @@ export type RegisterRequest = {
   userName: string;
   password: string;
 };
-
-export type AuthStatusResponse = {
-  isAuthenticated: boolean;
-};

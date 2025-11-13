@@ -67,7 +67,7 @@ export const AuthStore = signalStore(
       pipe(
         exhaustMap(({ credentials, onError }) => {
           return store._authService.login(credentials).pipe(
-            exhaustMap(() => store._accountService.updateCurrentUser()),
+            exhaustMap(() => store._accountService.getCurrentUser()),
             tapResponse({
               next: (user) => patchState(store, { currentUser: user }),
               error: (errors: string[] | null) => onError(errors),
@@ -107,7 +107,7 @@ export const AuthStore = signalStore(
 
     const refreshToken = () => {
       return store._authService.refreshToken().pipe(
-        exhaustMap(() => store._accountService.updateCurrentUser()),
+        exhaustMap(() => store._accountService.getCurrentUser()),
         tap({
           next: (user) => patchState(store, { currentUser: user }),
           error: () => logout(),

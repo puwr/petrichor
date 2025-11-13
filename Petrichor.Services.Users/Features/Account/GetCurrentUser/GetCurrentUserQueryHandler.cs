@@ -3,13 +3,13 @@ using System.Security.Claims;
 using ErrorOr;
 using MediatR;
 
-namespace Petrichor.Services.Users.Features.Account.GetCurrentUserInfo;
+namespace Petrichor.Services.Users.Features.Account.GetCurrentUser;
 
 public class GetCurrentUserInfoQueryHandler
-    : IRequestHandler<GetCurrentUserInfoQuery, ErrorOr<GetCurrentUserInfoResponse>>
+    : IRequestHandler<GetCurrentUserQuery, ErrorOr<GetCurrentUserResponse>>
 {
-    public Task<ErrorOr<GetCurrentUserInfoResponse>> Handle(
-        GetCurrentUserInfoQuery request,
+    public Task<ErrorOr<GetCurrentUserResponse>> Handle(
+        GetCurrentUserQuery request,
         CancellationToken cancellationToken)
     {
         var user = request.User;
@@ -21,7 +21,7 @@ public class GetCurrentUserInfoQueryHandler
         {
             return Task.FromResult(Error
                 .Failure("User id claim is missing.")
-                .ToErrorOr<GetCurrentUserInfoResponse>());
+                .ToErrorOr<GetCurrentUserResponse>());
         }
 
         var email = user
@@ -31,7 +31,7 @@ public class GetCurrentUserInfoQueryHandler
         {
             return Task.FromResult(Error
                 .Failure("User email claim is missing.")
-                .ToErrorOr<GetCurrentUserInfoResponse>());
+                .ToErrorOr<GetCurrentUserResponse>());
         }
 
         var userName = user
@@ -41,14 +41,14 @@ public class GetCurrentUserInfoQueryHandler
         {
             return Task.FromResult(Error
                 .Failure("User name claim is missing.")
-                .ToErrorOr<GetCurrentUserInfoResponse>());
+                .ToErrorOr<GetCurrentUserResponse>());
         }
 
         var roles = user.FindAll(ClaimTypes.Role)
             .Select(c => c.Value)
             .ToList();
 
-        return Task.FromResult(new GetCurrentUserInfoResponse(
+        return Task.FromResult(new GetCurrentUserResponse(
             id,
             email,
             userName,
