@@ -2,29 +2,31 @@ using MediatR;
 using Petrichor.Services.Gallery.Common.Authorization;
 using Petrichor.Shared.Features;
 
-namespace Petrichor.Services.Gallery.Features.DeleteImageTag;
+namespace Petrichor.Services.Gallery.Features.UpdateImageTags;
 
-public class DeleteImageTagEndpoint : FeatureEndpoint
+public class UpdateImageTagsEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapDelete("images/{imageId:guid}/tags/{tagId:guid}", async (
+        endpointRouteBuilder.MapPatch("images/{imageId:guid}/tags", async (
             Guid imageId,
-            Guid tagId,
+            UpdateImageTagsRequest request,
             ISender mediator) =>
         {
-            var command = new DeleteImageTagCommand(imageId, tagId);
+            var command = new UpdateImageTagsCommand(imageId, request.Tags);
 
-            var deleteImageTagResult = await mediator.Send(command);
+            var addImageTagResult = await mediator.Send(command);
 
-            return deleteImageTagResult.Match(
+            return addImageTagResult.Match(
                 _ => Results.NoContent(),
-                Problem);
+                Problem
+            );
         })
         .RequireAuthorization(GalleryPolicies.ImageUploaderOrAdmin)
         .WithTags(Tags.Images)
-        .WithSummary("Delete tag from image")
+        .WithSummary("Update image tags")
         .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status400BadRequest)
         .Produces(StatusCodes.Status401Unauthorized)
         .Produces(StatusCodes.Status403Forbidden);
     }

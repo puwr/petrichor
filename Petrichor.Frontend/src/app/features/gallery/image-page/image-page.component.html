@@ -14,7 +14,7 @@
     <div class="image-page__details">
       <div class="image-page__tags">
         <app-tags
-          [isUploader]="authStore.isResourceOwnerOrAdmin(img.uploaderId)"
+          [isUploader]="authStore.isResourceOwnerOrAdmin(img.uploader)"
           [imageId]="img.id"
           [tags]="img.tags"
           (tagsChanged)="refreshImage()"

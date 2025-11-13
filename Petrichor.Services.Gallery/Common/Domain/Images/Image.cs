@@ -24,28 +24,17 @@ public sealed class Image
         };
     }
 
-    public ErrorOr<Success> AddTags(List<Tag> tags)
+    public ErrorOr<Success> UpdateTags(List<Tag> tags)
     {
-        var tagsToAdd = tags.Except(_tags).ToList();
-
-        var potentialTotal = _tags.Count + tagsToAdd.Count;
-
-        if (potentialTotal > ImageConstants.MaxTagsPerImage)
+        if (tags.Count > ImageConstants.MaxTagsPerImage)
         {
             return ImageErrors.MaxTagsExceeded;
         }
 
-        _tags.AddRange(tagsToAdd);
+        _tags.Clear();
+
+        _tags.AddRange(tags);
 
         return Result.Success;
-    }
-
-    public void RemoveTag(Guid tagId)
-    {
-        var tagToRemove = _tags.FirstOrDefault(t => t.Id == tagId);
-
-        if (tagToRemove is null) return;
-
-        _tags.Remove(tagToRemove);
     }
 }

@@ -11,7 +11,7 @@ import { DialogData } from '@app/shared/components/dialog/dialog.models';
 import { Subject, switchMap, startWith, of, filter } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ImageService } from '../image.service';
-import { TagsComponent } from './tags/tags.component';
+import { TagsComponent } from './image-tags/image-tags.component';
 import { Image } from '../image.models';
 
 @Component({
@@ -49,9 +49,7 @@ export class ImagePageComponent implements OnInit, OnDestroy {
     { initialValue: null },
   );
 
-  isUploaderOrAdmin = computed(() =>
-    this.authStore.isResourceOwnerOrAdmin(this.image()?.uploaderId),
-  );
+  isUploaderOrAdmin = computed(() => this.authStore.isResourceOwnerOrAdmin(this.image()?.uploader));
 
   ngOnInit(): void {
     this.loadingService.show();

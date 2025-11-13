@@ -5,8 +5,8 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Gallery.Common.Persistence;
-using Petrichor.Services.Gallery.Features.AddImageTags;
 using Petrichor.Services.Gallery.Features.GetImages;
+using Petrichor.Services.Gallery.Features.UpdateImageTags;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.Shared.Pagination;
@@ -77,7 +77,7 @@ public class GetImagesEndpointTests: IDisposable
 
         var tag = $"tag-{Guid.NewGuid()}";
         var addImageTagResponse = await client
-            .PostAsJsonAsync($"/images/{uploadedImageId}/tags", new AddImageTagsRequest([tag]));
+            .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
         addImageTagResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var response = await client.GetAsync($"/images?tags={tag}");

@@ -6,24 +6,17 @@ using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.Common.Utilities;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace Petrichor.Services.Gallery.Features.AddImageTags;
+namespace Petrichor.Services.Gallery.Features.UpdateImageTags;
 
-public class AddImageTagsCommandHandler(
+public class UpdateImageTagsCommandHandler(
     GalleryDbContext dbContext,
     IFusionCache cache)
-    : IRequestHandler<AddImageTagsCommand, ErrorOr<Success>>
+    : IRequestHandler<UpdateImageTagsCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(
-        AddImageTagsCommand command,
+        UpdateImageTagsCommand command,
         CancellationToken cancellationToken)
     {
-        var tags = await GetOrCreateTagsAsync(command.Tags, cancellationToken);
-
-        if (tags.Count == 0)
-        {
-            return Error.Validation("No valid tags provided.");
-        }
-
         var image = await dbContext.Images
             .Include(i => i.Tags)
             .FirstOrDefaultAsync(i => i.Id == command.ImageId,
@@ -34,7 +27,9 @@ public class AddImageTagsCommandHandler(
             return Error.NotFound("Image not found.");
         }
 
-        var addTagsResult = image.AddTags(tags);
+        var tags = await GetOrCreateTagsAsync(command.Tags, cancellationToken);
+
+        var addTagsResult = image.UpdateTags(tags);
 
         if (addTagsResult.IsError)
         {

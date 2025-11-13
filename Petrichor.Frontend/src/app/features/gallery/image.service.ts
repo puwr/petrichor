@@ -77,13 +77,9 @@ export class ImageService {
     return this.http.delete<void>(`${this.apiUrl}/images/${id}`);
   }
 
-  addImageTags(imageId: string, tags: string[]): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/images/${imageId}/tags`, {
+  updateImageTags(imageId: string, tags: string[]): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/images/${imageId}/tags`, {
       tags,
     });
-  }
-
-  deleteImageTag(imageId: string, tagId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/images/${imageId}/tags/${tagId}`);
   }
 }

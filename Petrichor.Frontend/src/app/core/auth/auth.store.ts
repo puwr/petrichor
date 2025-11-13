@@ -115,10 +115,10 @@ export const AuthStore = signalStore(
       );
     };
 
-    const isResourceOwnerOrAdmin = (userId?: string): boolean => {
+    const isResourceOwnerOrAdmin = (userName?: string): boolean => {
       const currentUser = store.currentUser();
 
-      return currentUser?.roles.includes('Admin') || currentUser?.id == userId;
+      return currentUser?.roles.includes('Admin') || currentUser?.userName == userName;
     };
 
     return {

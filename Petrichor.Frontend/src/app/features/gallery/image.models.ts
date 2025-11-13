@@ -3,14 +3,9 @@ export type Image = {
   url: string;
   width: number;
   height: number;
-  uploaderId: string;
-  tags: Tag[];
+  uploader: string;
+  tags: string[];
   uploadedAt: Date;
-};
-
-export type Tag = {
-  id: string;
-  name: string;
 };
 
 export type GalleryItem = {
@@ -25,9 +20,9 @@ export type UploadEvent =
   | { type: 'complete'; imageUrl: string };
 
 export const isProgressEvent = (
-  event: UploadEvent
+  event: UploadEvent,
 ): event is { type: 'progress'; progress: number } => event.type === 'progress';
 
 export const isCompleteEvent = (
-  event: UploadEvent
+  event: UploadEvent,
 ): event is { type: 'complete'; imageUrl: string } => event.type === 'complete';

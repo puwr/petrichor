@@ -1,15 +1,14 @@
 using FluentValidation;
 using Petrichor.Services.Gallery.Common.Domain.Images;
 
-namespace Petrichor.Services.Gallery.Features.AddImageTags;
+namespace Petrichor.Services.Gallery.Features.UpdateImageTags;
 
-public class AddImageTagsCommandValidator : AbstractValidator<AddImageTagsCommand>
+public class UpdateImageTagsCommandValidator : AbstractValidator<UpdateImageTagsCommand>
 {
-    public AddImageTagsCommandValidator()
+    public UpdateImageTagsCommandValidator()
     {
         RuleFor(c => c.Tags)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("Please enter at least one tag.")
             .Must(tags => tags.All(tag => !string.IsNullOrWhiteSpace(tag)))
                 .WithMessage("Please enter valid tags.")
             .Must(tags => tags.Count <= ImageConstants.MaxTagsPerImage)

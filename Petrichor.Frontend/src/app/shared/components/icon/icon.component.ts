@@ -1,4 +1,10 @@
-import { Component, inject, input, ViewEncapsulation } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -6,6 +12,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   template: '<span class="icon" [innerHTML]="svg"></span>',
   styleUrl: 'icon.component.scss',
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent {
   private readonly sanitizer = inject(DomSanitizer);
@@ -32,15 +39,21 @@ const ICONS: Record<string, string> = {
       />
     </svg>
   `,
-  plus: `
+  pen: `
     <svg
+      stroke="currentColor"
+      height="24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
-      stroke-width="1.5"
-      stroke="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M11 11v-11h1v11h11v1h-11v11h-1v-11h-11v-1h11z" />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m14 6 2.293-2.293a1 1 0 0 1 1.414 0l2.586 2.586a1 1 0 0 1 0 1.414L18 10m-4-4-9.707 9.707a1 1 0 0 0-.293.707V19a1 1 0 0 0 1 1h2.586a1 1 0 0 0 .707-.293L18 10m-4-4 4 4"
+      />
     </svg>
-  `,
+`,
 };

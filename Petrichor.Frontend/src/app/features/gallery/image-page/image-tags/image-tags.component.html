@@ -1,6 +1,6 @@
 <div class="tags">
-  @if (showAddTagInput) {
-  <form class="tags__form" [formGroup]="addTagsForm" (ngSubmit)="onSubmit()" (reset)="onReset()">
+  @if (showTagsInput) {
+  <form class="tags__form" [formGroup]="tagsForm" (ngSubmit)="onSubmit()" (reset)="onReset()">
     <app-text-input label="Tags" controlName="tags" [autoFocus]="true" />
 
     @if (validationErrors) {
@@ -16,22 +16,17 @@
   </form>
   } @else { @if (tags() && tags().length > 0) {
   <ul class="tags__list list-reset">
-    @for (tag of tags(); track tag.id) {
-    <li class="tags__item">
-      <span class="tags__name">{{ tag.name }}</span>
-      @if (isUploader()) {
-      <button class="btn-reset tags__delete" (click)="deleteTag(tag.id)">
-        <app-icon name="delete" />
-      </button>
-      }
+    @for (tag of tags(); track tag) {
+    <li>
+      <a class="tags__link" routerLink="/" [queryParams]="{ tags: tag }">#{{ tag }}</a>
     </li>
     }
   </ul>
   } @else {
   <p class="tags__not-found">No tags found.</p>
   } @if (isUploader()) {
-  <app-button variant="fill" (click)="showAddTagInput = true">
-    <app-icon name="plus" />
+  <app-button variant="fill" (click)="showTagsInput = true">
+    <app-icon name="pen" />
   </app-button>
   } }
 </div>

@@ -7,52 +7,29 @@ namespace Petrichor.Services.Gallery.Tests.Domain;
 public class ImageTests
 {
     [Fact]
-    public void AddTags_AddsTagsToImage()
+    public void UpdateTags_UpdatesImageTags()
     {
         var image = CreateImage();
         var tags = CreateTags();
 
-        image.AddTags(tags);
-
+        image.UpdateTags(tags);
         image.Tags.Should().BeEquivalentTo(tags);
+
+        var newTags = CreateTags(count: 2);
+        image.UpdateTags(newTags);
+        image.Tags.Should().BeEquivalentTo(newTags);
     }
 
     [Fact]
-    public void AddTags_WhenTagsDuplicate_IgnoresDuplicates()
-    {
-        var image = CreateImage();
-        var tags = CreateTags();
-
-        image.AddTags(tags);
-        image.AddTags(tags); // Duplicate tag
-
-        image.Tags.Should().HaveCount(1);
-    }
-
-    [Fact]
-    public void AddTags_WhenMaxTagsExceeded_ReturnsMaxTagsExceededError()
+    public void UpdateTags_WhenMaxTagsExceeded_ReturnsMaxTagsExceededError()
     {
         var image = CreateImage();
         var tags = CreateTags(ImageConstants.MaxTagsPerImage + 1);
 
-        var addTagsResult = image.AddTags(tags);
+        var updateTagsResult = image.UpdateTags(tags);
 
-        addTagsResult.IsError.Should().BeTrue();
-        addTagsResult.FirstError.Should().Be(ImageErrors.MaxTagsExceeded);
-        image.Tags.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void RemoveTag_RemovesTagFromImage()
-    {
-        var image = CreateImage();
-        var tag = CreateTags();
-
-        image.AddTags(tag);
-
-        image.RemoveTag(tag[0].Id);
-
-        image.Tags.Should().NotContain(tag[0]);
+        updateTagsResult.IsError.Should().BeTrue();
+        updateTagsResult.FirstError.Should().Be(ImageErrors.MaxTagsExceeded);
         image.Tags.Should().BeEmpty();
     }
 

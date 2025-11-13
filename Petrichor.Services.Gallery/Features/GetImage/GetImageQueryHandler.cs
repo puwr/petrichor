@@ -33,8 +33,6 @@ public class GetImageQueryHandler(IServiceScopeFactory scopeFactory, IFusionCach
                     })
                     .FirstOrDefaultAsync(cancellationToken);
 
-                Console.WriteLine(data?.UserSnapshot?.UserName);
-
                 if (data?.Image is null) return Error.NotFound(description: "Image not found.");
 
                 return GetImageResponse.From(data.Image, data.UserSnapshot);

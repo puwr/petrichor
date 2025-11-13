@@ -1,18 +1,18 @@
 using System.Net;
 using System.Net.Http.Json;
-using Petrichor.Services.Gallery.Features.AddImageTags;
 using Petrichor.Services.Gallery.Features.GetImage;
+using Petrichor.Services.Gallery.Features.UpdateImageTags;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
 
-namespace Petrichor.Services.Gallery.Tests.Features.AddImageTags;
+namespace Petrichor.Services.Gallery.Tests.Features.UpdateImageTags;
 
 [Trait("Category", "Integration")]
 [Collection(ApiFactoryCollection.Name)]
-public class AddImageTagsEndpointTests(ApiFactory apiFactory)
+public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
 {
     [Fact]
-    public async Task AddImageTags_WhenUploader_ReturnsNoContent()
+    public async Task UpdateImageTags_WhenUploader_ReturnsNoContent()
     {
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
@@ -28,7 +28,7 @@ public class AddImageTagsEndpointTests(ApiFactory apiFactory)
 
         var tag = $"tag-{Guid.NewGuid()}";
         var response = await client
-            .PostAsJsonAsync($"/images/{uploadedImageId}/tags", new AddImageTagsRequest([tag]));
+            .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var getImageResponse = await client.GetAsync($"/images/{uploadedImageId}");
@@ -36,11 +36,11 @@ public class AddImageTagsEndpointTests(ApiFactory apiFactory)
 
         var image = await getImageResponse.Content.ReadFromJsonAsync<GetImageResponse>();
         image.Should().NotBeNull();
-        image.Tags.Select(t => t.Name).Should().Contain(tag);
+        image.Tags.Should().BeEquivalentTo([tag]);
     }
 
     [Fact]
-    public async Task AddImageTags_WhenAdmin_ReturnsNoContent()
+    public async Task UpdateImageTags_WhenAdmin_ReturnsNoContent()
     {
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
@@ -59,22 +59,22 @@ public class AddImageTagsEndpointTests(ApiFactory apiFactory)
 
         var tag = $"tag-{Guid.NewGuid()}";
         var response = await adminClient
-            .PostAsJsonAsync($"/images/{uploadedImageId}/tags", new AddImageTagsRequest([tag]));
+            .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     [Fact]
-    public async Task AddImageTags_WhenAnonymous_ReturnsUnauthorized()
+    public async Task UpdateImageTags_WhenAnonymous_ReturnsUnauthorized()
     {
         using var client = apiFactory.CreateClient();
 
         var response = await client
-            .PostAsync($"/images/{Guid.NewGuid()}/tags", null);
+            .PatchAsync($"/images/{Guid.NewGuid()}/tags", null);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
-    public async Task AddImageTags_WhenNotUploaderOrAdmin_ReturnsForbidden()
+    public async Task UpdateImageTags_WhenNotUploaderOrAdmin_ReturnsForbidden()
     {
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
@@ -93,12 +93,12 @@ public class AddImageTagsEndpointTests(ApiFactory apiFactory)
 
         var tag = $"tag-{Guid.NewGuid()}";
         var response = await otherClient
-            .PostAsJsonAsync($"/images/{uploadedImageId}/tags", new AddImageTagsRequest([tag]));
+            .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]
-    public async Task AddImageTags_WithInvalidData_ReturnsBadRequest()
+    public async Task UpdateImageTags_WithInvalidData_ReturnsBadRequest()
     {
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
@@ -113,7 +113,7 @@ public class AddImageTagsEndpointTests(ApiFactory apiFactory)
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var response = await client
-            .PostAsJsonAsync($"/images/{uploadedImageId}/tags", new AddImageTagsRequest([" "]));
+            .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([" "]));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
