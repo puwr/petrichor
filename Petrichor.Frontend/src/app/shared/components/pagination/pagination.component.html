@@ -1,34 +1,18 @@
 @if (totalPages() > 1) {
 <nav class="pagination">
-  <a
-    class="pagination__link"
-    [class.pagination__link--active]="pageNumber() === 1"
-    [routerLink]="['/']"
-    [queryParams]="{ page: null }"
-    queryParamsHandling="merge"
-    >1</a
-  >
-  @if (visiblePages()[0] > 2) {
+  @for (item of paginationItems(); track item) { @if (item === '…') {
   <span>…</span>
-  } @for (page of visiblePages(); track $index) {
+  } @else {
   <a
     class="pagination__link"
-    [class.pagination__link--active]="pageNumber() === page"
+    [class.pagination__link--active]="pageNumber() === item"
     [routerLink]="[]"
-    [queryParams]="{ page }"
+    [queryParams]="item === 1 ? { page: null } : { page: item }"
     queryParamsHandling="merge"
-    >{{ page }}</a
+    [tabIndex]="pageNumber() === item ? null : 0"
   >
-  } @if (visiblePages()[visiblePages().length - 1] < totalPages() - 1) {
-  <span>…</span>
-  }
-  <a
-    class="pagination__link"
-    [class.pagination__link--active]="pageNumber() === totalPages()"
-    [routerLink]="[]"
-    [queryParams]="{ page: totalPages() }"
-    queryParamsHandling="merge"
-    >{{ totalPages() }}</a
-  >
+    {{ item }}
+  </a>
+  } }
 </nav>
 }

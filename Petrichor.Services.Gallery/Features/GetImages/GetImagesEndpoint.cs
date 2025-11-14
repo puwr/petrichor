@@ -17,7 +17,7 @@ public class GetImagesEndpoint : FeatureEndpoint
                 [FromQuery] string[]? tags = null,
                 [FromQuery] string? uploader = null) =>
             {
-                var pagination = new PaginationParameters(pageNumber, PageSize: 20);
+                var pagination = new PaginationParameters(pageNumber, PageSize: 15);
 
                 var query = new GetImagesQuery(
                     Pagination: pagination,

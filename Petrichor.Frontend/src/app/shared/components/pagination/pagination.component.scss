@@ -22,17 +22,17 @@
     }
 
     &:active {
-      color: var(--color-secondary-hover);
+      color: var(--color-primary-hover);
     }
 
     &--active {
       cursor: default;
-      border: 1px solid var(--color-secondary);
+      border: 1px solid var(--color-primary);
     }
 
     @media (any-hover: hover) {
       &:hover:not(&--active) {
-        color: var(--color-secondary-hover);
+        color: var(--color-primary-hover);
       }
     }
   }
