@@ -17,7 +17,7 @@ export class UserNavComponent {
     {
       originX: 'center',
       originY: 'bottom',
-      overlayX: 'center',
+      overlayX: 'start',
       overlayY: 'top',
     },
   ];

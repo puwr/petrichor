@@ -1,36 +1,27 @@
 :root {
-  --color-primary: #451a339f;
-  --color-secondary: #9e477de1;
-  --color-secondary-hover: #b5548ee7;
-  --color-accent: #b45c50ee;
+  --color-primary: #228d52;
+  --color-primary-hover: #15ac59;
+  --color-secondary: #2083742d;
+  --color-accent: #4ad3bf;
   --color-success: #356859f1;
-  --color-danger: #a63a2cf3;
-  --color-danger-hover: #c44436ef;
-  --color-neutral: #3d3d44e3;
-  --color-neutral-hover: #4a4850e1;
+  --color-danger: #a63a2c;
+  --color-danger-hover: #c44436;
+  --color-neutral: #2b343b;
+  --color-neutral-hover: #44525e;
   --color-background: #1a1a1a;
   --color-text-primary: #ffeef0;
 
   --font-standard: 'Share Tech', serif;
-
   --text-size-standard: 1.1rem;
 
   --animation-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --animation-indeterminate: cubic-bezier(0.65, 0.815, 0.735, 0.395);
-
   --duration-standard: 200ms;
-
-  --outline-width: 0.15rem;
-  --outline-offset: 0.4rem;
 
   --outline-standard: var(--outline-width) solid var(--color-accent);
   --outline-danger: var(--outline-width) solid var(--color-danger);
+  --outline-width: 0.15rem;
+  --outline-offset: 0.4rem;
 
-  --radius-standard: 0.5rem;
-
-  --shadow-secondary: 0 0.25rem 0.5rem rgba(158, 71, 112, 0.4);
-  --shadow-accent: 0 0.25rem 0.5rem rgba(196, 107, 95, 0.4);
-  --shadow-success: 0 0.25rem 0.5rem rgba(53, 104, 89, 0.4);
-  --shadow-danger: 0 0.25rem 0.5rem rgba(196, 69, 54, 0.4);
-  --shadow-neutral: 0 0.25rem 0.5rem rgba(85, 85, 102, 0.4);
+  --radius-standard: 0.15rem;
 }

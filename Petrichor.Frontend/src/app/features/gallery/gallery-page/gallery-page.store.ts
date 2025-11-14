@@ -45,7 +45,7 @@ export const GalleryPageStore = signalStore(
       if (uploader && searchTags.length > 0) {
         return `Images uploaded by ${uploader} with tags: ${searchTags.join(', ')}`;
       } else if (uploader) {
-        return `All images uploaded by ${uploader}`;
+        return `Images uploaded by ${uploader}`;
       } else if (searchTags.length > 0) {
         return `Search results for: ${searchTags.join(', ')}`;
       }

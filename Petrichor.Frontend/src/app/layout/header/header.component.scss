@@ -1,6 +1,4 @@
 .header {
-  background-color: var(--color-primary);
-
   &__nav {
     display: flex;
     align-items: center;
@@ -9,16 +7,10 @@
     max-height: 2rem;
   }
 
-  &__logo-link {
-    &:focus {
-      outline: none;
-    }
-
-    &:focus-visible {
-      outline: var(--outline-standard);
-      outline-offset: var(--outline-offset);
-      border-radius: var(--radius-standard);
-    }
+  &__logo-link:focus-visible {
+    outline: var(--outline-standard);
+    outline-offset: var(--outline-offset);
+    border-radius: var(--radius-standard);
   }
 
   &__logo {

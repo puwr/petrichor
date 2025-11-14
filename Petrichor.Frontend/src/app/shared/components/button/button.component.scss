@@ -18,20 +18,19 @@
   }
 
   &:active:not(:disabled) {
-    filter: brightness(1.1);
+    filter: brightness(1.05);
   }
 
   &--fill {
-    background-color: var(--color-secondary);
-    box-shadow: var(--shadow-secondary);
+    background-color: var(--color-primary);
 
     &:focus-visible {
-      background-color: var(--color-secondary-hover);
+      background-color: var(--color-primary-hover);
     }
 
     @media (any-hover: hover) {
       &:hover:not(:disabled) {
-        background-color: var(--color-secondary-hover);
+        background-color: var(--color-primary-hover);
       }
     }
   }
@@ -40,21 +39,18 @@
     color: var(--color-text-primary);
 
     &:focus-visible {
-      background-color: var(--color-secondary);
-      box-shadow: var(--shadow-secondary);
+      background-color: var(--color-primary);
     }
 
     @media (any-hover: hover) {
       &:hover:not(:disabled) {
-        background-color: var(--color-secondary);
-        box-shadow: var(--shadow-secondary);
+        background-color: var(--color-primary);
       }
     }
   }
 
   &--danger {
     background-color: var(--color-danger);
-    box-shadow: var(--shadow-danger);
 
     &:focus-visible {
       background-color: var(--color-danger-hover);
@@ -69,7 +65,6 @@
 
   &--neutral {
     background-color: var(--color-neutral);
-    box-shadow: var(--shadow-neutral);
 
     &:focus-visible {
       background-color: var(--color-neutral-hover);

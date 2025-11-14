@@ -12,6 +12,7 @@ export class ProgressBarComponent {
   private loadingService = inject(LoadingService);
 
   mode = input<'determinate' | 'indeterminate'>('indeterminate');
+  position = input<'relative' | 'fixed'>('relative');
   progressPercentage = input<number>(0);
 
   loading = toSignal(this.loadingService.loading$, { initialValue: false });

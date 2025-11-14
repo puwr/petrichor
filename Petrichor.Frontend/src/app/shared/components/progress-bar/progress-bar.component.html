@@ -1,4 +1,5 @@
-<div class="progress-bar" [class.progress-bar--active]="isActive()">
+@if(isActive()) {
+<div class="progress-bar" [class.progress-bar--fixed]="position() === 'fixed'">
   <div
     class="progress-bar__fill"
     [class.progress-bar__fill--determinate]="isDeterminate()"
@@ -6,3 +7,4 @@
     [style.transform]="isDeterminate() ? progressTransform() : null"
   ></div>
 </div>
+}

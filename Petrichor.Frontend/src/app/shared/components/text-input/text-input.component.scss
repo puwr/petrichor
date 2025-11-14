@@ -14,7 +14,7 @@
     border-radius: var(--radius-standard);
     box-shadow: none;
     color: inherit;
-    background-color: var(--color-primary);
+    background-color: var(--color-secondary);
     transition: outline var(--duration-standard) var(--animation-standard);
     outline: var(--outline-width) solid transparent;
 
@@ -36,8 +36,8 @@
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus,
     &:-webkit-autofill:active {
-      -webkit-text-fill-color: var(--color-primary);
-      caret-color: var(--color-primary);
+      -webkit-text-fill-color: var(--color-secondary);
+      caret-color: var(--color-secondary);
     }
   }
 
@@ -46,7 +46,6 @@
     color: var(--color-danger);
     margin-top: 0.5rem;
     padding: 0 0.5rem;
-    animation: fadeInDown var(--duration-standard) var(--animation-standard)
-      both;
+    animation: fadeInDown var(--duration-standard) var(--animation-standard) both;
   }
 }

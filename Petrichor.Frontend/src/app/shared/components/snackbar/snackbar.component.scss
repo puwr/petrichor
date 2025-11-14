@@ -10,11 +10,9 @@
 
   &--success {
     background-color: var(--color-success);
-    box-shadow: var(--shadow-success);
   }
 
   &--error {
     background-color: var(--color-danger);
-    box-shadow: var(--shadow-danger);
   }
 }

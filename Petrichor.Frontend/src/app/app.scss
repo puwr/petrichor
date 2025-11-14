@@ -1,9 +1,0 @@
-.main {
-  opacity: 1;
-  transition: opacity var(--duration-standard) var(--animation-standard);
-
-  &--loading {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-}

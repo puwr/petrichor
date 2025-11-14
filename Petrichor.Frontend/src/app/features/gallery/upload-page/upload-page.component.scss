@@ -6,7 +6,7 @@
     flex-direction: column;
     gap: 1rem;
 
-    border: 2px dashed var(--color-secondary);
+    border: 2px dashed var(--color-primary);
     border-radius: var(--radius-standard);
     width: 70vh;
     height: 45vh;
@@ -19,19 +19,16 @@
     &:focus-visible {
       outline: none;
       border-color: var(--color-accent);
-      box-shadow: var(--shadow-accent);
     }
 
     @media (any-hover: hover) {
       &:hover:not(:focus-visible) {
-        border-color: var(--color-secondary-hover);
-        box-shadow: var(--shadow-secondary);
+        border-color: var(--color-primary-hover);
       }
     }
 
     &--drag-over {
-      border-color: var(--color-secondary-hover);
-      box-shadow: var(--shadow-secondary);
+      border-color: var(--color-primary-hover);
       animation: pulse 1.5s infinite;
     }
   }
