@@ -12,8 +12,6 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options)
     : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options),
         IInboxDbContext, IOutboxDbContext
 {
-    private static readonly Guid AdminRoleGuid = new("b31c98af-5964-4773-ab6c-cdc026b888ef");
-
     public DbSet<InboxMessage> InboxMessages { get; set; }
     public DbSet<InboxMessageConsumer> InboxMessageConsumers { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
@@ -35,14 +33,6 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options)
         modelBuilder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());
 
         modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
-
-        modelBuilder.Entity<IdentityRole<Guid>>()
-            .HasData(new IdentityRole<Guid>
-            {
-                Id = AdminRoleGuid,
-                Name = "Admin",
-                NormalizedName = "ADMIN"
-            });
 
         base.OnModelCreating(modelBuilder);
     }

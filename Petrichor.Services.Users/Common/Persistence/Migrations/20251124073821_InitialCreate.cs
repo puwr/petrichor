@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -236,12 +237,6 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.InsertData(
-                schema: "users",
-                table: "AspNetRoles",
-                columns: new[] { "id", "concurrency_stamp", "name", "normalized_name" },
-                values: new object[] { new Guid("b31c98af-5964-4773-ab6c-cdc026b888ef"), null, "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_asp_net_role_claims_role_id",

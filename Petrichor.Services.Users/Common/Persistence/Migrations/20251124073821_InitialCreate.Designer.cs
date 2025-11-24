@@ -12,7 +12,7 @@ using Petrichor.Services.Users.Common.Persistence;
 namespace Petrichor.Services.Users.Common.Persistence.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20251013142133_InitialCreate")]
+    [Migration("20251124073821_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("users")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -56,14 +56,6 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", "users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b31c98af-5964-4773-ab6c-cdc026b888ef"),
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

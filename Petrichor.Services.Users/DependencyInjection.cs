@@ -154,6 +154,8 @@ public static class DependencyInjection
                 };
             });
 
+        services.AddHostedService<RolesSeeder>();
+
         return services;
     }
 

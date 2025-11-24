@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi;
 using Yarp.ReverseProxy.Configuration;
 
 namespace Petrichor.Gateway.OpenApi;
@@ -15,7 +14,7 @@ public class OpenApiMerger(
         CancellationToken cancellationToken)
     {
         document.Components ??= new OpenApiComponents();
-        document.Components.Schemas ??= new Dictionary<string, OpenApiSchema>();
+        document.Components.Schemas ??= new Dictionary<string, IOpenApiSchema>();
 
         var proxyConfig = proxyConfigProvider.GetConfig();
 
@@ -43,8 +42,9 @@ public class OpenApiMerger(
             Path = "openapi/v1.json"
         }.Uri;
 
+
         await MergeOpenApiDocumentAsync(document, usersUrl, cancellationToken);
-        await MergeOpenApiDocumentAsync(document, galleryUrl , cancellationToken);
+        await MergeOpenApiDocumentAsync(document, galleryUrl, cancellationToken);
         await MergeOpenApiDocumentAsync(document, commentsUrl, cancellationToken);
     }
 
@@ -53,11 +53,18 @@ public class OpenApiMerger(
         Uri documentUrl,
         CancellationToken cancellationToken)
     {
-        using var stream = await httpClient.GetStreamAsync(documentUrl, cancellationToken);
+        var jsonBytes = await httpClient.GetByteArrayAsync(documentUrl, cancellationToken);
+        using var memoryStream = new MemoryStream(jsonBytes);
 
-        var document = new OpenApiStreamReader().Read(stream, out var _);
+        var (document, diagnostic) = await OpenApiDocument
+            .LoadAsync(memoryStream, cancellationToken: cancellationToken);
 
-        if (document.Paths is not null)
+        if (diagnostic?.Errors.Any() == true)
+        {
+            Console.Error.WriteLine($"Failed to load OpenAPI document from {documentUrl}");
+        }
+
+        if (document?.Paths?.Count > 0)
         {
             foreach (var path in document.Paths)
             {
@@ -65,11 +72,11 @@ public class OpenApiMerger(
             }
         }
 
-        if (document.Components.Schemas is not null)
+        if (document?.Components?.Schemas?.Count > 0)
         {
             foreach (var schema in document.Components.Schemas)
             {
-                targetDocument.Components.Schemas.TryAdd(schema.Key, schema.Value);
+                targetDocument?.Components?.Schemas?.TryAdd(schema.Key, schema.Value);
             }
         }
     }

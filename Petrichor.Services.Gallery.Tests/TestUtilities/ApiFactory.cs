@@ -16,7 +16,10 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder().Build();
     private readonly RedisContainer _redisContainer = new RedisBuilder().Build();
     private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder().Build();
-    private readonly MinioContainer _minioContainer = new MinioBuilder().Build();
+    private readonly MinioContainer _minioContainer = new MinioBuilder()
+        .WithUsername("minioadmin")
+        .WithPassword("minioadmin")
+        .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
