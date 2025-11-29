@@ -13,7 +13,7 @@ import {
   patchState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, exhaustMap, finalize, tap } from 'rxjs';
+import { pipe, exhaustMap, finalize, tap, EMPTY } from 'rxjs';
 import { authGuard } from './auth.guard';
 import { RegisterRequest, LoginRequest } from './auth.models';
 import { AuthService } from './auth.service';
@@ -41,45 +41,24 @@ export const AuthStore = signalStore(
     _snackbar: inject(SnackbarService),
   })),
   withMethods((store) => {
-    const register = rxMethod<{
-      userData: RegisterRequest;
-      onError: (errors: string[] | null) => void;
-    }>(
-      pipe(
-        exhaustMap(({ userData, onError }) => {
-          return store._authService.register(userData).pipe(
-            tapResponse({
-              next: () => {
-                store._snackbar.success('Registration complete! You may now log in.');
-                store._router.navigateByUrl('/login');
-              },
-              error: (errors: string[] | null) => onError(errors),
-            }),
-          );
+    const register = (userData: RegisterRequest) =>
+      store._authService.register(userData).pipe(
+        tap(() => {
+          store._snackbar.success('Registration complete! You may now log in.');
+          store._router.navigateByUrl('/login');
         }),
-      ),
-    );
+      );
 
-    const login = rxMethod<{
-      credentials: LoginRequest;
-      onError: (errors: string[] | null) => void;
-    }>(
-      pipe(
-        exhaustMap(({ credentials, onError }) => {
-          return store._authService.login(credentials).pipe(
-            exhaustMap(() => store._accountService.getCurrentUser()),
-            tapResponse({
-              next: (user) => patchState(store, { currentUser: user }),
-              error: (errors: string[] | null) => onError(errors),
-              complete: () => {
-                const returnUrl = store._route.snapshot.queryParams['returnUrl'] ?? '/';
-                store._router.navigateByUrl(returnUrl);
-              },
-            }),
-          );
+    const login = (credentials: LoginRequest) =>
+      store._authService.login(credentials).pipe(
+        exhaustMap(() => store._accountService.getCurrentUser()),
+        tap((user) => {
+          patchState(store, { currentUser: user });
+
+          const returnUrl = store._route.snapshot.queryParams['returnUrl'] ?? '/';
+          store._router.navigateByUrl(returnUrl);
         }),
-      ),
-    );
+      );
 
     const logout = rxMethod<void>(
       pipe(

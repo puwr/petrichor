@@ -1,19 +1,16 @@
-<form [formGroup]="commentForm" class="comment-form" (ngSubmit)="onSubmit()">
+<form class="comment-form" (submit)="onSubmit($event)">
   <textarea
     class="comment-form__textarea"
-    formControlName="comment"
     placeholder="Enter your comment…"
-    name="comment"
-    id="comment"
+    [id]="commentForm.comment().name()"
     rows="3"
+    [field]="commentForm.comment"
   ></textarea>
 
-  @if (commentStore.validationErrors(); as errors) {
-  <app-validation-errors [validationErrors]="errors" />
-  }
+  <app-validation-errors [validationErrors]="commentForm().errors()" />
 
   <div class="comment-form__add-comment">
-    <app-button variant="fill" type="submit" [disabled]="commentForm.invalid">
+    <app-button variant="fill" type="submit" [disabled]="commentForm().invalid()">
       Add Comment
     </app-button>
   </div>

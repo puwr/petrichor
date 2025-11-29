@@ -1,36 +1,53 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { AuthStore, LoginRequest } from '@app/core/auth';
+import { email, Field, form, required, submit } from '@angular/forms/signals';
+import { AuthStore } from '@app/core/auth';
 import {
-  TextInputComponent,
   ValidationErrorsComponent,
   ButtonComponent,
+  FieldErrorsDirective,
 } from '@app/shared/components';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
-  imports: [ReactiveFormsModule, TextInputComponent, ValidationErrorsComponent, ButtonComponent],
+  imports: [ValidationErrorsComponent, ButtonComponent, Field, FieldErrorsDirective],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginFormComponent {
-  private fb = inject(FormBuilder);
   private authStore = inject(AuthStore);
 
-  validationErrors = signal<string[] | null>(null);
+  loginForm = form(signal(this.initLoginForm()), (schema) => {
+    required(schema.email);
+    email(schema.email, { message: 'Invalid email.' });
 
-  loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    required(schema.password);
   });
 
-  onSubmit(): void {
-    this.authStore.login({
-      credentials: this.loginForm.getRawValue() as LoginRequest,
-      onError: (errors) => {
-        this.validationErrors.set(errors);
-      },
+  async onSubmit(event: SubmitEvent): Promise<void> {
+    event.preventDefault();
+
+    await submit(this.loginForm, async (form) => {
+      if (form().invalid()) return;
+
+      return await firstValueFrom(
+        this.authStore
+          .login({ email: form().value().email, password: form().value().password })
+          .pipe(
+            map(() => {
+              return null;
+            }),
+            catchError((errors) => of(errors)),
+          ),
+      );
     });
+  }
+
+  private initLoginForm() {
+    return {
+      email: '',
+      password: '',
+    };
   }
 }

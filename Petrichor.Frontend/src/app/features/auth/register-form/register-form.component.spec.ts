@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { RegisterFormComponent } from './register-form.component';
 import { AuthStore, RegisterRequest } from '@app/core/auth';
+import { ValidationError } from '@angular/forms/signals';
+import { of, throwError } from 'rxjs';
 
 describe('RegisterFormComponent', () => {
   it('enables register button when form is valid', async () => {
@@ -26,17 +28,24 @@ describe('RegisterFormComponent', () => {
 
   it('renders validation-errors component when errors are present', async () => {
     const { user, userData, authStore } = await setup();
-    const mockErrors = ['validation error 1'];
 
-    authStore.register.mockImplementation((args) => args.onError(mockErrors));
+    const mockErrors: ValidationError[] = [
+      {
+        kind: 'server',
+        message: 'validation error 1',
+      },
+    ];
+    authStore.register.mockReturnValue(throwError(() => mockErrors));
 
     await user.type(screen.getByLabelText(/email/i), userData.email);
     await user.type(screen.getByLabelText(/userName/i), userData.userName);
     await user.type(screen.getByLabelText(/password/i), userData.password);
     await user.click(screen.getByRole('button', { name: /register/i }));
 
-    expect(screen.getByRole('alert')).toBeInTheDocument();
-    expect(screen.getByText(/validation error 1/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByText(/validation error 1/i)).toBeInTheDocument();
+    });
   });
 
   it('does not render validation-errors component when errors are absent', async () => {
@@ -48,11 +57,10 @@ describe('RegisterFormComponent', () => {
 
     await user.click(screen.getByRole('button', { name: /register/i }));
 
-    expect(authStore.register).toHaveBeenCalledWith({
-      userData,
-      onError: expect.any(Function),
+    await waitFor(() => {
+      expect(authStore.register).toHaveBeenCalledWith(userData);
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });
 
@@ -60,7 +68,7 @@ async function setup() {
   const user = userEvent.setup();
 
   const authStore = {
-    register: vi.fn(),
+    register: vi.fn().mockReturnValue(of(undefined)),
   };
 
   await render(RegisterFormComponent, {

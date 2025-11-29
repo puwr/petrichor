@@ -1,8 +1,9 @@
-import { signal } from '@angular/core';
 import { CommentStore } from '../comment.store';
 import { CommentFormComponent } from './comment-form.component';
 import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { of, throwError } from 'rxjs';
+import { ValidationError } from '@angular/forms/signals';
 
 describe('CommentFormComponent', () => {
   it('enables submit button when form is valid', async () => {
@@ -24,9 +25,13 @@ describe('CommentFormComponent', () => {
   });
 
   it('renders validation-errors component when errors are present', async () => {
-    const { commentStore } = await setup();
+    const { commentStore, user } = await setup();
 
-    commentStore.validationErrors.set(['error 1']);
+    const mockValidationErrors: ValidationError[] = [{ kind: 'server', message: 'error 1' }];
+    commentStore.createComment.mockReturnValue(throwError(() => mockValidationErrors));
+
+    await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message');
+    await user.click(screen.getByRole('button', { name: /add comment/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
@@ -35,9 +40,10 @@ describe('CommentFormComponent', () => {
   });
 
   it('does not render validation-errors component when errors are absent', async () => {
-    const { commentStore } = await setup();
+    const { user } = await setup();
 
-    commentStore.validationErrors.set(null);
+    await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message');
+    await user.click(screen.getByRole('button', { name: /add comment/i }));
 
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -48,7 +54,6 @@ describe('CommentFormComponent', () => {
     const { user } = await setup();
 
     await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message');
-
     await user.click(screen.getByRole('button', { name: /add comment/i }));
 
     expect(screen.queryByText(/comment message/i)).not.toBeInTheDocument();
@@ -59,10 +64,7 @@ async function setup() {
   const user = userEvent.setup();
 
   const commentStore = {
-    validationErrors: signal<string[] | null>(null),
-    createComment: vi.fn().mockImplementation(({ _, onSuccess }) => {
-      onSuccess();
-    }),
+    createComment: vi.fn().mockReturnValue(of(undefined)),
   };
 
   await render(CommentFormComponent, {

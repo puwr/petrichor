@@ -22,13 +22,11 @@ import { CommentService } from './comment.service';
 interface CommentSlice {
   resourceId: string | null;
   nextCursor: string | null;
-  validationErrors: string[] | null;
 }
 
 const initialCommentSlice: CommentSlice = {
   resourceId: null,
   nextCursor: null,
-  validationErrors: null,
 };
 
 export const CommentStore = signalStore(
@@ -64,36 +62,21 @@ export const CommentStore = signalStore(
       ),
     );
 
-    const createComment = rxMethod<{ message: string; onSuccess: () => void }>(
-      pipe(
-        exhaustMap(({ message, onSuccess }) => {
-          const request: CreateCommentRequest = {
-            resourceId: store.resourceId()!,
-            message,
-          };
+    const createComment = (message: string) =>
+      store._commentsService
+        .createComment({ resourceId: store.resourceId()!, message } as CreateCommentRequest)
+        .pipe(
+          tap((commentId) => {
+            var newComment = makeComment(
+              commentId,
+              store.resourceId()!,
+              message,
+              store._authStore.currentUser()!,
+            );
 
-          return store._commentsService.createComment(request).pipe(
-            tapResponse({
-              next: (commentId) => {
-                var newComment = makeComment(
-                  commentId,
-                  store.resourceId()!,
-                  message,
-                  store._authStore.currentUser()!,
-                );
-
-                patchState(store, prependEntity(newComment, { collection: '_comment' }), {
-                  validationErrors: null,
-                });
-
-                onSuccess();
-              },
-              error: (errors: string[] | null) => patchState(store, { validationErrors: errors }),
-            }),
-          );
-        }),
-      ),
-    );
+            patchState(store, prependEntity(newComment, { collection: '_comment' }));
+          }),
+        );
 
     const deleteComment = rxMethod<{ commentId: string }>(
       pipe(

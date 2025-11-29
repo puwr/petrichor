@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { AuthStore } from '@app/core/auth';
-import { throwError, of, BehaviorSubject } from 'rxjs';
+import { of, BehaviorSubject, firstValueFrom } from 'rxjs';
 import { mockCurrentUser } from 'src/test/account.mocks';
 import { makeComment } from './comment.models';
 import { CommentService } from './comment.service';
@@ -19,37 +19,13 @@ describe('CommentStore', () => {
   });
 
   describe('createComment', () => {
-    it('creates and prepends new comment, calls onSuccess callback', () => {
+    it('creates and prepends new comment', async () => {
       const { store } = setup();
 
-      const mockOnSuccess = vi.fn();
-
-      store.createComment({
-        message: 'Comment 3',
-        onSuccess: () => mockOnSuccess(),
-      });
+      await firstValueFrom(store.createComment('Comment 3'));
 
       expect(store.comments().length).toBe(2);
       expect(store.comments()[0].message).toEqual('Comment 3');
-      expect(mockOnSuccess).toHaveBeenCalled();
-    });
-
-    it('updates validation errors on error', () => {
-      const { store, commentService } = setup();
-
-      const mockOnSuccess = vi.fn();
-      vi.spyOn(commentService, 'createComment').mockReturnValue(
-        throwError(() => ['Error 1', 'Error 2']),
-      );
-
-      store.createComment({
-        message: 'Comment 3',
-        onSuccess: () => mockOnSuccess(),
-      });
-
-      expect(store.validationErrors()).toEqual(['Error 1', 'Error 2']);
-      expect(store.comments().length).toBe(1);
-      expect(mockOnSuccess).not.toHaveBeenCalled();
     });
   });
 

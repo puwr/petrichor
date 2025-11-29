@@ -14,8 +14,8 @@ describe('UploadPageStore', () => {
       store.uploadImage(invalidMockFile);
 
       const errors = store.validationErrors();
-      expect(errors).not.toBeNull();
-      expect(errors).toContain('Only image files are allowed.');
+      expect(errors[0]).not.toBeNull();
+      expect(errors[0].message).toBe('Only image files are allowed.');
     });
 
     it('updates upload percentage and sets previewUrl', () => {
@@ -45,9 +45,10 @@ describe('UploadPageStore', () => {
 
     const uploadEventSubject = new Subject<UploadEvent>();
     imageService.uploadImage.mockReturnValue(uploadEventSubject);
-    uploadEventSubject.next({ type: 'progress' as const, progress: 10 } as UploadEvent);
 
     store.uploadImage(mockFile);
+
+    uploadEventSubject.next({ type: 'progress' as const, progress: 10 } as UploadEvent);
 
     await vi.runAllTimersAsync();
 
@@ -83,7 +84,7 @@ describe('UploadPageStore', () => {
 });
 
 function setup() {
-  const imageService = { uploadImage: vi.fn().mockReturnValue(EMPTY) };
+  const imageService = { uploadImage: vi.fn().mockReturnValue(of(undefined)) };
   const snackbar = { success: vi.fn() };
 
   TestBed.configureTestingModule({

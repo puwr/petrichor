@@ -5,5 +5,5 @@ export * from './icon/icon.component';
 export * from './pagination/pagination.component';
 export * from './progress-bar/progress-bar.component';
 export * from './snackbar/snackbar.component';
-export * from './text-input/text-input.component';
 export * from './validation-errors/validation-errors.component';
+export * from './validation-errors/field-errors.directive';

@@ -6,7 +6,10 @@ describe('ValidationErrorsComponent', () => {
   it('displays validation errors if errors are present', async () => {
     await render(ValidationErrorsComponent, {
       bindings: [
-        inputBinding('validationErrors', () => ['validation error 1', 'validation error 2']),
+        inputBinding('validationErrors', () => [
+          { kind: 'server', message: 'validation error 1' },
+          { kind: 'server', message: 'validation error 2' },
+        ]),
       ],
     });
 

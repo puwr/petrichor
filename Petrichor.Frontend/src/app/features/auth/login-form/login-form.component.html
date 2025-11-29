@@ -1,12 +1,18 @@
-<form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-  <app-text-input label="Email" type="email" controlName="email" />
-  <app-text-input label="Password" type="password" controlName="password" />
+<form class="auth-form" (submit)="onSubmit($event)">
+  <label [for]="loginForm.email().name()">Email</label>
+  <input class="text-input" type="text" [id]="loginForm.email().name()" [field]="loginForm.email" />
 
-  @if (validationErrors(); as errors) {
-  <app-validation-errors [validationErrors]="errors" />
-  }
+  <label [for]="loginForm.password().name()">Password</label>
+  <input
+    class="text-input"
+    type="password"
+    [id]="loginForm.password().name()"
+    [field]="loginForm.password"
+  />
 
-  <app-button variant="fill" [disabled]="loginForm.invalid" type="submit" [fullWidth]="true"
-    >Login</app-button
-  >
+  <app-validation-errors [validationErrors]="loginForm().errors()" />
+
+  <app-button variant="fill" [disabled]="loginForm().invalid()" type="submit" [fullWidth]="true">
+    Login
+  </app-button>
 </form>

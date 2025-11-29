@@ -1,13 +1,10 @@
 <div class="tags">
   @if (showTagsInput) {
-  <form class="tags__form" [formGroup]="tagsForm" (ngSubmit)="onSubmit()" (reset)="onReset()">
-    <app-text-input label="Tags" controlName="tags" [autoFocus]="true" />
+  <form class="tags__form" (submit)="onSubmit($event)" (reset)="onReset()">
+    <label [for]="tagsForm.tags().name()">Tags</label>
+    <input class="text-input" type="text" [id]="tagsForm.tags().name()" [field]="tagsForm.tags" />
 
-    @if (validationErrors) {
-    <div class="tags__errors">
-      <app-validation-errors [validationErrors]="validationErrors" />
-    </div>
-    }
+    <app-validation-errors [validationErrors]="tagsForm().errors()" />
 
     <div class="tags__actions">
       <app-button variant="neutral" type="reset">Cancel</app-button>

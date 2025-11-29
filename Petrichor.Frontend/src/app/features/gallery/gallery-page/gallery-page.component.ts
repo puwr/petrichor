@@ -1,40 +1,30 @@
-import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  GalleryComponent,
-  PaginationComponent,
-  TextInputComponent,
-  ButtonComponent,
-} from '@app/shared/components';
+import { GalleryComponent, PaginationComponent, ButtonComponent } from '@app/shared/components';
 import { GalleryPageStore } from './gallery-page.store';
+import { Field, form } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-gallery-page',
-  imports: [
-    GalleryComponent,
-    PaginationComponent,
-    TextInputComponent,
-    ReactiveFormsModule,
-    ButtonComponent,
-  ],
+  imports: [GalleryComponent, PaginationComponent, ReactiveFormsModule, ButtonComponent, Field],
   providers: [GalleryPageStore],
   templateUrl: './gallery-page.component.html',
   styleUrl: './gallery-page.component.scss',
 })
 export class GalleryPageComponent {
   private router = inject(Router);
-  private fb = inject(FormBuilder);
   readonly galleryPageStore = inject(GalleryPageStore);
 
-  searchForm = this.fb.group({
-    tags: [''],
-  });
+  searchForm = form(signal({ tags: '' }));
 
-  onSearch(): void {
+  onSearch(event: SubmitEvent): void {
+    event.preventDefault();
+
     const tags =
-      this.searchForm.value.tags
-        ?.split(',')
+      this.searchForm()
+        .value()
+        .tags.split(',')
         .map((tag) => tag.trim().toLowerCase())
         .filter((tag) => tag) || [];
 
@@ -44,7 +34,8 @@ export class GalleryPageComponent {
         queryParamsHandling: 'merge',
       });
 
-      this.searchForm.reset();
+      this.searchForm().reset();
+      this.searchForm().value.set({ tags: '' });
     }
   }
 }

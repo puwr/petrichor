@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { SnackbarService } from './snackbar.service';
+import { ValidationError } from '@angular/forms/signals';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -15,12 +16,22 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       if (err.status === 400) {
-        if (err.error?.errors) {
-          const validationErrors = Object.values(err.error.errors).flat();
+        if (err.error.errors) {
+          const validationErrors: ValidationError[] = Object.values(err.error.errors).flatMap(
+            (messages) =>
+              (messages as string[]).map((message) => ({
+                kind: 'server',
+                message: message.trim(),
+              })),
+          );
 
-          if (validationErrors.length) {
+          if (validationErrors.length > 0) {
             return throwError(() => validationErrors);
           }
+        }
+
+        if (err.error?.title) {
+          return throwError(() => [{ kind: 'server', message: err.error.title }]);
         }
 
         snackbar.error(err.error?.title || err.error);
@@ -35,7 +46,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       if (err.status === 409) {
-        return throwError(() => [err.error?.title || 'Conflict occured.']);
+        if (err.error?.title) {
+          return throwError(() => [{ kind: 'server', message: err.error.title }]);
+        }
+
+        snackbar.error('Conflict occured.');
       }
 
       if (err.status >= 500) {

@@ -30,9 +30,7 @@
         <p>or click to browse files</p>
       </div>
 
-      @if (uploadPageStore.validationErrors(); as validationErrors) {
-      <app-validation-errors [validationErrors]="validationErrors" />
-      }
+      <app-validation-errors [validationErrors]="uploadPageStore.validationErrors()" />
     </div>
   </div>
 

@@ -14,18 +14,16 @@
   }
 
   &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
     width: 100%;
     animation: fadeInDown var(--duration-standard) var(--animation-standard) both;
-  }
-
-  &__errors {
-    margin-top: 0.5rem;
   }
 
   &__actions {
     display: flex;
     gap: 1rem;
     align-items: center;
-    margin-top: 1rem;
   }
 }

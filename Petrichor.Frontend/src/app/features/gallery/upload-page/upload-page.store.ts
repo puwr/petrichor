@@ -5,20 +5,21 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SnackbarService } from '@app/core/snackbar.service';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { finalize, switchMap, tap } from 'rxjs';
+import { EMPTY, finalize, switchMap, tap } from 'rxjs';
 import { isCompleteEvent, isProgressEvent, UploadEvent } from '../image.models';
 import { tapResponse } from '@ngrx/operators';
+import { ValidationError } from '@angular/forms/signals';
 
 interface UploadPageSlice {
   previewUrl: string | ArrayBuffer | null;
   uploadProgress: number;
-  validationErrors: string[] | null;
+  validationErrors: ValidationError[];
 }
 
 const initialUploadPageSlice: UploadPageSlice = {
   previewUrl: null,
   uploadProgress: 0,
-  validationErrors: null,
+  validationErrors: [],
 };
 
 export const UploadPageStore = signalStore(
@@ -33,24 +34,30 @@ export const UploadPageStore = signalStore(
 
     const uploadImage = rxMethod<File>((file$) =>
       file$.pipe(
-        tap((file) => {
-          patchState(store, { validationErrors: null });
+        switchMap((file) => {
+          patchState(store, { validationErrors: [] });
 
           if (!file.type.match('image.*')) {
-            patchState(store, { validationErrors: ['Only image files are allowed.'] });
-            return;
+            patchState(store, {
+              validationErrors: [
+                { kind: 'invalidFileType', message: 'Only image files are allowed.' },
+              ],
+            });
+
+            return EMPTY;
           }
 
-          _filePreviewReader = new FileReader();
-          _filePreviewReader.onload = () => {
-            patchState(store, { previewUrl: _filePreviewReader?.result ?? null });
-          };
-          _filePreviewReader.readAsDataURL(file);
-        }),
-        switchMap((file) => {
           return store._imageService.uploadImage(file).pipe(
             tapResponse({
               next: (event: UploadEvent) => {
+                if (!store.previewUrl()) {
+                  _filePreviewReader = new FileReader();
+                  _filePreviewReader.onload = () => {
+                    patchState(store, { previewUrl: _filePreviewReader?.result ?? null });
+                  };
+                  _filePreviewReader.readAsDataURL(file);
+                }
+
                 if (isProgressEvent(event)) {
                   patchState(store, { uploadProgress: event.progress });
                 }
@@ -61,7 +68,7 @@ export const UploadPageStore = signalStore(
                   store._router.navigateByUrl(event.imageUrl);
                 }
               },
-              error: (errors: string[] | null) => {
+              error: (errors: ValidationError[]) => {
                 patchState(store, {
                   validationErrors: errors,
                   uploadProgress: 0,

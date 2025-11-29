@@ -20,7 +20,7 @@ public class LoginCommandHandler(
 
         if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
         {
-            return Error.Validation("Invalid credentials.");
+            return Error.Validation(description: "Invalid credentials.");
         }
 
         var roles = await userManager.GetRolesAsync(user);

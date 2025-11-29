@@ -1,13 +1,31 @@
-<form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-  <app-text-input label="Email" type="email" controlName="email" />
-  <app-text-input label="Username" controlName="userName" />
-  <app-text-input label="Password" type="password" controlName="password" />
+<form class="auth-form" (submit)="onSubmit($event)">
+  <label [for]="registerForm.email().name()">Email</label>
+  <input
+    class="text-input"
+    type="text"
+    [id]="registerForm.email().name()"
+    [field]="registerForm.email"
+  />
 
-  @if (validationErrors(); as errors) {
-  <app-validation-errors [validationErrors]="errors" />
-  }
+  <label [for]="registerForm.userName().name()">Username</label>
+  <input
+    class="text-input"
+    type="text"
+    [id]="registerForm.userName().name()"
+    [field]="registerForm.userName"
+  />
 
-  <app-button variant="fill" [disabled]="registerForm.invalid" type="submit" [fullWidth]="true"
-    >Register</app-button
-  >
+  <label [for]="registerForm.password().name()">Password</label>
+  <input
+    class="text-input"
+    type="password"
+    [id]="registerForm.password().name()"
+    [field]="registerForm.password"
+  />
+
+  <app-validation-errors [validationErrors]="registerForm().errors()" />
+
+  <app-button variant="fill" [disabled]="registerForm().invalid()" type="submit" [fullWidth]="true">
+    Register
+  </app-button>
 </form>

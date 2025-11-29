@@ -1,26 +1,38 @@
-import { Component, inject } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
 import { ValidationErrorsComponent, ButtonComponent } from '@app/shared/components';
 import { CommentStore } from '../comment.store';
+import { Field, form, required, submit } from '@angular/forms/signals';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-comment-form',
-  imports: [ReactiveFormsModule, ValidationErrorsComponent, ButtonComponent],
+  imports: [ValidationErrorsComponent, ButtonComponent, Field],
   templateUrl: './comment-form.component.html',
   styleUrl: './comment-form.component.scss',
 })
 export class CommentFormComponent {
-  private fb = inject(FormBuilder);
   readonly commentStore = inject(CommentStore);
 
-  commentForm = this.fb.group({
-    comment: ['', Validators.required],
+  commentForm = form(signal({ comment: '' }), (schema) => {
+    required(schema.comment, { message: '' });
   });
 
-  onSubmit(): void {
-    this.commentStore.createComment({
-      message: this.commentForm.value.comment!.trim(),
-      onSuccess: () => this.commentForm.reset(),
+  async onSubmit(event: SubmitEvent): Promise<void> {
+    event.preventDefault();
+
+    await submit(this.commentForm, async (form) => {
+      if (form().invalid()) return;
+
+      return await firstValueFrom(
+        this.commentStore.createComment(form().value().comment).pipe(
+          map(() => {
+            form().reset();
+            form().value.set({ comment: '' });
+            return null;
+          }),
+          catchError((errors) => of(errors)),
+        ),
+      );
     });
   }
 }
