@@ -8,6 +8,7 @@ import {
   FieldErrorsDirective,
 } from '@app/shared/components';
 import { catchError, firstValueFrom, of } from 'rxjs';
+import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive';
 
 @Component({
   selector: 'app-register-form',
@@ -17,6 +18,7 @@ import { catchError, firstValueFrom, of } from 'rxjs';
     ButtonComponent,
     Field,
     FieldErrorsDirective,
+    AutoFocusDirective,
   ],
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss',

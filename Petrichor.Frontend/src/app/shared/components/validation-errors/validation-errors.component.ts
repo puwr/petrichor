@@ -18,6 +18,7 @@ import { ValidationMessagePipe } from '@app/shared/components/validation-errors/
     .validation-errors {
       display: flex;
       flex-direction: column;
+      margin-bottom: 0.25rem;
       gap: 0.25rem;
       color: var(--color-danger);
 

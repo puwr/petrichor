@@ -2,7 +2,13 @@
   @if (showTagsInput) {
   <form class="tags__form" (submit)="onSubmit($event)" (reset)="onReset()">
     <label [for]="tagsForm.tags().name()">Tags</label>
-    <input class="text-input" type="text" [id]="tagsForm.tags().name()" [field]="tagsForm.tags" />
+    <input
+      class="text-input"
+      type="text"
+      [id]="tagsForm.tags().name()"
+      [field]="tagsForm.tags"
+      appAutoFocus
+    />
 
     <app-validation-errors [validationErrors]="tagsForm().errors()" />
 

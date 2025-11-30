@@ -7,10 +7,17 @@ import {
   FieldErrorsDirective,
 } from '@app/shared/components';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
+import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive';
 
 @Component({
   selector: 'app-login-form',
-  imports: [ValidationErrorsComponent, ButtonComponent, Field, FieldErrorsDirective],
+  imports: [
+    ValidationErrorsComponent,
+    ButtonComponent,
+    Field,
+    FieldErrorsDirective,
+    AutoFocusDirective,
+  ],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

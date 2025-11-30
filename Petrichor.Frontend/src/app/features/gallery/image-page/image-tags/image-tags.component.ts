@@ -5,6 +5,7 @@ import { ImageService } from '../../image.service';
 import { RouterLink } from '@angular/router';
 import { Field, form, submit } from '@angular/forms/signals';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
+import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive';
 
 @Component({
   selector: 'app-tags',
@@ -15,6 +16,7 @@ import { catchError, firstValueFrom, map, of } from 'rxjs';
     IconComponent,
     RouterLink,
     Field,
+    AutoFocusDirective,
   ],
   templateUrl: './image-tags.component.html',
   styleUrl: './image-tags.component.scss',

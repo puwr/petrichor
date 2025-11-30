@@ -1,6 +1,12 @@
 <form class="auth-form" (submit)="onSubmit($event)">
   <label [for]="loginForm.email().name()">Email</label>
-  <input class="text-input" type="text" [id]="loginForm.email().name()" [field]="loginForm.email" />
+  <input
+    class="text-input"
+    type="text"
+    [id]="loginForm.email().name()"
+    [field]="loginForm.email"
+    appAutoFocus
+  />
 
   <label [for]="loginForm.password().name()">Password</label>
   <input
