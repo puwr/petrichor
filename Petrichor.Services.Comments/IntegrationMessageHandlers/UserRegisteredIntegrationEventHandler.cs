@@ -1,17 +1,22 @@
+using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Common.Domain;
 using Petrichor.Services.Comments.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
-using Petrichor.Shared.Events;
 
 namespace Petrichor.Services.Comments.IntegrationMessageHandlers;
 
-public class UserRegisteredIntegrationEventHandler(CommentsDbContext dbContext)
-    : IIntegrationEventHandler<UserRegisteredIntegrationEvent>
+public static class UserRegisteredIntegrationEventHandler
 {
-    public async Task Handle(
+    public static async Task Handle(
         UserRegisteredIntegrationEvent @event,
-        CancellationToken cancellationToken = default)
+        CommentsDbContext dbContext,
+        CancellationToken cancellationToken)
     {
+        var snapshotExists = await dbContext.UserSnapshots
+            .AnyAsync(us => us.UserId == @event.UserId, cancellationToken);
+
+        if (snapshotExists) return;
+
         var userSnapshot = UserSnapshot.Create(@event.UserId, @event.UserName);
 
         dbContext.UserSnapshots.Add(userSnapshot);

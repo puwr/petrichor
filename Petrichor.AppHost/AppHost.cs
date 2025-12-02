@@ -9,8 +9,13 @@ var cache = builder.AddRedis("cache");
 var rmq = builder.AddRabbitMQ("rmq")
     .WithLifetime(ContainerLifetime.Persistent);
 
-var minio = builder.AddMinioContainer("minio")
+var minioUser = builder.AddParameter("MinioUser");
+var minioPassword = builder.AddParameter("MinioPassword", secret: true);
+
+var minio = builder.AddMinioContainer("minio", minioUser, minioPassword)
     .WithLifetime(ContainerLifetime.Persistent);
+minioUser.WithParentRelationship(minio);
+minioPassword.WithParentRelationship(minio);
 
 var users = builder.
     AddProject<Projects.Petrichor_Services_Users>("usersservice")

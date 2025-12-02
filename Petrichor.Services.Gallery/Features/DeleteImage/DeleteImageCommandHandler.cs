@@ -1,22 +1,20 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Domain.Images.Events;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.IntegrationMessages;
-using Petrichor.Shared.Outbox;
+using Wolverine;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.DeleteImage;
 
-public class DeleteImageCommandHandler(
-    GalleryDbContext dbContext,
-    EventPublisher<GalleryDbContext> eventPublisher,
-    IFusionCache cache)
-    : IRequestHandler<DeleteImageCommand, ErrorOr<Deleted>>
+public static class DeleteImageCommandHandler
 {
-    public async Task<ErrorOr<Deleted>> Handle(
+    public static async Task<ErrorOr<Deleted>> Handle(
         DeleteImageCommand command,
+        GalleryDbContext dbContext,
+        IMessageBus bus,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var image = await dbContext.Images
@@ -29,13 +27,14 @@ public class DeleteImageCommandHandler(
             return Result.Deleted;
         }
 
-        eventPublisher.Publish(new ImageDeletedDomainEvent(
+        dbContext.Images.Remove(image);
+
+        await bus.PublishAsync(new ImageDeletedDomainEvent(
             image.OriginalImage.Path,
             image.Thumbnail.Path));
 
-        eventPublisher.Publish(new ImageDeletedIntegrationEvent(image.Id));
+        await bus.PublishAsync(new ImageDeletedIntegrationEvent(image.Id));
 
-        dbContext.Images.Remove(image);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         await cache.RemoveAsync($"image:{image.Id}", token: cancellationToken);

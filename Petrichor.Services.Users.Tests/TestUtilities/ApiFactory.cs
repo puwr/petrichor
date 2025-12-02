@@ -6,6 +6,7 @@ using Petrichor.TestUtilities.Authentication;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 using Testcontainers.Redis;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Tests.TestUtilities;
 
@@ -29,6 +30,9 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
                 options.DefaultChallengeScheme = "Test";
             })
             .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("Test", options => { });
+
+            services.RunWolverineInSoloMode();
+            services.DisableAllExternalWolverineTransports();
         });
     }
 

@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Shared.Pagination;
 using Petrichor.Shared.Extensions;
@@ -9,11 +8,12 @@ using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.GetImages;
 
-public class GetImagesQueryHandler(IServiceScopeFactory scopeFactory, IFusionCache cache)
-    : IRequestHandler<GetImagesQuery, ErrorOr<PagedResponse<GetImagesResponse>>>
+public static class GetImagesQueryHandler
 {
-    public async Task<ErrorOr<PagedResponse<GetImagesResponse>>> Handle(
+    public static async Task<ErrorOr<PagedResponse<GetImagesResponse>>> Handle(
         GetImagesQuery request,
+        IDbContextFactory<GalleryDbContext> dbContextFactory,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var normalizedTags = TagHelpers.Normalize(request.Tags);
@@ -23,8 +23,7 @@ public class GetImagesQueryHandler(IServiceScopeFactory scopeFactory, IFusionCac
             $"images:page-{request.Pagination.PageNumber}:tags-{tagsHash}:uploader-{request.Uploader ?? "all"}",
             async _ =>
             {
-                await using var scope = scopeFactory.CreateAsyncScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
+                var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
                 var query = dbContext.Images.AsNoTracking().AsQueryable();
 

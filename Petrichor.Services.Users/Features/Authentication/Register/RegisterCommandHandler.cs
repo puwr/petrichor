@@ -1,22 +1,20 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Users.Common.Domain;
 using Petrichor.Services.Users.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
-using Petrichor.Shared.Outbox;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Authentication.Register;
 
-public class RegisterCommandHandler(
-    UserManager<User> userManager,
-    UsersDbContext dbContext,
-    EventPublisher<UsersDbContext> eventPublisher)
-    : IRequestHandler<RegisterCommand, ErrorOr<Guid>>
+public static class RegisterCommandHandler
 {
-    public async Task<ErrorOr<Guid>> Handle(
+    public static async Task<ErrorOr<Guid>> Handle(
         RegisterCommand command,
+        UserManager<User> userManager,
+        UsersDbContext dbContext,
+        IMessageBus bus,
         CancellationToken cancellationToken)
     {
         var existingUser = await dbContext.Users
@@ -60,7 +58,7 @@ public class RegisterCommandHandler(
             await userManager.AddToRoleAsync(user, "Admin");
         }
 
-        eventPublisher.Publish(new UserRegisteredIntegrationEvent(
+        await bus.PublishAsync(new UserRegisteredIntegrationEvent(
             user.Id,
             user.UserName!));
 

@@ -2,19 +2,19 @@ using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Domain.Images.Events;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
-using Petrichor.Shared.Events;
-using Petrichor.Shared.Outbox;
+using Wolverine;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.IntegrationMessageHandlers;
 
-public class UserDeletedIntegrationEventHandler(
-    GalleryDbContext dbContext,
-    EventPublisher<GalleryDbContext> eventPublisher,
-    IFusionCache cache)
-    : IIntegrationEventHandler<UserDeletedIntegrationEvent>
+public static class UserDeletedIntegrationEventHandler
 {
-    public async Task Handle(UserDeletedIntegrationEvent @event, CancellationToken cancellationToken)
+    public static async Task Handle(
+        UserDeletedIntegrationEvent @event,
+        GalleryDbContext dbContext,
+        IMessageBus bus,
+        IFusionCache cache,
+        CancellationToken cancellationToken)
     {
         await dbContext.UserSnapshots
             .Where(c => c.UserId == @event.UserId)
@@ -28,7 +28,7 @@ public class UserDeletedIntegrationEventHandler(
 
             foreach (var image in images)
             {
-                eventPublisher.Publish(new ImageDeletedDomainEvent(
+                await bus.PublishAsync(new ImageDeletedDomainEvent(
                     image.OriginalImage.Path,
                     image.Thumbnail.Path));
 

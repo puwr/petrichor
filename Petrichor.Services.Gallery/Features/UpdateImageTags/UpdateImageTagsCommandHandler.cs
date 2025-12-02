@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Domain;
 using Petrichor.Services.Gallery.Common.Persistence;
@@ -8,10 +7,7 @@ using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.UpdateImageTags;
 
-public class UpdateImageTagsCommandHandler(
-    GalleryDbContext dbContext,
-    IFusionCache cache)
-    : IRequestHandler<UpdateImageTagsCommand, ErrorOr<Success>>
+public class UpdateImageTagsCommandHandler(GalleryDbContext dbContext, IFusionCache cache)
 {
     public async Task<ErrorOr<Success>> Handle(
         UpdateImageTagsCommand command,
@@ -45,7 +41,7 @@ public class UpdateImageTagsCommandHandler(
 
     private async Task<List<Tag>> GetOrCreateTagsAsync(
         List<string> tags,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         var normalizedTagNames = TagHelpers.Normalize(tags);
 

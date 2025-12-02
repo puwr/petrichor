@@ -1,17 +1,22 @@
+using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Domain;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
-using Petrichor.Shared.Events;
 
 namespace Petrichor.Services.Gallery.IntegrationMessageHandlers;
 
-public class UserRegisteredIntegrationEventHandler(GalleryDbContext dbContext)
-    : IIntegrationEventHandler<UserRegisteredIntegrationEvent>
+public static class UserRegisteredIntegrationEventHandler
 {
-    public async Task Handle(
+    public static async Task Handle(
         UserRegisteredIntegrationEvent @event,
-        CancellationToken cancellationToken = default)
+        GalleryDbContext dbContext,
+        CancellationToken cancellationToken)
     {
+        var snapshotExists = await dbContext.UserSnapshots
+            .AnyAsync(us => us.UserId == @event.UserId, cancellationToken);
+
+        if (snapshotExists) return;
+
         var userSnapshot = UserSnapshot.Create(@event.UserId, @event.UserName);
 
         dbContext.UserSnapshots.Add(userSnapshot);

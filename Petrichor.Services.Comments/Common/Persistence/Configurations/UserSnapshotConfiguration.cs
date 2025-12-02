@@ -9,9 +9,8 @@ public class UserSnapshotConfiguration : IEntityTypeConfiguration<UserSnapshot>
     public void Configure(EntityTypeBuilder<UserSnapshot> builder)
     {
         builder.HasKey(us => us.UserId);
-
         builder.Property(us => us.UserId).ValueGeneratedNever();
 
-        builder.HasIndex(us => us.UserId);
+        builder.HasIndex(us => us.UserName);
     }
 }

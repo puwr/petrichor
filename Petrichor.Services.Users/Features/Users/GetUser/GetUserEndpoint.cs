@@ -1,5 +1,6 @@
-using MediatR;
-using Petrichor.Shared.Features;
+using ErrorOr;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Users.GetUser;
 
@@ -7,11 +8,11 @@ public class GetUserEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapGet("users/{userId:guid}", async (Guid userId, ISender mediator) =>
+        endpointRouteBuilder.MapGet("users/{userId:guid}", async (Guid userId, IMessageBus bus) =>
         {
             var query = new GetUserQuery(userId);
 
-            var getUserResult = await mediator.Send(query);
+            var getUserResult = await bus.InvokeAsync<ErrorOr<GetUserResponse>>(query);
 
             return getUserResult.Match(
                 Results.Ok,

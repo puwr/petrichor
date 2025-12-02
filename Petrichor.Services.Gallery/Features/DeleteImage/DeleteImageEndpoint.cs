@@ -1,6 +1,7 @@
-using MediatR;
+using ErrorOr;
 using Petrichor.Services.Gallery.Common.Authorization;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Gallery.Features.DeleteImage;
 
@@ -8,11 +9,11 @@ public class DeleteImageEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapDelete("images/{imageId:guid}", async (Guid imageId, ISender mediator) =>
+        endpointRouteBuilder.MapDelete("images/{imageId:guid}", async (Guid imageId, IMessageBus bus) =>
         {
             var command = new DeleteImageCommand(imageId);
 
-            var deleteImageResult = await mediator.Send(command);
+            var deleteImageResult = await bus.InvokeAsync<ErrorOr<Deleted>>(command);
 
             return deleteImageResult.Match(
                 _ => Results.NoContent(),

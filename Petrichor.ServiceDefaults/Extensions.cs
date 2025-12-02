@@ -49,16 +49,12 @@ public static class Extensions
         });
 
         builder.Services.AddOpenTelemetry()
-            .WithMetrics(metrics =>
-            {
-                metrics.AddAspNetCoreInstrumentation()
+            .WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation()
-                    .AddNpgsqlInstrumentation();
-            })
-            .WithTracing(tracing =>
-            {
-                tracing.AddSource(builder.Environment.ApplicationName)
+                    .AddNpgsqlInstrumentation()
+                    .AddFusionCacheInstrumentation())
+            .WithTracing(tracing => tracing.AddSource(builder.Environment.ApplicationName)
                     .AddAspNetCoreInstrumentation(tracing =>
                         tracing.Filter = context =>
                             !context.Request.Path.StartsWithSegments(HealthEndpointPath)
@@ -66,8 +62,7 @@ public static class Extensions
                     )
                     .AddHttpClientInstrumentation()
                     .AddEntityFrameworkCoreInstrumentation()
-                    .AddNpgsql();
-            });
+                    .AddFusionCacheInstrumentation());
 
         builder.AddOpenTelemetryExporters();
 
@@ -98,7 +93,6 @@ public static class Extensions
     {
         if (app.Environment.IsDevelopment())
         {
-
             app.MapHealthChecks(HealthEndpointPath);
 
             app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions

@@ -17,5 +17,5 @@ export class CommentItemComponent {
   comment = input.required<Comment>();
   commentDeleted = output<string>();
 
-  isAuthorOrAdmin = computed(() => this.authStore.isResourceOwnerOrAdmin(this.comment().authorId));
+  isAuthorOrAdmin = computed(() => this.authStore.isResourceOwnerOrAdmin(this.comment().author));
 }

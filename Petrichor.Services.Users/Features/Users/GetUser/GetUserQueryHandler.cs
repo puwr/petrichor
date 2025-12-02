@@ -1,24 +1,23 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Users.Common.Persistence;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Users.Features.Users.GetUser;
 
-public class GetUserQueryHandler(IServiceScopeFactory scopeFactory, IFusionCache cache)
-    : IRequestHandler<GetUserQuery, ErrorOr<GetUserResponse>>
+public static class GetUserQueryHandler
 {
-    public async Task<ErrorOr<GetUserResponse>> Handle(
+    public static async Task<ErrorOr<GetUserResponse>> Handle(
         GetUserQuery request,
+        IDbContextFactory<UsersDbContext> dbContextFactory,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var response = await cache.GetOrSetAsync<ErrorOr<GetUserResponse>>(
             $"user:{request.UserId}",
             async _ =>
             {
-                await using var scope = scopeFactory.CreateAsyncScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
                 var user = await dbContext.Users
                     .AsNoTracking()

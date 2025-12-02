@@ -1,5 +1,6 @@
-using MediatR;
-using Petrichor.Shared.Features;
+using ErrorOr;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Account.GetCurrentUser;
 
@@ -7,11 +8,12 @@ public class GetCurrentUserEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapGet("account/me", async (ISender mediator, HttpContext httpContext) =>
+        endpointRouteBuilder.MapGet("account/me",
+        async (IMessageBus bus, HttpContext httpContext) =>
         {
             var query = new GetCurrentUserQuery(httpContext.User);
 
-            var getCurrentUserInfoResult = await mediator.Send(query);
+            var getCurrentUserInfoResult = await bus.InvokeAsync<ErrorOr<GetCurrentUserResponse>>(query);
 
             return getCurrentUserInfoResult.Match(
                 Results.Ok,

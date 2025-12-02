@@ -1,7 +1,8 @@
-using MediatR;
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Common.Authorization;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Users.DeleteUser;
 
@@ -11,11 +12,11 @@ public class DeleteUserEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapDelete(
             "users/{userId:guid}",
-            async (Guid userId, ISender mediator, [FromQuery] bool deleteUploadedImages = false) =>
+            async (Guid userId, IMessageBus bus, [FromQuery] bool deleteUploadedImages = false) =>
         {
             var command = new DeleteUserCommand(userId, deleteUploadedImages);
 
-            var deleteUserResult = await mediator.Send(command);
+            var deleteUserResult = await bus.InvokeAsync<ErrorOr<Deleted>>(command);
 
             return deleteUserResult.Match(
                 _ => Results.NoContent(),

@@ -1,22 +1,19 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Petrichor.Services.Users.Common.Domain;
-using Petrichor.Services.Users.Common.Persistence;
 using Petrichor.Services.Users.IntegrationMessages;
-using Petrichor.Shared.Outbox;
+using Wolverine;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Users.Features.Users.DeleteUser;
 
-public class DeleteUserCommandHandler(
-    UserManager<User> userManager,
-    EventPublisher<UsersDbContext> eventPublisher,
-    IFusionCache cache)
-    : IRequestHandler<DeleteUserCommand, ErrorOr<Deleted>>
+public static class DeleteUserCommandHandler
 {
-    public async Task<ErrorOr<Deleted>> Handle(
+    public static async Task<ErrorOr<Deleted>> Handle(
         DeleteUserCommand command,
+        UserManager<User> userManager,
+        IMessageBus bus,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(command.UserId.ToString());
@@ -28,7 +25,7 @@ public class DeleteUserCommandHandler(
 
         user.IsDeleted = true;
 
-        eventPublisher.Publish(new UserDeletedIntegrationEvent(
+        await bus.PublishAsync(new UserDeletedIntegrationEvent(
             user.Id,
             command.DeleteUploadedImages));
 

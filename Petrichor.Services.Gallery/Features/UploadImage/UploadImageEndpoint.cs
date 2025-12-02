@@ -1,9 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ErrorOr;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Gallery.Features.UploadImage;
 
@@ -13,7 +13,7 @@ public class UploadImageEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "images",
-            async ([FromForm] UploadImageRequest request, ISender mediator, HttpContext httpContext) =>
+            async ([FromForm] UploadImageRequest request, IMessageBus bus, HttpContext httpContext) =>
             {
                 var currentUserIdClaim = httpContext.User
                     .FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -27,7 +27,7 @@ public class UploadImageEndpoint : FeatureEndpoint
                     ImageFile: request.ImageFile,
                     UploaderId: uploaderId);
 
-                var uploadImageResult = await mediator.Send(uploadImageCommand);
+                var uploadImageResult = await bus.InvokeAsync<ErrorOr<Guid>>(uploadImageCommand);
 
                 return uploadImageResult.Match(
                     imageId =>

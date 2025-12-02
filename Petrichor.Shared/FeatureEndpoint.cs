@@ -2,13 +2,13 @@ using ErrorOr;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Petrichor.Shared.Features;
+namespace Petrichor.Shared;
 
 public abstract class FeatureEndpoint
 {
     public abstract void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder);
 
-    protected IResult Problem(List<Error> errors)
+    protected static IResult Problem(List<Error> errors)
     {
         if (errors.Count is 0)
         {
@@ -23,7 +23,7 @@ public abstract class FeatureEndpoint
         return Problem(errors[0]);
     }
 
-    protected IResult Problem(Error error)
+    protected static IResult Problem(Error error)
     {
         var statusCode = error.Type switch
         {

@@ -1,6 +1,7 @@
-using MediatR;
+using ErrorOr;
 using Petrichor.Services.Comments.Common.Authorization;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Comments.Features.DeleteComment;
 
@@ -10,11 +11,11 @@ public class DeleteCommentEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapDelete(
             "comments/{commentId:guid}",
-            async (Guid commentId, ISender mediator) =>
+            async (Guid commentId, IMessageBus bus) =>
             {
                 var command = new DeleteCommentCommand(commentId);
 
-                var deleteCommentResult = await mediator.Send(command);
+                var deleteCommentResult = await bus.InvokeAsync<ErrorOr<Deleted>>(command);
 
                 return deleteCommentResult.Match(
                     _ => Results.NoContent(),

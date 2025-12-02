@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Petrichor.Services.Comments;
 using Petrichor.TestUtilities.Authentication;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 using Testcontainers.Redis;
+using Wolverine;
 
 namespace Petrichor.Services.Comments.Tests.TestUtilities;
 
@@ -26,6 +26,9 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         {
             services.AddAuthentication("Test")
                 .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("Test", options => {});
+
+            services.RunWolverineInSoloMode();
+            services.DisableAllExternalWolverineTransports();
         });
     }
 

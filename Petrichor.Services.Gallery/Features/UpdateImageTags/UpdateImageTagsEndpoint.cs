@@ -1,6 +1,7 @@
-using MediatR;
+using ErrorOr;
 using Petrichor.Services.Gallery.Common.Authorization;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Gallery.Features.UpdateImageTags;
 
@@ -11,11 +12,11 @@ public class UpdateImageTagsEndpoint : FeatureEndpoint
         endpointRouteBuilder.MapPatch("images/{imageId:guid}/tags", async (
             Guid imageId,
             UpdateImageTagsRequest request,
-            ISender mediator) =>
+            IMessageBus bus) =>
         {
             var command = new UpdateImageTagsCommand(imageId, request.Tags);
 
-            var addImageTagResult = await mediator.Send(command);
+            var addImageTagResult = await bus.InvokeAsync<ErrorOr<Success>>(command);
 
             return addImageTagResult.Match(
                 _ => Results.NoContent(),

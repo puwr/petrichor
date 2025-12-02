@@ -5,13 +5,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" PrivateAssets="all" />
-    <PackageReference Include="Newtonsoft.Json" PrivateAssets="all" />
-    <PackageReference Include="MassTransit" PrivateAssets="all" />
-    <PackageReference Include="ErrorOr" PrivateAssets="all" />
-    <PackageReference Include="FluentValidation" PrivateAssets="all" />
-    <PackageReference Include="MediatR" PrivateAssets="all" />
-    <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" PrivateAssets="all" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="ErrorOr" />
+    <PackageReference Include="WolverineFx.FluentValidation" />
+    <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" />
   </ItemGroup>
 
 </Project>

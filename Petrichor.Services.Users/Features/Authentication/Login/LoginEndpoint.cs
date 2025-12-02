@@ -1,5 +1,6 @@
-using MediatR;
-using Petrichor.Shared.Features;
+using ErrorOr;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Authentication.Login;
 
@@ -9,11 +10,11 @@ public class LoginEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "auth/login",
-            async (LoginRequest request, ISender mediator) =>
+            async (LoginRequest request, IMessageBus bus) =>
             {
                 var query = new LoginCommand(request.Email, request.Password);
 
-                var loginResult = await mediator.Send(query);
+                var loginResult = await bus.InvokeAsync<ErrorOr<Success>>(query);
 
                 return loginResult.Match(
                     _ => Results.NoContent(),

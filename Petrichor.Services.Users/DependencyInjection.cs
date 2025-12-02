@@ -1,26 +1,21 @@
 using System.Text;
-using FluentValidation;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Petrichor.Services.Users.Common.Authorization;
 using Petrichor.Services.Users.Common.Domain;
-using Petrichor.Services.Users.Common.Extensions;
 using Petrichor.Services.Users.Common.Persistence;
 using Petrichor.Services.Users.Common.Services;
-using Petrichor.Shared.Behaviors;
-using Petrichor.Shared.DomainEvents;
-using Petrichor.Shared.Events;
-using Petrichor.Shared.Inbox;
-using Petrichor.Shared.IntegrationEvents;
-using Petrichor.Shared.Outbox;
 using Petrichor.Shared.Settings;
+using Wolverine;
+using Wolverine.EntityFrameworkCore;
+using Wolverine.FluentValidation;
+using Wolverine.Postgresql;
+using Wolverine.RabbitMQ;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
 
@@ -28,35 +23,65 @@ namespace Petrichor.Services.Users;
 
 public static class DependencyInjection
 {
-    public static void AddApplication(this WebApplicationBuilder builder)
+    public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        builder.Services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
-            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-        });
+        var databaseConnectionString = configuration.GetConnectionString("database")
+            ?? throw new InvalidOperationException("Connection string 'database' not found.");
 
-        builder.Services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-
-        builder.Services.AddEndpoints();
-    }
-
-    public static void AddInfrastructure(this WebApplicationBuilder builder)
-    {
-        builder.Services.AddAuthentication(builder.Configuration);
-
-        builder.Services.AddAuthorizationBuilder()
-            .AddPolicy(UsersPolicies.AdminOnly, policy => policy.RequireRole("Admin"));
-
-        builder.Services.AddDbContext<UsersDbContext>(options =>
+        services.AddDbContext<UsersDbContext>(options =>
             options
                 .UseNpgsql(
-                    builder.Configuration.GetConnectionString("database"),
+                    databaseConnectionString,
+                    npgsqlOptions => npgsqlOptions
+                        .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
+                .UseSnakeCaseNamingConvention(),
+                optionsLifetime: ServiceLifetime.Singleton);
+
+        services.AddPooledDbContextFactory<UsersDbContext>(options =>
+            options
+                .UseNpgsql(
+                    databaseConnectionString,
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, "users"))
                 .UseSnakeCaseNamingConvention());
 
-        builder.Services.AddFusionCache()
+        return services;
+    }
+
+    public static void AddWolverine(this WebApplicationBuilder builder)
+    {
+        var databaseConnectionString = builder.Configuration.GetConnectionString("database")
+            ?? throw new InvalidOperationException("Connection string 'database' not found.");
+
+        var rmqConnectionString = builder.Configuration.GetConnectionString("rmq")
+            ?? throw new InvalidOperationException("Connection string 'rmq' not found.");
+
+        builder.UseWolverine(options =>
+        {
+            options.PersistMessagesWithPostgresql(databaseConnectionString, "users");
+            options.UseEntityFrameworkCoreTransactions();
+            options.Policies.UseDurableLocalQueues();
+            options.Policies.UseDurableInboxOnAllListeners();
+            options.Policies.UseDurableOutboxOnAllSendingEndpoints();
+            options.Policies.AutoApplyTransactions();
+
+            options.UseRabbitMq(rmqConnectionString)
+                .AutoProvision();
+
+            options.Publish(c => c
+                .MessagesFromNamespace("Petrichor.Services.Users.IntegrationMessages")
+                .ToRabbitExchange("users-exchange"));
+
+            options.UseFluentValidation();
+        });
+    }
+
+    public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
+    {
+        var cacheConnectionString = configuration.GetConnectionString("cache")
+            ?? throw new InvalidOperationException("Connection string 'cache' not found.");
+
+        services.AddFusionCache()
             .WithDefaultEntryOptions(options =>
             {
                 options.Duration = TimeSpan.FromMinutes(2);
@@ -76,32 +101,13 @@ public static class DependencyInjection
             .WithSerializer(new FusionCacheSystemTextJsonSerializer())
             .WithDistributedCache(new RedisCache(new RedisCacheOptions()
             {
-                Configuration = builder.Configuration.GetConnectionString("cache")
+                Configuration = cacheConnectionString
             }));
 
-        builder.Services.AddMassTransit(configure =>
-        {
-            configure.DisableUsageTelemetry();
-
-            configure.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.Host(builder.Configuration.GetConnectionString("rmq"));
-                cfg.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(prefix: "users"));
-            });
-        });
-
-        builder.Services.AddScoped<EventPublisher<UsersDbContext>>();
-
-        builder.Services.AddDomainEvents();
-        builder.Services.AddIntegrationEvents();
-
-        builder.Services.AddHostedService<InboxBackgroundService<UsersDbContext>>();
-        builder.Services.AddHostedService<OutboxBackgroudService<UsersDbContext>>();
-
-        builder.Services.AddScoped<ICookieService, CookieService>();
+        return services;
     }
 
-    private static IServiceCollection AddAuthentication(
+    public static IServiceCollection AddAuthenticationAndAuthorization(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -154,49 +160,12 @@ public static class DependencyInjection
                 };
             });
 
+        services.AddAuthorizationBuilder()
+            .AddPolicy(UsersPolicies.AdminOnly, policy => policy.RequireRole("Admin"));
+
         services.AddHostedService<RolesSeeder>();
 
-        return services;
-    }
-
-    private static IServiceCollection AddDomainEvents(this IServiceCollection services)
-    {
-        services.AddScoped<DomainEventDispatcher<UsersDbContext>>();
-
-        Type[] handlerTypes = typeof(DependencyInjection).Assembly
-            .GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>)))
-            .ToArray();
-
-        foreach (Type handlerType in handlerTypes)
-        {
-            var interfaceType = handlerType.GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>));
-
-            services.TryAddScoped(interfaceType, handlerType);
-        }
-
-        return services;
-    }
-
-    private static IServiceCollection AddIntegrationEvents(this IServiceCollection services)
-    {
-        services.AddScoped<IntegrationEventDispatcher<UsersDbContext>>();
-
-        Type[] handlerTypes = typeof(DependencyInjection).Assembly
-            .GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IIntegrationEventHandler<>)))
-            .ToArray();
-
-        foreach (Type handlerType in handlerTypes)
-        {
-            var interfaceType = handlerType.GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IIntegrationEventHandler<>));
-
-            services.TryAddScoped(interfaceType, handlerType);
-        }
+        services.AddScoped<ICookieService, CookieService>();
 
         return services;
     }

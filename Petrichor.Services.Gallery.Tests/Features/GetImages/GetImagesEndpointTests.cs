@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Gallery.Common.Persistence;
@@ -12,6 +11,7 @@ using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.Shared.Pagination;
 using Petrichor.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
+using Wolverine;
 
 namespace Petrichor.Services.Gallery.Tests.Features.GetImages;
 
@@ -22,14 +22,14 @@ public class GetImagesEndpointTests: IDisposable
     private readonly ApiFactory _apiFactory;
     private readonly IServiceScope _scope;
     private readonly GalleryDbContext _dbContext;
-    private readonly IBus _bus;
+    private readonly IMessageBus _bus;
 
     public GetImagesEndpointTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _scope = _apiFactory.Services.CreateScope();
         _dbContext = _scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
-        _bus = _scope.ServiceProvider.GetRequiredService<IBus>();
+        _bus = _scope.ServiceProvider.GetRequiredService<IMessageBus>();
     }
 
     public void Dispose()
@@ -94,7 +94,7 @@ public class GetImagesEndpointTests: IDisposable
         var testUserId = Guid.NewGuid();
         var testUserName = "test123";
 
-        await _bus.Publish(new UserRegisteredIntegrationEvent(testUserId, testUserName));
+        await _bus.PublishAsync(new UserRegisteredIntegrationEvent(testUserId, testUserName));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {

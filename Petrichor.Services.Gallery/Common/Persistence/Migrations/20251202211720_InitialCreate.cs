@@ -35,67 +35,6 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "inbox_message_consumers",
-                schema: "gallery",
-                columns: table => new
-                {
-                    inbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(600)", maxLength: 600, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_inbox_message_consumers", x => new { x.inbox_message_id, x.name });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "inbox_messages",
-                schema: "gallery",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
-                    occurred_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    processed_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    error = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_inbox_messages", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "outbox_message_consumers",
-                schema: "gallery",
-                columns: table => new
-                {
-                    outbox_message_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "character varying(600)", maxLength: 600, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_outbox_message_consumers", x => new { x.outbox_message_id, x.name });
-                });
-
-            migrationBuilder.CreateTable(
-                name: "outbox_messages",
-                schema: "gallery",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    type = table.Column<int>(type: "integer", nullable: false),
-                    content = table.Column<string>(type: "jsonb", maxLength: 2000, nullable: false),
-                    occurred_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    processed_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    error = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_outbox_messages", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tags",
                 schema: "gallery",
                 columns: table => new
@@ -155,23 +94,10 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                 columns: new[] { "tag_id", "image_id" });
 
             migrationBuilder.CreateIndex(
-                name: "ix_images_id",
-                schema: "gallery",
-                table: "images",
-                column: "id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_images_uploader_id",
                 schema: "gallery",
                 table: "images",
                 column: "uploader_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_tags_id",
-                schema: "gallery",
-                table: "tags",
-                column: "id",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_tags_name",
@@ -179,12 +105,6 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                 table: "tags",
                 column: "name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_user_snapshots_user_id",
-                schema: "gallery",
-                table: "user_snapshots",
-                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_user_snapshots_user_name",
@@ -198,22 +118,6 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "image_tags",
-                schema: "gallery");
-
-            migrationBuilder.DropTable(
-                name: "inbox_message_consumers",
-                schema: "gallery");
-
-            migrationBuilder.DropTable(
-                name: "inbox_messages",
-                schema: "gallery");
-
-            migrationBuilder.DropTable(
-                name: "outbox_message_consumers",
-                schema: "gallery");
-
-            migrationBuilder.DropTable(
-                name: "outbox_messages",
                 schema: "gallery");
 
             migrationBuilder.DropTable(

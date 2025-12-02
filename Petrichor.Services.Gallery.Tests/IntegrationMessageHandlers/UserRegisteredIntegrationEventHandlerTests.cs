@@ -1,10 +1,10 @@
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.TestUtilities;
+using Wolverine;
 
 namespace Petrichor.Services.Gallery.Tests.IntegrationMessageHandlers;
 
@@ -15,14 +15,14 @@ public class UserRegisteredIntegrationEventHandlerTests : IDisposable
     private readonly ApiFactory _apiFactory;
     private readonly IServiceScope _scope;
     private readonly GalleryDbContext _dbContext;
-    private readonly IBus _bus;
+    private readonly IMessageBus _bus;
 
     public UserRegisteredIntegrationEventHandlerTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _scope = _apiFactory.Services.CreateScope();
         _dbContext = _scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
-        _bus = _scope.ServiceProvider.GetRequiredService<IBus>();
+        _bus = _scope.ServiceProvider.GetRequiredService<IMessageBus>();
     }
 
     public void Dispose()
@@ -35,7 +35,7 @@ public class UserRegisteredIntegrationEventHandlerTests : IDisposable
     {
         var testUserId = Guid.NewGuid();
         var userRegisteredEvent = new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}");
-        await _bus.Publish(userRegisteredEvent);
+        await _bus.PublishAsync(userRegisteredEvent);
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {

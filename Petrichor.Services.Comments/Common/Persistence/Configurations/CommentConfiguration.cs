@@ -9,12 +9,10 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
     public void Configure(EntityTypeBuilder<Comment> builder)
     {
         builder.HasKey(c => c.Id);
-
         builder.Property(c => c.Id).ValueGeneratedNever();
 
-        builder.Property(c => c.Message).HasMaxLength(1000);
-
-        builder.HasIndex(c => c.Id);
         builder.HasIndex(c => c.ResourceId);
+
+        builder.Property(c => c.Message).HasMaxLength(1000);
     }
 }

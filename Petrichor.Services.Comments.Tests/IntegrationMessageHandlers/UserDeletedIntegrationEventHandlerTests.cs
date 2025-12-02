@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Comments.Common.Persistence;
@@ -11,6 +10,7 @@ using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.Shared.Pagination;
 using Petrichor.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
+using Wolverine;
 
 namespace Petrichor.Services.Comments.Tests.IntegrationMessageHandlers;
 
@@ -21,14 +21,14 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     private readonly ApiFactory _apiFactory;
     private readonly IServiceScope _scope;
     private readonly CommentsDbContext _dbContext;
-    private readonly IBus _bus;
+    private readonly IMessageBus _bus;
 
     public UserDeletedIntegrationEventHandlerTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _scope = _apiFactory.Services.CreateScope();
         _dbContext = _scope.ServiceProvider.GetRequiredService<CommentsDbContext>();
-        _bus = _scope.ServiceProvider.GetRequiredService<IBus>();
+        _bus = _scope.ServiceProvider.GetRequiredService<IMessageBus>();
     }
 
     public void Dispose()
@@ -41,7 +41,7 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     {
         var testUserId = Guid.NewGuid();
         var userRegisteredEvent = new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}");
-        await _bus.Publish(userRegisteredEvent);
+        await _bus.PublishAsync(userRegisteredEvent);
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
@@ -63,7 +63,7 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
         createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var userDeletedEvent = new UserDeletedIntegrationEvent(testUserId, false);
-        await _bus.Publish(userDeletedEvent);
+        await _bus.PublishAsync(userDeletedEvent);
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {

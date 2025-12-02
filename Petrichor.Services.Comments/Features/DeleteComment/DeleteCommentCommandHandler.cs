@@ -1,16 +1,16 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Common.Persistence;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Comments.Features.DeleteComment;
 
-public class DeleteCommentCommandHandler(CommentsDbContext dbContext, IFusionCache cache)
-    : IRequestHandler<DeleteCommentCommand, ErrorOr<Deleted>>
+public static class DeleteCommentCommandHandler
 {
-    public async Task<ErrorOr<Deleted>> Handle(
+    public static async Task<ErrorOr<Deleted>> Handle(
         DeleteCommentCommand command,
+        CommentsDbContext dbContext,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var comment = await dbContext.Comments

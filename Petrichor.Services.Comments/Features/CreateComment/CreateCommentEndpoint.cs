@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ErrorOr;
-using MediatR;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Comments.Features.CreateComment;
 
@@ -12,7 +12,7 @@ public class CreateCommentEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "comments",
-            async (CreateCommentRequest request, ISender mediator, HttpContext httpContext) =>
+            async (CreateCommentRequest request, IMessageBus bus, HttpContext httpContext) =>
             {
                 var currentUserIdClaim = httpContext.User
                     .FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -27,7 +27,7 @@ public class CreateCommentEndpoint : FeatureEndpoint
                     request.ResourceId,
                     request.Message);
 
-                var createCommentResult = await mediator.Send(command);
+                var createCommentResult = await bus.InvokeAsync<ErrorOr<Guid>>(command);
 
                 return createCommentResult.Match(
                     commentId => Results.Created($"/comments?resourceId={request.ResourceId}", commentId),

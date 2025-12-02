@@ -1,17 +1,17 @@
 using System.Text.RegularExpressions;
 using ErrorOr;
-using MediatR;
 using Petrichor.Services.Comments.Common.Domain;
 using Petrichor.Services.Comments.Common.Persistence;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Comments.Features.CreateComment;
 
-public class CreateCommentCommandHandler(CommentsDbContext dbContext, IFusionCache cache)
-    : IRequestHandler<CreateCommentCommand, ErrorOr<Guid>>
+public static class CreateCommentCommandHandler
 {
-    public async Task<ErrorOr<Guid>> Handle(
+    public static async Task<ErrorOr<Guid>> Handle(
         CreateCommentCommand command,
+        CommentsDbContext dbContext,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var normalizedMessage = StripHtmlTags(command.Message.Trim());

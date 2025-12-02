@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Petrichor.Services.Gallery.Common.Domain.Images;
 using Petrichor.Services.Gallery.Common.Domain.Images.ValueObjects;
 using Petrichor.Services.Gallery.Common.Persistence;
@@ -16,7 +15,7 @@ public class UploadImageCommandHandler(
     IThumbnailGenerator thumbnailGenerator,
     IImageMetadataProvider imageMetadataProvider,
     IFusionCache cache
-) : IRequestHandler<UploadImageCommand, ErrorOr<Guid>>
+)
 {
     public async Task<ErrorOr<Guid>> Handle(
         UploadImageCommand command,

@@ -1,8 +1,9 @@
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Common.Authorization;
 using Petrichor.Shared.Pagination;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
+using ErrorOr;
 
 namespace Petrichor.Services.Users.Features.Users.GetUsers;
 
@@ -12,13 +13,13 @@ public class GetUsersEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapGet(
             "users",
-            async (ISender mediator, [FromQuery(Name = "page")] int pageNumber = 1) =>
+            async (IMessageBus bus, [FromQuery(Name = "page")] int pageNumber = 1) =>
             {
                 var pagination = new PaginationParameters(pageNumber);
 
                 var query = new GetUsersQuery(pagination);
 
-                var listUsersResult = await mediator.Send(query);
+                var listUsersResult = await bus.InvokeAsync<ErrorOr<PagedResponse<GetUsersResponse>>>(query);
 
                 return listUsersResult.Match(
                     Results.Ok,

@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Common.Persistence;
 using Petrichor.Shared.Extensions;
@@ -8,19 +7,19 @@ using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Comments.Features.GetComments;
 
-public class GetCommentsQueryHandler(IServiceScopeFactory scopeFactory, IFusionCache cache)
-    : IRequestHandler<GetCommentsQuery, ErrorOr<CursorPagedResponse<GetCommentsResponse>>>
+public static class GetCommentsQueryHandler
 {
-    public async Task<ErrorOr<CursorPagedResponse<GetCommentsResponse>>> Handle(
+    public static async Task<ErrorOr<CursorPagedResponse<GetCommentsResponse>>> Handle(
         GetCommentsQuery request,
+        IDbContextFactory<CommentsDbContext> dbContextFactory,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var response = await cache.GetOrSetAsync(
             $"comments:{request.ResourceId}:{request.PaginationParameters.Cursor ?? "null"}",
             async _ =>
             {
-                await using var scope = scopeFactory.CreateAsyncScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<CommentsDbContext>();
+                var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
                 var query = dbContext.Comments.AsNoTracking().AsQueryable();
 

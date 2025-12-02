@@ -1,17 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Common.Persistence;
 using Petrichor.Services.Gallery.IntegrationMessages;
-using Petrichor.Shared.Events;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Comments.IntegrationMessageHandlers;
 
-public class ImageDeletedIntegrationEventHandler(CommentsDbContext dbContext, IFusionCache cache)
-    : IIntegrationEventHandler<ImageDeletedIntegrationEvent>
+public static class ImageDeletedIntegrationEventHandler
 {
-    public async Task Handle(
+    public static async Task Handle(
         ImageDeletedIntegrationEvent @event,
-        CancellationToken cancellationToken = default)
+        CommentsDbContext dbContext,
+        IFusionCache cache,
+        CancellationToken cancellationToken)
     {
         await dbContext.Comments
             .Where(c => c.ResourceId == @event.ImageId)

@@ -18,8 +18,9 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("gallery")
-                .HasAnnotation("ProductVersion", "9.0.1")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("WolverineEnabled", "true");
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
@@ -59,9 +60,6 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_images");
 
-                    b.HasIndex("Id")
-                        .HasDatabaseName("ix_images_id");
-
                     b.HasIndex("UploaderId")
                         .HasDatabaseName("ix_images_uploader_id");
 
@@ -81,10 +79,6 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_tags");
-
-                    b.HasIndex("Id")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tags_id");
 
                     b.HasIndex("Name")
                         .IsUnique()
@@ -107,123 +101,108 @@ namespace Petrichor.Services.Gallery.Common.Persistence.Migrations
                     b.HasKey("UserId")
                         .HasName("pk_user_snapshots");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_snapshots_user_id");
-
                     b.HasIndex("UserName")
                         .HasDatabaseName("ix_user_snapshots_user_name");
 
                     b.ToTable("user_snapshots", "gallery");
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Inbox.InboxMessage", b =>
+            modelBuilder.Entity("Wolverine.EntityFrameworkCore.Internals.IncomingMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("jsonb")
-                        .HasColumnName("content");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("text")
-                        .HasColumnName("error");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<DateTime>("OccurredAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("occurred_at_utc");
-
-                    b.Property<DateTime?>("ProcessedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("processed_at_utc");
-
-                    b.HasKey("Id")
-                        .HasName("pk_inbox_messages");
-
-                    b.ToTable("inbox_messages", "gallery");
-                });
-
-            modelBuilder.Entity("Petrichor.Shared.Inbox.InboxMessageConsumer", b =>
-                {
-                    b.Property<Guid>("InboxMessageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("inbox_message_id");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(600)
-                        .HasColumnType("character varying(600)")
-                        .HasColumnName("name");
-
-                    b.HasKey("InboxMessageId", "Name")
-                        .HasName("pk_inbox_message_consumers");
-
-                    b.ToTable("inbox_message_consumers", "gallery");
-                });
-
-            modelBuilder.Entity("Petrichor.Shared.Outbox.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Attempts")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("jsonb")
-                        .HasColumnName("content");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("text")
-                        .HasColumnName("error");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<DateTime>("OccurredAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("occurred_at_utc");
-
-                    b.Property<DateTime?>("ProcessedAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("processed_at_utc");
-
-                    b.Property<int>("Type")
                         .HasColumnType("integer")
-                        .HasColumnName("type");
+                        .HasDefaultValue(0)
+                        .HasColumnName("attempts");
+
+                    b.Property<byte[]>("Body")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("body");
+
+                    b.Property<DateTimeOffset?>("ExecutionTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("execution_time");
+
+                    b.Property<DateTimeOffset?>("KeepUntil")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("keep_until");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("message_type");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("owner_id");
+
+                    b.Property<string>("ReceivedAt")
+                        .HasColumnType("text")
+                        .HasColumnName("received_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.HasKey("Id")
-                        .HasName("pk_outbox_messages");
+                        .HasName("pk_wolverine_incoming_envelopes");
 
-                    b.ToTable("outbox_messages", "gallery");
+                    b.ToTable("wolverine_incoming_envelopes", "gallery", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
                 });
 
-            modelBuilder.Entity("Petrichor.Shared.Outbox.OutboxMessageConsumer", b =>
+            modelBuilder.Entity("Wolverine.EntityFrameworkCore.Internals.OutgoingMessage", b =>
                 {
-                    b.Property<Guid>("OutboxMessageId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("outbox_message_id");
+                        .HasColumnName("id");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(600)
-                        .HasColumnType("character varying(600)")
-                        .HasColumnName("name");
+                    b.Property<int>("Attempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("attempts");
 
-                    b.HasKey("OutboxMessageId", "Name")
-                        .HasName("pk_outbox_message_consumers");
+                    b.Property<byte[]>("Body")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("body");
 
-                    b.ToTable("outbox_message_consumers", "gallery");
+                    b.Property<DateTimeOffset?>("DeliverBy")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deliver_by");
+
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("destination");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("message_type");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer")
+                        .HasColumnName("owner_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_wolverine_outgoing_envelopes");
+
+                    b.ToTable("wolverine_outgoing_envelopes", "gallery", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
                 });
 
             modelBuilder.Entity("ImageTag", b =>

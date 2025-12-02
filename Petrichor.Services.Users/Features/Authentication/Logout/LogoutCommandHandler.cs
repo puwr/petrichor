@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Users.Common.Domain;
@@ -7,13 +6,12 @@ using Petrichor.Services.Users.Common.Services;
 
 namespace Petrichor.Services.Users.Features.Authentication.Logout;
 
-public class LogoutCommandHandler(
-    UserManager<User> userManager,
-    ICookieService cookieService)
-    : IRequestHandler<LogoutCommand, ErrorOr<Success>>
+public static class LogoutCommandHandler
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public static async Task<ErrorOr<Success>> Handle(
         LogoutCommand command,
+        UserManager<User> userManager,
+        ICookieService cookieService,
         CancellationToken cancellationToken)
     {
         if (!string.IsNullOrEmpty(command.RefreshToken))

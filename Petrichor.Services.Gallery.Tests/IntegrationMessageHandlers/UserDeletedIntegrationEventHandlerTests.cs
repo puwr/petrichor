@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Gallery.Common.Persistence;
@@ -8,6 +7,7 @@ using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
+using Wolverine;
 
 namespace Petrichor.Services.Gallery.Tests.IntegrationMessageHandlers;
 
@@ -18,14 +18,14 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     private readonly ApiFactory _apiFactory;
     private readonly IServiceScope _scope;
     private readonly GalleryDbContext _dbContext;
-    private readonly IBus _bus;
+    private readonly IMessageBus _bus;
 
     public UserDeletedIntegrationEventHandlerTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _scope = _apiFactory.Services.CreateScope();
         _dbContext = _scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
-        _bus = _scope.ServiceProvider.GetRequiredService<IBus>();
+        _bus = _scope.ServiceProvider.GetRequiredService<IMessageBus>();
     }
 
     public void Dispose()
@@ -38,7 +38,7 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     {
         var testUserId = Guid.NewGuid();
 
-        await _bus.Publish(new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}"));
+        await _bus.PublishAsync(new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}"));
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
             var userSnapshot = await _dbContext.UserSnapshots
@@ -48,7 +48,7 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
             return userSnapshot is not null;
         });
 
-        await _bus.Publish(new UserDeletedIntegrationEvent(testUserId, false));
+        await _bus.PublishAsync(new UserDeletedIntegrationEvent(testUserId, false));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
@@ -79,9 +79,9 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
         uploadImageId.Should().NotBeEmpty();
 
         var userDeletedEvent = new UserDeletedIntegrationEvent(
-            userId: testUserId,
-            deleteUploadedImages: true);
-        await _bus.Publish(userDeletedEvent);
+            UserId: testUserId,
+            DeleteUploadedImages: true);
+        await _bus.PublishAsync(userDeletedEvent);
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
@@ -110,9 +110,9 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
         uploadImageId.Should().NotBeEmpty();
 
         var userDeletedEvent = new UserDeletedIntegrationEvent(
-            userId: testUserId,
-            deleteUploadedImages: false);
-        await _bus.Publish(userDeletedEvent);
+            UserId: testUserId,
+            DeleteUploadedImages: false);
+        await _bus.PublishAsync(userDeletedEvent);
 
         await Poller.PollAsync(TimeSpan.FromSeconds(10), async () =>
         {

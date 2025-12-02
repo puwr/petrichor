@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Shared.Pagination;
 using Petrichor.Shared.Extensions;
@@ -7,11 +6,11 @@ using Petrichor.Services.Users.Common.Persistence;
 
 namespace Petrichor.Services.Users.Features.Users.GetUsers;
 
-public class GetUsersQueryHandler(UsersDbContext dbContext)
-    : IRequestHandler<GetUsersQuery, ErrorOr<PagedResponse<GetUsersResponse>>>
+public static class GetUsersQueryHandler
 {
-    public async Task<ErrorOr<PagedResponse<GetUsersResponse>>> Handle(
+    public static async Task<ErrorOr<PagedResponse<GetUsersResponse>>> Handle(
         GetUsersQuery request,
+        UsersDbContext dbContext,
         CancellationToken cancellationToken)
     {
         var users = await dbContext.Users

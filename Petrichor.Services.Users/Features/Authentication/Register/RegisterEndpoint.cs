@@ -1,5 +1,6 @@
-using MediatR;
-using Petrichor.Shared.Features;
+using ErrorOr;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Authentication.Register;
 
@@ -9,14 +10,14 @@ public class RegisterEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "auth/register",
-            async (RegisterRequest request, ISender mediator) =>
+            async (RegisterRequest request, IMessageBus bus) =>
             {
                 var command = new RegisterCommand(
                     request.Email.ToLowerInvariant(),
                     request.UserName.ToLowerInvariant(),
                     request.Password);
 
-                var registerResult = await mediator.Send(command);
+                var registerResult = await bus.InvokeAsync<ErrorOr<Guid>>(command);
 
                 return registerResult.Match(
                     userId => Results.Created($"/users/{userId}", userId),

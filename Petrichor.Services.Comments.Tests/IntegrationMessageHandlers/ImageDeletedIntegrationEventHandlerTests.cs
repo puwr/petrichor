@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Comments.Features.CreateComment;
 using Petrichor.Services.Comments.Features.GetComments;
@@ -9,6 +8,7 @@ using Petrichor.Services.Gallery.IntegrationMessages;
 using Petrichor.Shared.Pagination;
 using Petrichor.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
+using Wolverine;
 
 namespace Petrichor.Services.Comments.Tests.IntegrationMessageHandlers;
 
@@ -18,13 +18,13 @@ public class ImageDeletedIntegrationEventHandlerTests : IDisposable
 {
     private readonly ApiFactory _apiFactory;
     private readonly IServiceScope _scope;
-    private readonly IBus _bus;
+    private readonly IMessageBus _bus;
 
     public ImageDeletedIntegrationEventHandlerTests(ApiFactory apiFactory)
     {
         _apiFactory = apiFactory;
         _scope = _apiFactory.Services.CreateScope();
-        _bus = _scope.ServiceProvider.GetRequiredService<IBus>();
+        _bus = _scope.ServiceProvider.GetRequiredService<IMessageBus>();
     }
 
     public void Dispose()
@@ -46,7 +46,7 @@ public class ImageDeletedIntegrationEventHandlerTests : IDisposable
         createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var imageDeletedEvent = new ImageDeletedIntegrationEvent(testResourceId);
-        await _bus.Publish(imageDeletedEvent);
+        await _bus.PublishAsync(imageDeletedEvent);
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {

@@ -1,16 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using ErrorOr;
-using MediatR;
 
 namespace Petrichor.Services.Users.Features.Account.GetCurrentUser;
 
-public class GetCurrentUserInfoQueryHandler
-    : IRequestHandler<GetCurrentUserQuery, ErrorOr<GetCurrentUserResponse>>
+public static class GetCurrentUserInfoQueryHandler
 {
-    public Task<ErrorOr<GetCurrentUserResponse>> Handle(
-        GetCurrentUserQuery request,
-        CancellationToken cancellationToken)
+    public static Task<ErrorOr<GetCurrentUserResponse>> Handle(GetCurrentUserQuery request)
     {
         var user = request.User;
 

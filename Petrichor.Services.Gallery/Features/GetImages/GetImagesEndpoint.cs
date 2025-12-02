@@ -1,7 +1,8 @@
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Petrichor.Shared.Pagination;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
+using Wolverine;
+using ErrorOr;
 
 namespace Petrichor.Services.Gallery.Features.GetImages;
 
@@ -12,7 +13,7 @@ public class GetImagesEndpoint : FeatureEndpoint
         endpointRouteBuilder.MapGet(
             "images",
             async (
-                ISender mediator,
+                IMessageBus bus,
                 [FromQuery(Name = "page")] int pageNumber = 1,
                 [FromQuery] string[]? tags = null,
                 [FromQuery] string? uploader = null) =>
@@ -24,7 +25,7 @@ public class GetImagesEndpoint : FeatureEndpoint
                     Tags: tags?.ToList() ?? null,
                     Uploader: uploader?.ToLowerInvariant());
 
-                var getImagesResult = await mediator.Send(query);
+                var getImagesResult = await bus.InvokeAsync<ErrorOr<PagedResponse<GetImagesResponse>>>(query);
 
                 return getImagesResult.Match(
                     Results.Ok,

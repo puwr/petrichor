@@ -1,5 +1,6 @@
-using MediatR;
-using Petrichor.Shared.Features;
+using ErrorOr;
+using Petrichor.Shared;
+using Wolverine;
 
 namespace Petrichor.Services.Users.Features.Authentication.RefreshToken;
 
@@ -9,13 +10,13 @@ public class RefreshTokenEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "auth/refresh-token",
-            async (ISender mediator, HttpContext httpContext) =>
+            async (IMessageBus bus, HttpContext httpContext) =>
             {
                 var refreshToken = httpContext.Request.Cookies["REFRESH_TOKEN"];
 
                 var command = new RefreshTokenCommand(refreshToken);
 
-                var refreshTokenResult = await mediator.Send(command);
+                var refreshTokenResult = await bus.InvokeAsync<ErrorOr<Success>>(command);
 
                 return refreshTokenResult.Match(
                     _ => Results.NoContent(),

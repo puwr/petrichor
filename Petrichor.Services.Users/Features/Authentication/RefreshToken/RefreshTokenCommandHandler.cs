@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Users.Common.Domain;
@@ -7,14 +6,13 @@ using Petrichor.Services.Users.Common.Services;
 
 namespace Petrichor.Services.Users.Features.Authentication.RefreshToken;
 
-public class RefreshTokenCommandHandler(
-    IJwtTokenProvider jwtTokenProvider,
-    UserManager<User> userManager,
-    ICookieService cookieService)
-    : IRequestHandler<RefreshTokenCommand, ErrorOr<Success>>
+public static class RefreshTokenCommandHandler
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public static async Task<ErrorOr<Success>> Handle(
         RefreshTokenCommand command,
+        IJwtTokenProvider jwtTokenProvider,
+        UserManager<User> userManager,
+        ICookieService cookieService,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(command.RefreshToken))

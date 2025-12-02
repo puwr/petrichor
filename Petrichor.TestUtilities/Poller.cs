@@ -4,7 +4,7 @@ public static class Poller
 {
     public static async Task WaitAsync(TimeSpan timeout, Func<Task<bool>> condition)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
 
         DateTime endTimeUtc = DateTime.UtcNow.Add(timeout);
 
@@ -18,7 +18,7 @@ public static class Poller
 
     public static async Task PollAsync(TimeSpan duration, Func<Task<bool>> condition)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(500));
 
         DateTime endTimeUtc = DateTime.UtcNow.Add(duration);
 

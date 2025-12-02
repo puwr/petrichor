@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Petrichor.Shared.Features;
+using Petrichor.Shared;
 
 namespace Petrichor.Services.Gallery.Common.Extensions;
 

@@ -1,20 +1,17 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Petrichor.Services.Users.Common.Domain;
 using Petrichor.Services.Users.Common.Services;
 
 namespace Petrichor.Services.Users.Features.Authentication.Login;
 
-public class LoginCommandHandler(
-    UserManager<User> userManager,
-    IJwtTokenProvider jwtTokenProvider,
-    ICookieService cookieService)
-    : IRequestHandler<LoginCommand, ErrorOr<Success>>
+public static class LoginCommandHandler
 {
-    public async Task<ErrorOr<Success>> Handle(
+    public static async Task<ErrorOr<Success>> Handle(
         LoginCommand request,
-        CancellationToken cancellationToken)
+        UserManager<User> userManager,
+        IJwtTokenProvider jwtTokenProvider,
+        ICookieService cookieService)
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 

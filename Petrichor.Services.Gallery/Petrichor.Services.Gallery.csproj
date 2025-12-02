@@ -3,7 +3,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="EFCore.NamingConventions" />
@@ -12,11 +11,12 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="SixLabors.ImageSharp" />
-    <PackageReference Include="MediatR" />
     <PackageReference Include="ErrorOr" />
-    <PackageReference Include="MassTransit" />
-    <PackageReference Include="MassTransit.RabbitMQ" />
-    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="WolverineFx" />
+    <PackageReference Include="WolverineFx.EntityFrameworkCore" />
+    <PackageReference Include="WolverineFx.FluentValidation" />
+    <PackageReference Include="WolverineFx.Postgresql" />
+    <PackageReference Include="WolverineFx.RabbitMQ" />
     <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" />
     <PackageReference Include="ZiggyCreatures.FusionCache" />
     <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />

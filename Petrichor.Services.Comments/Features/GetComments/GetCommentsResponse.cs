@@ -6,8 +6,7 @@ public record GetCommentsResponse
 {
     public Guid Id { get; init; }
     public Guid ResourceId { get; init; }
-    public Guid AuthorId { get; init; }
-    public string AuthorUserName { get; init; }
+    public string Author { get; init; }
     public string Message { get; init; }
     public DateTime CreatedAtUtc { get; init; }
 
@@ -17,8 +16,7 @@ public record GetCommentsResponse
         {
             Id = comment.Id,
             ResourceId = comment.ResourceId,
-            AuthorId = comment.AuthorId,
-            AuthorUserName = userSnapshot?.UserName ?? "Deleted",
+            Author = userSnapshot?.UserName ?? "Deleted",
             Message = comment.Message,
             CreatedAtUtc = comment.CreatedAtUtc
         };

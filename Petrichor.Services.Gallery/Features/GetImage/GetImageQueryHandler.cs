@@ -1,25 +1,23 @@
 using ErrorOr;
-using MassTransit.Initializers;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Persistence;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Petrichor.Services.Gallery.Features.GetImage;
 
-public class GetImageQueryHandler(IServiceScopeFactory scopeFactory, IFusionCache cache)
-    : IRequestHandler<GetImageQuery, ErrorOr<GetImageResponse>>
+public static class GetImageQueryHandler
 {
-    public async Task<ErrorOr<GetImageResponse>> Handle(
+    public static async Task<ErrorOr<GetImageResponse>> Handle(
         GetImageQuery request,
+        IDbContextFactory<GalleryDbContext> dbContextFactory,
+        IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var response = await cache.GetOrSetAsync<ErrorOr<GetImageResponse>>(
             $"image:{request.ImageId}",
             async _ =>
             {
-                await using var scope = scopeFactory.CreateAsyncScope();
-                var dbContext = scope.ServiceProvider.GetRequiredService<GalleryDbContext>();
+                var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
                 var data = await dbContext.Images
                     .AsNoTracking()

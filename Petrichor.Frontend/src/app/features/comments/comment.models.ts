@@ -8,8 +8,7 @@ export type CreateCommentRequest = {
 export type Comment = {
   id: string;
   resourceId: string;
-  authorId: string;
-  authorUserName: string;
+  author: string;
   message: string;
   createdAtUtc: Date;
 };
@@ -23,8 +22,7 @@ export function makeComment(
   return {
     id: commentId,
     resourceId,
-    authorId: currentUser.id,
-    authorUserName: currentUser.userName,
+    author: currentUser.userName,
     message,
     createdAtUtc: new Date(),
   };
