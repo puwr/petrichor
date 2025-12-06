@@ -1,8 +1,10 @@
+using MemoryPack;
 using Petrichor.Services.Gallery.Common.Domain.Images;
 
 namespace Petrichor.Services.Gallery.Features.GetImages;
 
-public record GetImagesResponse
+[MemoryPackable]
+public partial record GetImagesResponse
 {
     public Guid Id { get; init; }
     public string ThumbnailUrl { get; init; }

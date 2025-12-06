@@ -1,9 +1,11 @@
+using MemoryPack;
 using Petrichor.Services.Gallery.Common.Domain;
 using Petrichor.Services.Gallery.Common.Domain.Images;
 
 namespace Petrichor.Services.Gallery.Features.GetImage;
 
-public record GetImageResponse
+[MemoryPackable]
+public partial record GetImageResponse
 {
     public Guid Id { get; init; }
     public string Url { get; init; }
@@ -28,4 +30,5 @@ public record GetImageResponse
     }
 }
 
-public record TagResponse(Guid Id, string Name);
+[MemoryPackable]
+public partial record TagResponse(Guid Id, string Name);

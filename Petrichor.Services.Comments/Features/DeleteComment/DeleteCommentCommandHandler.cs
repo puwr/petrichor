@@ -1,4 +1,3 @@
-using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Common.Persistence;
 using ZiggyCreatures.Caching.Fusion;
@@ -7,7 +6,7 @@ namespace Petrichor.Services.Comments.Features.DeleteComment;
 
 public static class DeleteCommentCommandHandler
 {
-    public static async Task<ErrorOr<Deleted>> Handle(
+    public static async Task Handle(
         DeleteCommentCommand command,
         CommentsDbContext dbContext,
         IFusionCache cache,
@@ -18,10 +17,7 @@ public static class DeleteCommentCommandHandler
             .FirstOrDefaultAsync(c => c.Id == command.CommentId,
                 cancellationToken);
 
-        if (comment is null)
-        {
-            return Result.Deleted;
-        }
+        if (comment is null) return;
 
         dbContext.Comments.Remove(comment);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -29,7 +25,5 @@ public static class DeleteCommentCommandHandler
         await cache.RemoveByTagAsync(
             $"comments:{comment.ResourceId}",
             token: cancellationToken);
-
-        return Result.Deleted;
     }
 }

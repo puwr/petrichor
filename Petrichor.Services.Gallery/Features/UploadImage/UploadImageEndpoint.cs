@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using Petrichor.Shared;
 using Wolverine;
@@ -13,30 +12,22 @@ public class UploadImageEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "images",
-            async ([FromForm] UploadImageRequest request, IMessageBus bus, HttpContext httpContext) =>
+            async (
+                [FromForm] UploadImageRequest request,
+                IMessageBus bus,
+                ClaimsPrincipal user,
+                CancellationToken cancellationToken) =>
             {
-                var currentUserIdClaim = httpContext.User
-                    .FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-                if (!Guid.TryParse(currentUserIdClaim, out Guid uploaderId))
-                {
-                    return Problem(Error.Unauthorized());
-                }
+                var uploaderId = Guid.Parse(user.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
 
                 var uploadImageCommand = new UploadImageCommand(
                     ImageFile: request.ImageFile,
                     UploaderId: uploaderId);
 
-                var uploadImageResult = await bus.InvokeAsync<ErrorOr<Guid>>(uploadImageCommand);
+                var uploadedImageId = await bus
+                    .InvokeAsync<Guid>(uploadImageCommand, cancellationToken);
 
-                return uploadImageResult.Match(
-                    imageId =>
-                    {
-                        var path = $"/images/{imageId}";
-                        return Results.Created(path, imageId);
-                    },
-                    Problem
-                );
+                return Results.Created($"/images/{uploadedImageId}", uploadedImageId);
             })
             .RequireAuthorization()
             .WithTags(Tags.Images)

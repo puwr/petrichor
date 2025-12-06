@@ -8,13 +8,13 @@ namespace Petrichor.Services.Users.Features.Users.GetUser;
 public static class GetUserQueryHandler
 {
     public static async Task<ErrorOr<GetUserResponse>> Handle(
-        GetUserQuery request,
+        GetUserQuery query,
         IDbContextFactory<UsersDbContext> dbContextFactory,
         IFusionCache cache,
         CancellationToken cancellationToken)
     {
-        var response = await cache.GetOrSetAsync<ErrorOr<GetUserResponse>>(
-            $"user:{request.UserId}",
+        var response = await cache.GetOrSetAsync(
+            $"user:{query.UserId}",
             async _ =>
             {
                 var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
@@ -22,11 +22,11 @@ public static class GetUserQueryHandler
                 var user = await dbContext.Users
                     .AsNoTracking()
                     .IgnoreQueryFilters()
-                    .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+                    .FirstOrDefaultAsync(u => u.Id == query.UserId, cancellationToken);
 
                 if (user is null)
                 {
-                    return Error.NotFound(description: "User not found.");
+                    return null;
                 }
 
                 if (user.IsDeleted)
@@ -38,6 +38,8 @@ public static class GetUserQueryHandler
             },
             token: cancellationToken);
 
-        return response;
+        return response is not null
+            ? response
+            : Error.NotFound(description: "User not found.");
     }
 }

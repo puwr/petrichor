@@ -8,20 +8,23 @@ public class GetUserEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapGet("users/{userId:guid}", async (Guid userId, IMessageBus bus) =>
-        {
-            var query = new GetUserQuery(userId);
+        endpointRouteBuilder.MapGet(
+            "users/{userId:guid}",
+            async (Guid userId, IMessageBus bus, CancellationToken cancellationToken) =>
+            {
+                var query = new GetUserQuery(userId);
 
-            var getUserResult = await bus.InvokeAsync<ErrorOr<GetUserResponse>>(query);
+                var getUserResult = await bus
+                    .InvokeAsync<ErrorOr<GetUserResponse>>(query, cancellationToken);
 
-            return getUserResult.Match(
-                Results.Ok,
-                Problem
-            );
-        })
-        .WithTags(Tags.Users)
-        .WithSummary("Get user")
-        .Produces<GetUserResponse>(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status404NotFound);
+                return getUserResult.Match(
+                    Results.Ok,
+                    Problem
+                );
+            })
+            .WithTags(Tags.Users)
+            .WithSummary("Get user")
+            .Produces<GetUserResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
     }
 }

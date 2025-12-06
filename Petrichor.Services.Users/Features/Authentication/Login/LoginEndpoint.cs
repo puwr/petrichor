@@ -10,11 +10,12 @@ public class LoginEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "auth/login",
-            async (LoginRequest request, IMessageBus bus) =>
+            async (LoginRequest request, IMessageBus bus, CancellationToken cancellationToken) =>
             {
                 var query = new LoginCommand(request.Email, request.Password);
 
-                var loginResult = await bus.InvokeAsync<ErrorOr<Success>>(query);
+                var loginResult = await bus
+                    .InvokeAsync<ErrorOr<Success>>(query, cancellationToken);
 
                 return loginResult.Match(
                     _ => Results.NoContent(),

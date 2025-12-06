@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using ErrorOr;
 using Petrichor.Services.Comments.Common.Domain;
 using Petrichor.Services.Comments.Common.Persistence;
 using ZiggyCreatures.Caching.Fusion;
@@ -8,7 +7,7 @@ namespace Petrichor.Services.Comments.Features.CreateComment;
 
 public static class CreateCommentCommandHandler
 {
-    public static async Task<ErrorOr<Guid>> Handle(
+    public static async Task<Guid> Handle(
         CreateCommentCommand command,
         CommentsDbContext dbContext,
         IFusionCache cache,

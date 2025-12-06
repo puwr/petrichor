@@ -9,6 +9,7 @@
     <PackageReference Include="ErrorOr" />
     <PackageReference Include="WolverineFx.FluentValidation" />
     <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" />
+    <PackageReference Include="MemoryPack" />
   </ItemGroup>
 
 </Project>

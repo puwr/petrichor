@@ -1,4 +1,3 @@
-using ErrorOr;
 using Petrichor.Services.Gallery.Common.Domain.Images;
 using Petrichor.Services.Gallery.Common.Domain.Images.ValueObjects;
 using Petrichor.Services.Gallery.Common.Persistence;
@@ -17,11 +16,11 @@ public class UploadImageCommandHandler(
     IFusionCache cache
 )
 {
-    public async Task<ErrorOr<Guid>> Handle(
+    public async Task<Guid> Handle(
         UploadImageCommand command,
         CancellationToken cancellationToken)
     {
-        var (originalImage, thumbnail) = await ProcessImageAsync(command.ImageFile);
+        var (originalImage, thumbnail) = await ProcessImageAsync(command.ImageFile, cancellationToken);
 
         var image = Image.Create(originalImage, thumbnail, command.UploaderId);
 
@@ -33,7 +32,9 @@ public class UploadImageCommandHandler(
         return image.Id;
     }
 
-    private async Task<(OriginalImage, Thumbnail)> ProcessImageAsync(IFormFile imageFile)
+    private async Task<(OriginalImage, Thumbnail)> ProcessImageAsync(
+        IFormFile imageFile,
+        CancellationToken cancellationToken)
     {
         var imageExtension = Path.GetExtension(imageFile.FileName);
 
@@ -42,21 +43,23 @@ public class UploadImageCommandHandler(
         var imagePath = await fileStorage.SaveFileAsync(
             imageStream,
             imageExtension,
-            StorageFolders.Uploads);
+            StorageFolders.Uploads,
+            cancellationToken);
 
         var (imageWidth, imageHeight) = await imageMetadataProvider
-            .GetDimensionsAsync(imageStream);
+            .GetDimensionsAsync(imageStream, cancellationToken);
 
         var thumbnailStream = await thumbnailGenerator
-            .CreateThumbnailAsync(imageStream);
+            .CreateThumbnailAsync(imageStream, cancellationToken);
 
         var thumbnailPath = await fileStorage.SaveFileAsync(
             thumbnailStream,
             ".jpg",
-            StorageFolders.Thumbnails);
+            StorageFolders.Thumbnails,
+            cancellationToken);
 
         var (thumbnailWidth, thumbnailHeight) = await imageMetadataProvider
-            .GetDimensionsAsync(thumbnailStream);
+            .GetDimensionsAsync(thumbnailStream, cancellationToken);
 
         var originalImage = new OriginalImage(imagePath, imageWidth, imageHeight);
         var thumbnail = new Thumbnail(thumbnailPath, thumbnailWidth, thumbnailHeight);

@@ -4,11 +4,10 @@
 
 - .NET
 - Microservices
+- Wolverine
 - .NET Aspire
 - YARP
-- Outbox for domain evets
-- Inbox and Outbox for integration events
-- CQRS
+- Caching
 - JWT authentication (HTTP-only cookies)
 - Image upload
 - Integration tests
@@ -22,5 +21,6 @@
 
 # How to run
 
-Ensure the Docker Engine is running.  
+Prerequisites: .NET 10, pnpm, Docker.
+
 `dotnet run --project .\Petrichor.AppHost\`

@@ -5,11 +5,13 @@ namespace Petrichor.Services.Gallery.Common.Services;
 
 public class ImageMetadataProvider : IImageMetadataProvider
 {
-    public async Task<(int width, int height)> GetDimensionsAsync(Stream imageStream)
+    public async Task<(int width, int height)> GetDimensionsAsync(
+        Stream imageStream,
+        CancellationToken cancellationToken = default)
     {
         imageStream.Reset();
 
-        using Image image = await Image.LoadAsync(imageStream);
+        using Image image = await Image.LoadAsync(imageStream, cancellationToken);
 
         return (image.Width, image.Height);
     }

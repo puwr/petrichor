@@ -1,6 +1,9 @@
+using MemoryPack;
+
 namespace Petrichor.Services.Users.Features.Users.GetUsers;
 
-public record GetUsersResponse(
+[MemoryPackable]
+public partial record GetUsersResponse(
     Guid Id,
     string Email,
     string UserName,

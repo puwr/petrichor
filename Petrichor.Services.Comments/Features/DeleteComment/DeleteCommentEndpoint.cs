@@ -1,4 +1,3 @@
-using ErrorOr;
 using Petrichor.Services.Comments.Common.Authorization;
 using Petrichor.Shared;
 using Wolverine;
@@ -11,15 +10,13 @@ public class DeleteCommentEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapDelete(
             "comments/{commentId:guid}",
-            async (Guid commentId, IMessageBus bus) =>
+            async (Guid commentId, IMessageBus bus, CancellationToken cancellationToken) =>
             {
                 var command = new DeleteCommentCommand(commentId);
 
-                var deleteCommentResult = await bus.InvokeAsync<ErrorOr<Deleted>>(command);
+                await bus.InvokeAsync(command, cancellationToken);
 
-                return deleteCommentResult.Match(
-                    _ => Results.NoContent(),
-                    Problem);
+                return Results.NoContent();
             }
         )
         .RequireAuthorization(CommentsPolicies.AuthorOrAdmin)

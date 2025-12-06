@@ -1,39 +1,37 @@
-using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Comments.Common.Persistence;
 using Petrichor.Shared.Extensions;
-using Petrichor.Shared.Pagination;
 using ZiggyCreatures.Caching.Fusion;
+using Petrichor.Shared.Pagination;
 
 namespace Petrichor.Services.Comments.Features.GetComments;
 
 public static class GetCommentsQueryHandler
 {
-    public static async Task<ErrorOr<CursorPagedResponse<GetCommentsResponse>>> Handle(
-        GetCommentsQuery request,
+    public static async Task<CursorPagedResponse<GetCommentsResponse>> Handle(
+        GetCommentsQuery query,
         IDbContextFactory<CommentsDbContext> dbContextFactory,
         IFusionCache cache,
         CancellationToken cancellationToken)
     {
         var response = await cache.GetOrSetAsync(
-            $"comments:{request.ResourceId}:{request.PaginationParameters.Cursor ?? "null"}",
+            $"comments:{query.ResourceId}:{query.Pagination.Cursor ?? "null"}",
             async _ =>
             {
                 var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-                var query = dbContext.Comments.AsNoTracking().AsQueryable();
+                var commemtsQuery = dbContext.Comments.AsNoTracking().AsQueryable();
 
-                var lastId = Cursor.Decode(request.PaginationParameters.Cursor);
-
-                query = query.WhereIf(
+                var lastId = Cursor.Decode(query.Pagination.Cursor);
+                commemtsQuery = commemtsQuery.WhereIf(
                     condition: lastId.HasValue,
                     predicate: comment => comment.Id <= lastId!.Value
                 );
 
-                var comments = await query
-                    .Where(c => c.ResourceId == request.ResourceId)
+                var comments = await commemtsQuery
+                    .Where(c => c.ResourceId == query.ResourceId)
                     .OrderByDescending(c => c.Id)
-                    .Take(request.PaginationParameters.Limit + 1)
+                    .Take(query.Pagination.Limit + 1)
                     .GroupJoin(dbContext.UserSnapshots,
                         comment => comment.AuthorId,
                         userSnapshot => userSnapshot.UserId,
@@ -42,7 +40,7 @@ public static class GetCommentsQueryHandler
                     .Select(x => GetCommentsResponse.From(x.Comment, x.UserSnapshot))
                     .ToListAsync(cancellationToken);
 
-                var hasMore = comments.Count > request.PaginationParameters.Limit;
+                var hasMore = comments.Count > query.Pagination.Limit;
 
                 string? nextCursor = null;
 
@@ -58,7 +56,7 @@ public static class GetCommentsQueryHandler
                     NextCursor: nextCursor,
                     HasMore: hasMore);
             },
-            tags: [$"comments:{request.ResourceId}"],
+            tags: [$"comments:{query.ResourceId}"],
             token: cancellationToken);
 
         return response;

@@ -1,51 +1,51 @@
-using ErrorOr;
 using Microsoft.EntityFrameworkCore;
-using Petrichor.Shared.Pagination;
 using Petrichor.Shared.Extensions;
 using Petrichor.Services.Gallery.Common.Persistence;
 using Petrichor.Services.Gallery.Common.Utilities;
 using ZiggyCreatures.Caching.Fusion;
+using Petrichor.Shared.Pagination;
 
 namespace Petrichor.Services.Gallery.Features.GetImages;
 
 public static class GetImagesQueryHandler
 {
-    public static async Task<ErrorOr<PagedResponse<GetImagesResponse>>> Handle(
-        GetImagesQuery request,
+    public static async Task<PagedResponse<GetImagesResponse>> Handle(
+        GetImagesQuery query,
         IDbContextFactory<GalleryDbContext> dbContextFactory,
         IFusionCache cache,
         CancellationToken cancellationToken)
     {
-        var normalizedTags = TagHelpers.Normalize(request.Tags);
+        var normalizedTags = TagHelpers.Normalize(query.Tags);
         var tagsHash = TagHelpers.Hash(normalizedTags);
+        var uploader = query.Uploader?.Trim().ToLowerInvariant();
 
         var response = await cache.GetOrSetAsync(
-            $"images:page-{request.Pagination.PageNumber}:tags-{tagsHash}:uploader-{request.Uploader ?? "all"}",
+            $"images:page-{query.Pagination.PageNumber}:tags-{tagsHash}:uploader-{query.Uploader ?? "all"}",
             async _ =>
             {
                 var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
-                var query = dbContext.Images.AsNoTracking().AsQueryable();
+                var imagesQuery = dbContext.Images.AsNoTracking().AsQueryable();
 
-                query = query.WhereIf(
+                imagesQuery = imagesQuery.WhereIf(
                     condition: normalizedTags?.Count > 0,
                     predicate: image => normalizedTags!
                         .All(nt => image.Tags.Any(t => t.Name.Contains(nt)))
                 );
 
-                query = query.WhereIf(
-                    condition: !string.IsNullOrWhiteSpace(request.Uploader),
+                imagesQuery = imagesQuery.WhereIf(
+                    condition: !string.IsNullOrWhiteSpace(uploader),
                     predicate: image => dbContext.UserSnapshots
-                        .Any(us => us.UserName == request.Uploader && us.UserId == image.UploaderId)
+                        .Any(us => us.UserName == uploader && us.UserId == image.UploaderId)
                 );
 
-                var images = await query
+                var response = await imagesQuery
                     .AsNoTracking()
                     .OrderByDescending(i => i.UploadedDateTime)
                     .Select(image => GetImagesResponse.From(image))
-                    .ToPagedResponseAsync(request.Pagination, cancellationToken);
+                    .ToPagedResponseAsync(query.Pagination, cancellationToken);
 
-                return images;
+                return response;
             },
             tags: ["images"],
             token: cancellationToken

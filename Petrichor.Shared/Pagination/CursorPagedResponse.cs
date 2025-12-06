@@ -1,3 +1,6 @@
+using MemoryPack;
+
 namespace Petrichor.Shared.Pagination;
 
-public record CursorPagedResponse<T>(IReadOnlyList<T> Items, string? NextCursor, bool HasMore);
+[MemoryPackable]
+public partial record CursorPagedResponse<T>(IReadOnlyList<T> Items, string? NextCursor, bool HasMore);

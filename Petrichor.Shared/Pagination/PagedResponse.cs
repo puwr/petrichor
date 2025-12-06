@@ -1,6 +1,9 @@
+using MemoryPack;
+
 namespace Petrichor.Shared.Pagination;
 
-public record PagedResponse<T>(IReadOnlyList<T> Items, int Count, int PageNumber, int PageSize)
+[MemoryPackable]
+public partial record PagedResponse<T>(IReadOnlyList<T> Items, int Count, int PageNumber, int PageSize)
 {
     public int TotalPages => (int)Math.Ceiling(Count / (double)PageSize);
 }

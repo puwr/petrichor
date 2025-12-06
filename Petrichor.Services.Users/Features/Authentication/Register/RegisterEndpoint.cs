@@ -10,14 +10,14 @@ public class RegisterEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "auth/register",
-            async (RegisterRequest request, IMessageBus bus) =>
+            async (RegisterRequest request, IMessageBus bus, CancellationToken cancellationToken) =>
             {
                 var command = new RegisterCommand(
                     request.Email.ToLowerInvariant(),
                     request.UserName.ToLowerInvariant(),
                     request.Password);
 
-                var registerResult = await bus.InvokeAsync<ErrorOr<Guid>>(command);
+                var registerResult = await bus.InvokeAsync<ErrorOr<Guid>>(command, cancellationToken);
 
                 return registerResult.Match(
                     userId => Results.Created($"/users/{userId}", userId),

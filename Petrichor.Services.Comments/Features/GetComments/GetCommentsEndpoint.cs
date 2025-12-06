@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Petrichor.Shared.Pagination;
 using Petrichor.Shared;
+using Petrichor.Shared.Pagination;
 using Wolverine;
-using ErrorOr;
 
 namespace Petrichor.Services.Comments.Features.GetComments;
 
@@ -12,18 +11,19 @@ public class GetCommentsEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapGet(
             "comments",
-            async ([FromQuery] Guid resourceId, [FromQuery] string? cursor, IMessageBus bus) =>
+            async (
+                [FromQuery] Guid resourceId,
+                [FromQuery] string? cursor,
+                IMessageBus bus,
+                CancellationToken cancellationToken) =>
             {
-                var paginationParameters = new CursorPaginationParameters(cursor);
-                var query = new GetCommentsQuery(resourceId, paginationParameters);
+                var pagination = new CursorPaginationParameters(cursor);
+                var query = new GetCommentsQuery(resourceId, pagination);
 
-                var getCommentsResult = await bus
-                    .InvokeAsync<ErrorOr<CursorPagedResponse<GetCommentsResponse>>>(query);
+                var comments = await bus
+                    .InvokeAsync<CursorPagedResponse<GetCommentsResponse>>(query, cancellationToken);
 
-                return getCommentsResult.Match(
-                    Results.Ok,
-                    Problem
-                );
+                return Results.Ok(comments);
             }
         )
         .WithTags(Tags.Comments)

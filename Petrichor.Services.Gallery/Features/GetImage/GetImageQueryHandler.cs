@@ -8,20 +8,20 @@ namespace Petrichor.Services.Gallery.Features.GetImage;
 public static class GetImageQueryHandler
 {
     public static async Task<ErrorOr<GetImageResponse>> Handle(
-        GetImageQuery request,
+        GetImageQuery query,
         IDbContextFactory<GalleryDbContext> dbContextFactory,
         IFusionCache cache,
         CancellationToken cancellationToken)
     {
-        var response = await cache.GetOrSetAsync<ErrorOr<GetImageResponse>>(
-            $"image:{request.ImageId}",
+        var response = await cache.GetOrSetAsync(
+            $"image:{query.ImageId}",
             async _ =>
             {
                 var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
                 var data = await dbContext.Images
                     .AsNoTracking()
-                    .Where(i => i.Id == request.ImageId)
+                    .Where(i => i.Id == query.ImageId)
                     .Include(i => i.Tags)
                     .Select(i => new
                     {
@@ -31,13 +31,15 @@ public static class GetImageQueryHandler
                     })
                     .FirstOrDefaultAsync(cancellationToken);
 
-                if (data?.Image is null) return Error.NotFound(description: "Image not found.");
+                if (data?.Image is null) return null;
 
                 return GetImageResponse.From(data.Image, data.UserSnapshot);
             },
             token: cancellationToken
         );
 
-        return response;
+        return response is not null
+            ? response
+            : Error.NotFound(description: "Image not found.");
     }
 }

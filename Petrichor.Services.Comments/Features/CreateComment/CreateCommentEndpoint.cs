@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using ErrorOr;
 using Petrichor.Shared;
 using Wolverine;
 
@@ -12,32 +11,28 @@ public class CreateCommentEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapPost(
             "comments",
-            async (CreateCommentRequest request, IMessageBus bus, HttpContext httpContext) =>
+            async (
+                CreateCommentRequest request,
+                IMessageBus bus,
+                ClaimsPrincipal user,
+                CancellationToken cancellationToken) =>
             {
-                var currentUserIdClaim = httpContext.User
-                    .FindFirstValue(JwtRegisteredClaimNames.Sub);
-
-                if (!Guid.TryParse(currentUserIdClaim, out Guid authorId))
-                {
-                    return Problem(Error.Unauthorized());
-                }
+                var authorId = Guid.Parse(user.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
 
                 var command = new CreateCommentCommand(
                     authorId,
                     request.ResourceId,
                     request.Message);
 
-                var createCommentResult = await bus.InvokeAsync<ErrorOr<Guid>>(command);
+                var createdCommentId = await bus.InvokeAsync<Guid>(command, cancellationToken);
 
-                return createCommentResult.Match(
-                    commentId => Results.Created($"/comments?resourceId={request.ResourceId}", commentId),
-                    Problem
-                );
+                return Results.Created($"/comments?resourceId={request.ResourceId}", createdCommentId);
             })
             .RequireAuthorization()
             .WithTags(Tags.Comments)
             .WithSummary("Create comment")
             .Produces<Guid>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status401Unauthorized);
     }
 }

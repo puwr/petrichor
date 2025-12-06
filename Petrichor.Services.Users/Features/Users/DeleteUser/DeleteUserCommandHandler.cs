@@ -9,7 +9,7 @@ namespace Petrichor.Services.Users.Features.Users.DeleteUser;
 
 public static class DeleteUserCommandHandler
 {
-    public static async Task<ErrorOr<Deleted>> Handle(
+    public static async Task<Deleted> Handle(
         DeleteUserCommand command,
         UserManager<User> userManager,
         IMessageBus bus,

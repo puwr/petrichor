@@ -1,4 +1,4 @@
-using ErrorOr;
+using System.Security.Claims;
 using Petrichor.Shared;
 using Wolverine;
 
@@ -8,22 +8,21 @@ public class GetCurrentUserEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapGet("account/me",
-        async (IMessageBus bus, HttpContext httpContext) =>
-        {
-            var query = new GetCurrentUserQuery(httpContext.User);
+        endpointRouteBuilder.MapGet(
+            "account/me",
+            async (IMessageBus bus, ClaimsPrincipal user) =>
+            {
+                var query = new GetCurrentUserQuery(user);
 
-            var getCurrentUserInfoResult = await bus.InvokeAsync<ErrorOr<GetCurrentUserResponse>>(query);
+                var response = await bus
+                    .InvokeAsync<GetCurrentUserResponse>(query);
 
-            return getCurrentUserInfoResult.Match(
-                Results.Ok,
-                Problem
-            );
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Account)
-        .WithSummary("Get current user")
-        .Produces<GetCurrentUserResponse>(StatusCodes.Status200OK)
-        .Produces(StatusCodes.Status401Unauthorized);
+                return Results.Ok(response);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Account)
+            .WithSummary("Get current user")
+            .Produces<GetCurrentUserResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized);
     }
 }

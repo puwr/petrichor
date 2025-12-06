@@ -7,9 +7,10 @@ public static class ImageDeletedDomainEventHandler
 {
     public static async Task Handle(
         ImageDeletedDomainEvent @event,
-        IFileStorage fileStorage)
+        IFileStorage fileStorage,
+        CancellationToken cancellationToken)
     {
-        await fileStorage.DeleteFileAsync(@event.ImagePath);
-        await fileStorage.DeleteFileAsync(@event.ThumbnailPath);
+        await fileStorage.DeleteFileAsync(@event.ImagePath, cancellationToken);
+        await fileStorage.DeleteFileAsync(@event.ThumbnailPath, cancellationToken);
     }
 }

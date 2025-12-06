@@ -1,19 +1,18 @@
-using ErrorOr;
 using Microsoft.EntityFrameworkCore;
-using Petrichor.Shared.Pagination;
-using Petrichor.Shared.Extensions;
 using Petrichor.Services.Users.Common.Persistence;
+using Petrichor.Shared.Extensions;
+using Petrichor.Shared.Pagination;
 
 namespace Petrichor.Services.Users.Features.Users.GetUsers;
 
 public static class GetUsersQueryHandler
 {
-    public static async Task<ErrorOr<PagedResponse<GetUsersResponse>>> Handle(
-        GetUsersQuery request,
+    public static async Task<PagedResponse<GetUsersResponse>> Handle(
+        GetUsersQuery query,
         UsersDbContext dbContext,
         CancellationToken cancellationToken)
     {
-        var users = await dbContext.Users
+        var response = await dbContext.Users
             .AsNoTracking()
             .IgnoreQueryFilters()
             .OrderByDescending(u => u.RegisteredAtUtc)
@@ -27,8 +26,8 @@ public static class GetUsersQueryHandler
                         .Select(r => r.Name ?? string.Empty)
                         .ToList(),
                     u.IsDeleted))
-            .ToPagedResponseAsync(request.Pagination, cancellationToken);
+            .ToPagedResponseAsync(query.Pagination, cancellationToken);
 
-        return users;
+        return response;
     }
 }

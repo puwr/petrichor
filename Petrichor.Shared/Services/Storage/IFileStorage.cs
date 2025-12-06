@@ -5,7 +5,8 @@ public interface IFileStorage
     Task<string> SaveFileAsync(
         Stream fileStream,
         string fileExtension,
-        string folderName);
+        string folderName,
+        CancellationToken cancellationToken = default);
 
-    Task DeleteFileAsync(string filePath);
+    Task DeleteFileAsync(string filePath, CancellationToken cancellationToken = default);
 }

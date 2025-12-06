@@ -10,11 +10,12 @@ public class GetImageEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapGet(
             "images/{imageId:guid}",
-            async (Guid imageId, IMessageBus bus) =>
+            async (Guid imageId, IMessageBus bus, CancellationToken cancellationToken) =>
             {
                 var query = new GetImageQuery(imageId);
 
-                var getImageResult = await bus.InvokeAsync<ErrorOr<GetImageResponse>>(query);
+                var getImageResult = await bus
+                    .InvokeAsync<ErrorOr<GetImageResponse>>(query, cancellationToken);
 
                 return getImageResult.Match(
                     Results.Ok,

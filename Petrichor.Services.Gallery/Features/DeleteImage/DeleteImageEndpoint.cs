@@ -1,4 +1,3 @@
-using ErrorOr;
 using Petrichor.Services.Gallery.Common.Authorization;
 using Petrichor.Shared;
 using Wolverine;
@@ -9,21 +8,21 @@ public class DeleteImageEndpoint : FeatureEndpoint
 {
     public override void MapEndpoint(IEndpointRouteBuilder endpointRouteBuilder)
     {
-        endpointRouteBuilder.MapDelete("images/{imageId:guid}", async (Guid imageId, IMessageBus bus) =>
-        {
-            var command = new DeleteImageCommand(imageId);
+        endpointRouteBuilder.MapDelete(
+            "images/{imageId:guid}",
+            async (Guid imageId, IMessageBus bus, CancellationToken cancellationToken) =>
+            {
+                var command = new DeleteImageCommand(imageId);
 
-            var deleteImageResult = await bus.InvokeAsync<ErrorOr<Deleted>>(command);
+                await bus.InvokeAsync(command, cancellationToken);
 
-            return deleteImageResult.Match(
-                _ => Results.NoContent(),
-                Problem);
-        })
-        .RequireAuthorization(GalleryPolicies.ImageUploaderOrAdmin)
-        .WithTags(Tags.Images)
-        .WithSummary("Delete image")
-        .Produces(StatusCodes.Status204NoContent)
-        .Produces(StatusCodes.Status401Unauthorized)
-        .Produces(StatusCodes.Status403Forbidden);
+                return Results.NoContent();
+            })
+            .RequireAuthorization(GalleryPolicies.ImageUploaderOrAdmin)
+            .WithTags(Tags.Images)
+            .WithSummary("Delete image")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden);
     }
 }

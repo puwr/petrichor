@@ -1,8 +1,10 @@
+using MemoryPack;
 using Petrichor.Services.Comments.Common.Domain;
 
 namespace Petrichor.Services.Comments.Features.GetComments;
 
-public record GetCommentsResponse
+[MemoryPackable]
+public partial record GetCommentsResponse
 {
     public Guid Id { get; init; }
     public Guid ResourceId { get; init; }

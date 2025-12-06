@@ -12,11 +12,13 @@ public class UpdateImageTagsEndpoint : FeatureEndpoint
         endpointRouteBuilder.MapPatch("images/{imageId:guid}/tags", async (
             Guid imageId,
             UpdateImageTagsRequest request,
-            IMessageBus bus) =>
+            IMessageBus bus,
+            CancellationToken cancellationToken) =>
         {
             var command = new UpdateImageTagsCommand(imageId, request.Tags);
 
-            var addImageTagResult = await bus.InvokeAsync<ErrorOr<Success>>(command);
+            var addImageTagResult = await bus
+                .InvokeAsync<ErrorOr<Success>>(command, cancellationToken);
 
             return addImageTagResult.Match(
                 _ => Results.NoContent(),

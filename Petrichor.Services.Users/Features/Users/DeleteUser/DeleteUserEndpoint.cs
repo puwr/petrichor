@@ -1,4 +1,3 @@
-using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Common.Authorization;
 using Petrichor.Shared;
@@ -12,16 +11,17 @@ public class DeleteUserEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapDelete(
             "users/{userId:guid}",
-            async (Guid userId, IMessageBus bus, [FromQuery] bool deleteUploadedImages = false) =>
+            async (
+                Guid userId,
+                IMessageBus bus,
+                CancellationToken cancellationToken,
+                [FromQuery] bool deleteUploadedImages = false) =>
         {
             var command = new DeleteUserCommand(userId, deleteUploadedImages);
 
-            var deleteUserResult = await bus.InvokeAsync<ErrorOr<Deleted>>(command);
+            await bus.InvokeAsync(command, cancellationToken);
 
-            return deleteUserResult.Match(
-                _ => Results.NoContent(),
-                Problem
-            );
+            return Results.NoContent();
         })
         .RequireAuthorization(UsersPolicies.AdminOnly)
         .WithTags(Tags.Users)

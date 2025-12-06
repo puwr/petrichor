@@ -1,3 +1,6 @@
+using MemoryPack;
+
 namespace Petrichor.Services.Gallery.IntegrationMessages;
 
-public record ImageDeletedIntegrationEvent(Guid ImageId);
+[MemoryPackable]
+public partial record ImageDeletedIntegrationEvent(Guid ImageId);

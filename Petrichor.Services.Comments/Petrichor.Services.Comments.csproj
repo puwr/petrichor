@@ -13,11 +13,12 @@
     <PackageReference Include="WolverineFx" />
     <PackageReference Include="WolverineFx.EntityFrameworkCore" />
     <PackageReference Include="WolverineFx.FluentValidation" />
+    <PackageReference Include="WolverineFx.MemoryPack" />
     <PackageReference Include="WolverineFx.Postgresql" />
     <PackageReference Include="WolverineFx.RabbitMQ" />
     <PackageReference Include="ErrorOr" />
     <PackageReference Include="ZiggyCreatures.FusionCache" />
-    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.SystemTextJson" />
+    <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.CysharpMemoryPack" />
   </ItemGroup>
 
   <ItemGroup>

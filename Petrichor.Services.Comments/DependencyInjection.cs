@@ -12,10 +12,11 @@ using Petrichor.Shared.Settings;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.FluentValidation;
+using Wolverine.MemoryPack;
 using Wolverine.Postgresql;
 using Wolverine.RabbitMQ;
 using ZiggyCreatures.Caching.Fusion;
-using ZiggyCreatures.Caching.Fusion.Serialization.SystemTextJson;
+using ZiggyCreatures.Caching.Fusion.Serialization.CysharpMemoryPack;
 
 namespace Petrichor.Services.Comments;
 
@@ -53,6 +54,8 @@ public static class DependencyInjection
 
         builder.UseWolverine(options =>
         {
+            options.UseMemoryPackSerialization();
+
             options.PersistMessagesWithPostgresql(databaseConnectionString, "comments");
             options.UseEntityFrameworkCoreTransactions();
             options.Policies.UseDurableLocalQueues();
@@ -94,7 +97,7 @@ public static class DependencyInjection
 
                 options.JitterMaxDuration = TimeSpan.FromSeconds(2);
             })
-            .WithSerializer(new FusionCacheSystemTextJsonSerializer())
+            .WithSerializer(new FusionCacheCysharpMemoryPackSerializer())
             .WithDistributedCache(new RedisCache(new RedisCacheOptions()
             {
               Configuration = cacheConnectionString

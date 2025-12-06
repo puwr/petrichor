@@ -1,4 +1,3 @@
-using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Petrichor.Services.Gallery.Common.Domain.Images.Events;
 using Petrichor.Services.Gallery.Common.Persistence;
@@ -10,7 +9,7 @@ namespace Petrichor.Services.Gallery.Features.DeleteImage;
 
 public static class DeleteImageCommandHandler
 {
-    public static async Task<ErrorOr<Deleted>> Handle(
+    public static async Task Handle(
         DeleteImageCommand command,
         GalleryDbContext dbContext,
         IMessageBus bus,
@@ -22,10 +21,7 @@ public static class DeleteImageCommandHandler
             .FirstOrDefaultAsync(i => i.Id == command.ImageId,
                 cancellationToken: cancellationToken);
 
-        if (image is null)
-        {
-            return Result.Deleted;
-        }
+        if (image is null) return;
 
         dbContext.Images.Remove(image);
 
@@ -39,7 +35,5 @@ public static class DeleteImageCommandHandler
 
         await cache.RemoveAsync($"image:{image.Id}", token: cancellationToken);
         await cache.RemoveByTagAsync("images", token: cancellationToken);
-
-        return Result.Deleted;
     }
 }

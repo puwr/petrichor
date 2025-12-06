@@ -20,7 +20,7 @@ public class UpdateImageTagsCommandHandler(GalleryDbContext dbContext, IFusionCa
 
         if (image is null)
         {
-            return Error.NotFound("Image not found.");
+            return Error.NotFound(description: "Image not found.");
         }
 
         var tags = await GetOrCreateTagsAsync(command.Tags, cancellationToken);

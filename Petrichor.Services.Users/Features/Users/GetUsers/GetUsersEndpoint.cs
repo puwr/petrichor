@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Common.Authorization;
-using Petrichor.Shared.Pagination;
 using Petrichor.Shared;
+using Petrichor.Shared.Pagination;
 using Wolverine;
-using ErrorOr;
 
 namespace Petrichor.Services.Users.Features.Users.GetUsers;
 
@@ -13,18 +12,19 @@ public class GetUsersEndpoint : FeatureEndpoint
     {
         endpointRouteBuilder.MapGet(
             "users",
-            async (IMessageBus bus, [FromQuery(Name = "page")] int pageNumber = 1) =>
+            async (
+                IMessageBus bus,
+                CancellationToken cancellationToken,
+                [FromQuery(Name = "page")] int pageNumber = 1) =>
             {
                 var pagination = new PaginationParameters(pageNumber);
 
                 var query = new GetUsersQuery(pagination);
 
-                var listUsersResult = await bus.InvokeAsync<ErrorOr<PagedResponse<GetUsersResponse>>>(query);
+                var users = await bus
+                    .InvokeAsync<PagedResponse<GetUsersResponse>>(query, cancellationToken);
 
-                return listUsersResult.Match(
-                    Results.Ok,
-                    Problem
-                );
+                return Results.Ok(users);
             })
             .RequireAuthorization(UsersPolicies.AdminOnly)
             .WithTags(Tags.Users)
