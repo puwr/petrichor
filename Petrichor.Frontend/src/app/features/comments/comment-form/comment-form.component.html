@@ -4,7 +4,7 @@
     placeholder="Enter your comment…"
     [id]="commentForm.comment().name()"
     rows="3"
-    [field]="commentForm.comment"
+    [formField]="commentForm.comment"
   ></textarea>
 
   <app-validation-errors [validationErrors]="commentForm().errors()" />

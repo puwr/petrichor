@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { Field, ValidationError } from '@angular/forms/signals';
+import { FormField, ValidationError } from '@angular/forms/signals';
 import { ValidationMessagePipe } from '@app/shared/components/validation-errors/validation-message.pipe';
 
 @Component({
   selector: 'app-validation-errors',
   imports: [ValidationMessagePipe],
   template: `
-    @if(showErrors()) {
-    <ul class="list-reset validation-errors" [id]="describedby()" role="alert">
-      @for (error of errors(); track $index) {
-      <li class="validation-errors__item">{{ error | validationMessage }}</li>
-      }
-    </ul>
+    @if (showErrors()) {
+      <ul class="list-reset validation-errors" [id]="describedby()" role="alert">
+        @for (error of errors(); track $index) {
+          <li class="validation-errors__item">{{ error | validationMessage }}</li>
+        }
+      </ul>
     }
   `,
   styles: `
@@ -29,7 +29,7 @@ import { ValidationMessagePipe } from '@app/shared/components/validation-errors/
 })
 export class ValidationErrorsComponent {
   validationErrors = input<ValidationError.WithOptionalField[] | null>(null);
-  field = input<Field<unknown> | null>(null);
+  field = input<FormField<unknown> | null>(null);
   describedby = input<string | null>(null);
 
   errors = computed(() => {

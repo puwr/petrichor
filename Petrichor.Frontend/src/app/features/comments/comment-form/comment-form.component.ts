@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { ValidationErrorsComponent, ButtonComponent } from '@app/shared/components';
 import { CommentStore } from '../comment.store';
-import { Field, form, required, submit } from '@angular/forms/signals';
+import { form, FormField, required, submit } from '@angular/forms/signals';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-comment-form',
-  imports: [ValidationErrorsComponent, ButtonComponent, Field],
+  imports: [ValidationErrorsComponent, ButtonComponent, FormField],
   templateUrl: './comment-form.component.html',
   styleUrl: './comment-form.component.scss',
 })

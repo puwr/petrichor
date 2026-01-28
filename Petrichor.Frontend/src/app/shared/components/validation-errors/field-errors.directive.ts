@@ -1,13 +1,13 @@
 import { AfterViewInit, Directive, inject, ViewContainerRef } from '@angular/core';
-import { Field } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { ValidationErrorsComponent } from './validation-errors.component';
 
 @Directive({
-  selector: '[field]',
+  selector: '[formField]',
 })
 export class FieldErrorsDirective implements AfterViewInit {
   private readonly viewContainerRef = inject(ViewContainerRef);
-  private readonly field = inject(Field);
+  private readonly field = inject(FormField);
 
   ngAfterViewInit(): void {
     const errorsContainer = this.viewContainerRef.createComponent(ValidationErrorsComponent);

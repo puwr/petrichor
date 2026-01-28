@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { email, Field, form, required, submit } from '@angular/forms/signals';
+import { email, form, FormField, required, submit } from '@angular/forms/signals';
 import { AuthStore } from '@app/core/auth';
 import {
   ValidationErrorsComponent,
@@ -14,7 +14,7 @@ import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive'
   imports: [
     ValidationErrorsComponent,
     ButtonComponent,
-    Field,
+    FormField,
     FieldErrorsDirective,
     AutoFocusDirective,
   ],

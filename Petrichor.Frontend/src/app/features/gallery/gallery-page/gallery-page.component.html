@@ -7,15 +7,15 @@
         class="text-input"
         type="text"
         placeholder="Search by tags"
-        [field]="searchForm.tags"
+        [formField]="searchForm.tags"
       />
 
       <app-button variant="fill" type="submit">Search</app-button>
     </form>
     @if (galleryPageStore.filterMessage()) {
-    <span class="gallery-page__results">
-      {{ galleryPageStore.filterMessage() }}
-    </span>
+      <span class="gallery-page__results">
+        {{ galleryPageStore.filterMessage() }}
+      </span>
     }
     <div class="gallery-page__gallery-wrapper">
       <app-gallery [galleryItems]="galleryItems" />

@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ValidationErrorsComponent, ButtonComponent, IconComponent } from '@app/shared/components';
 import { ImageService } from '../../image.service';
 import { RouterLink } from '@angular/router';
-import { Field, form, submit } from '@angular/forms/signals';
+import { form, FormField, submit } from '@angular/forms/signals';
 import { catchError, firstValueFrom, map, of } from 'rxjs';
 import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive';
 
@@ -15,7 +15,7 @@ import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive'
     ButtonComponent,
     IconComponent,
     RouterLink,
-    Field,
+    FormField,
     AutoFocusDirective,
   ],
   templateUrl: './image-tags.component.html',

@@ -4,7 +4,7 @@
     class="text-input"
     type="text"
     [id]="loginForm.email().name()"
-    [field]="loginForm.email"
+    [formField]="loginForm.email"
     appAutoFocus
   />
 
@@ -13,7 +13,7 @@
     class="text-input"
     type="password"
     [id]="loginForm.password().name()"
-    [field]="loginForm.password"
+    [formField]="loginForm.password"
   />
 
   <app-validation-errors [validationErrors]="loginForm().errors()" />

@@ -3,11 +3,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GalleryComponent, PaginationComponent, ButtonComponent } from '@app/shared/components';
 import { GalleryPageStore } from './gallery-page.store';
-import { Field, form } from '@angular/forms/signals';
+import { form, FormField } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-gallery-page',
-  imports: [GalleryComponent, PaginationComponent, ReactiveFormsModule, ButtonComponent, Field],
+  imports: [GalleryComponent, PaginationComponent, ReactiveFormsModule, ButtonComponent, FormField],
   providers: [GalleryPageStore],
   templateUrl: './gallery-page.component.html',
   styleUrl: './gallery-page.component.scss',

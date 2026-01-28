@@ -1,6 +1,14 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { email, Field, form, maxLength, pattern, required, submit } from '@angular/forms/signals';
+import {
+  email,
+  form,
+  FormField,
+  maxLength,
+  pattern,
+  required,
+  submit,
+} from '@angular/forms/signals';
 import { AuthStore } from '@app/core/auth';
 import {
   ValidationErrorsComponent,
@@ -16,7 +24,7 @@ import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive'
     ReactiveFormsModule,
     ValidationErrorsComponent,
     ButtonComponent,
-    Field,
+    FormField,
     FieldErrorsDirective,
     AutoFocusDirective,
   ],

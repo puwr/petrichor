@@ -1,35 +1,38 @@
 <div class="tags">
   @if (showTagsInput) {
-  <form class="tags__form" (submit)="onSubmit($event)" (reset)="onReset()">
-    <label [for]="tagsForm.tags().name()">Tags</label>
-    <input
-      class="text-input"
-      type="text"
-      [id]="tagsForm.tags().name()"
-      [field]="tagsForm.tags"
-      appAutoFocus
-    />
+    <form class="tags__form" (submit)="onSubmit($event)" (reset)="onReset()">
+      <label [for]="tagsForm.tags().name()">Tags</label>
+      <input
+        class="text-input"
+        type="text"
+        [id]="tagsForm.tags().name()"
+        [formField]="tagsForm.tags"
+        appAutoFocus
+      />
 
-    <app-validation-errors [validationErrors]="tagsForm().errors()" />
+      <app-validation-errors [validationErrors]="tagsForm().errors()" />
 
-    <div class="tags__actions">
-      <app-button variant="neutral" type="reset">Cancel</app-button>
-      <app-button variant="fill" type="submit">Save</app-button>
-    </div>
-  </form>
-  } @else { @if (tags() && tags().length > 0) {
-  <ul class="tags__list list-reset">
-    @for (tag of tags(); track tag) {
-    <li>
-      <a class="link" routerLink="/" [queryParams]="{ tags: tag }">#{{ tag }}</a>
-    </li>
-    }
-  </ul>
+      <div class="tags__actions">
+        <app-button variant="neutral" type="reset">Cancel</app-button>
+        <app-button variant="fill" type="submit">Save</app-button>
+      </div>
+    </form>
   } @else {
-  <p class="tags__not-found">No tags found.</p>
-  } @if (isUploader()) {
-  <app-button variant="fill" (click)="showTagsInput = true">
-    <app-icon name="pen" />
-  </app-button>
-  } }
+    @if (tags() && tags().length > 0) {
+      <ul class="tags__list list-reset">
+        @for (tag of tags(); track tag) {
+          <li>
+            <a class="link" routerLink="/" [queryParams]="{ tags: tag }">#{{ tag }}</a>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="tags__not-found">No tags found.</p>
+    }
+    @if (isUploader()) {
+      <app-button variant="fill" (click)="showTagsInput = true">
+        <app-icon name="pen" />
+      </app-button>
+    }
+  }
 </div>
