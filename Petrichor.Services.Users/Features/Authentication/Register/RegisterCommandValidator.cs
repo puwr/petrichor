@@ -7,17 +7,17 @@ public partial class RegisterCommandValidator : AbstractValidator<RegisterComman
 {
     public RegisterCommandValidator()
     {
-        RuleFor(c => c.UserName)
-            .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("Username is required.")
-            .Matches(UsernameRegex).WithMessage(@"Username must be 3-30 characters long
-                and only contain letters, digits or underscores.");
-
         RuleFor(c => c.Email)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("Please enter a valid email.")
             .MaximumLength(100).WithMessage("Email cannot exceed 100 characters.");
+
+        RuleFor(c => c.UserName)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage("Username is required.")
+            .Matches(UsernameRegex).WithMessage(@"Username must be 3-30 characters long
+                and only contain letters, digits or underscores.");
 
         RuleFor(c => c.Password)
             .Cascade(CascadeMode.Stop)

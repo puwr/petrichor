@@ -6,7 +6,6 @@ public static class ValidationMessages
 {
     public static class Image
     {
-        public const string Required = "Image file is required.";
         public static string SizeLimit
             => $"Max file size is {UploadImageCommandValidator.MaxFileSizeMB}MB.";
         public static string SupportedFormats

@@ -20,7 +20,6 @@ public class UploadImageCommandValidator : AbstractValidator<UploadImageCommand>
     {
         RuleFor(c => c.ImageFile)
             .Cascade(CascadeMode.Stop)
-            .NotNull().WithMessage(ValidationMessages.Image.Required)
             .Must(BeWithinSizeLimit).WithMessage(ValidationMessages.Image.SizeLimit)
             .Must(HaveValidExtension)
                 .WithMessage(ValidationMessages.Image.SupportedFormats)

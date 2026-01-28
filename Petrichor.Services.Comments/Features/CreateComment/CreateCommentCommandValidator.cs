@@ -7,9 +7,6 @@ public class CreateCommentCommandValidator
 {
     public CreateCommentCommandValidator()
     {
-        RuleFor(c => c.ResourceId)
-            .NotEmpty();
-
         RuleFor(c => c.Message)
             .Must(message => !string.IsNullOrEmpty(message?.Trim()))
                 .WithMessage("Comment message is required.")
