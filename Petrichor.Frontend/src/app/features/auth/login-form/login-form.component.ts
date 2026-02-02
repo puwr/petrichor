@@ -42,9 +42,7 @@ export class LoginFormComponent {
         this.authStore
           .login({ email: form().value().email, password: form().value().password })
           .pipe(
-            map(() => {
-              return null;
-            }),
+            map(() => null),
             catchError((errors) => of(errors)),
           ),
       );

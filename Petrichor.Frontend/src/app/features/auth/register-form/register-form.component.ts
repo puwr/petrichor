@@ -15,7 +15,7 @@ import {
   ButtonComponent,
   FieldErrorsDirective,
 } from '@app/shared/components';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive';
 
 @Component({
@@ -82,7 +82,10 @@ export class RegisterFormComponent {
             userName: formValue.userName,
             password: formValue.password,
           })
-          .pipe(catchError((errors) => of(errors))),
+          .pipe(
+            map(() => null),
+            catchError((errors) => of(errors)),
+          ),
       );
     });
   }

@@ -47,11 +47,11 @@ public class RefreshTokenEndpointTests : IDisposable
             Password: testPassword));
         loginResponse.Headers.TryGetValues("Set-Cookie", out var loginCookies)
             .Should().BeTrue();
-        var refreshToken = loginCookies?
+        var refreshTokenCookie = loginCookies?
             .FirstOrDefault(c => c.StartsWith("REFRESH_TOKEN="));
-        refreshToken.Should().NotBeNull();
+        refreshTokenCookie.Should().NotBeNull();
 
-        client.DefaultRequestHeaders.Add("Cookie", refreshToken);
+        client.DefaultRequestHeaders.Add("Cookie", refreshTokenCookie);
 
         var response = await client.PostAsync("/auth/refresh-token", null);
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -59,20 +59,20 @@ public class RefreshTokenEndpointTests : IDisposable
         response.Headers.TryGetValues("Set-Cookie", out var refreshTokenCookies)
             .Should().BeTrue();
 
-        var newAccessToken = refreshTokenCookies
+        var newAccessTokenCookie = refreshTokenCookies
             ?.FirstOrDefault(c => c.StartsWith("ACCESS_TOKEN="));
-        newAccessToken.Should().NotBeNull();
+        newAccessTokenCookie.Should().NotBeNull();
 
-        var newRefreshToken = refreshTokenCookies
+        var newRefreshTokenCookie = refreshTokenCookies
             ?.FirstOrDefault(c => c.StartsWith("REFRESH_TOKEN="));
-        newRefreshToken.Should().NotBeNull();
+        newRefreshTokenCookie.Should().NotBeNull();
 
-        var user = await _dbContext.Users
+        var refreshToken = await _dbContext.RefreshTokens
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Email == testEmail);
-        user.Should().NotBeNull();
-
-        WebUtility.UrlDecode(newRefreshToken).Should().Contain(user.RefreshToken);
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => WebUtility.UrlDecode(newRefreshTokenCookie).Contains(rt.Token));
+        refreshToken.Should().NotBeNull();
+        refreshToken.User.Email.Should().Be(testEmail);
     }
 
     [Fact]

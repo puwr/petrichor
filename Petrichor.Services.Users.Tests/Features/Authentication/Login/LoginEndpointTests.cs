@@ -51,18 +51,18 @@ public class LoginEndpointTests : IDisposable
         response.Headers.TryGetValues("Set-Cookie", out var loginCookies)
             .Should().BeTrue();
 
-        var accessToken = loginCookies?.FirstOrDefault(c => c.StartsWith("ACCESS_TOKEN="));
-        accessToken.Should().NotBeNull();
+        var accessTokenCookie = loginCookies?.FirstOrDefault(c => c.StartsWith("ACCESS_TOKEN="));
+        accessTokenCookie.Should().NotBeNull();
 
-        var refreshToken = loginCookies?.FirstOrDefault(c => c.StartsWith("REFRESH_TOKEN="));
-        refreshToken.Should().NotBeNull();
+        var refreshTokenCookie = loginCookies?.FirstOrDefault(c => c.StartsWith("REFRESH_TOKEN="));
+        refreshTokenCookie.Should().NotBeNull();
 
-        var user = await _dbContext.Users
+        var refreshToken = await _dbContext.RefreshTokens
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Email == testEmail);
-        user.Should().NotBeNull();
-
-        WebUtility.UrlDecode(refreshToken).Should().Contain(user.RefreshToken);
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => WebUtility.UrlDecode(refreshTokenCookie).Contains(rt.Token));
+        refreshToken.Should().NotBeNull();
+        refreshToken.User.Email.Should().Be(testEmail);
     }
 
     [Fact]

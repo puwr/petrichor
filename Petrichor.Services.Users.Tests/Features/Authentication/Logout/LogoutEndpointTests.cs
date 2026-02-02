@@ -46,11 +46,11 @@ public class LogoutEndpointTests: IDisposable
             Password: testPassword));
         loginResponse.Headers.TryGetValues("Set-Cookie", out var loginCookies)
             .Should().BeTrue();
-        var refreshToken = loginCookies?
+        var refreshTokenCookie = loginCookies?
             .FirstOrDefault(c => c.StartsWith("REFRESH_TOKEN="));
-        refreshToken.Should().NotBeNull();
+        refreshTokenCookie.Should().NotBeNull();
 
-        client.DefaultRequestHeaders.Add("Cookie", refreshToken);
+        client.DefaultRequestHeaders.Add("Cookie", refreshTokenCookie);
 
         var response = await client.PostAsync("/auth/logout", null);
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -66,13 +66,11 @@ public class LogoutEndpointTests: IDisposable
             .FirstOrDefault(c => c.StartsWith("REFRESH_TOKEN=;"));
         deleteRefreshTokenCookie.Should().NotBeNull();
 
-        var user = await _dbContext.Users
+        var refreshToken = await _dbContext.RefreshTokens
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Email == testEmail);
-        user.Should().NotBeNull();
-
-        user.RefreshToken.Should().BeNull();
-        user.RefreshTokenExpiresAtUtc.Should().BeNull();
+            .Include(rt => rt.User)
+            .FirstOrDefaultAsync(rt => rt.User.Email == testEmail);
+        refreshToken.Should().BeNull();
     }
 
     [Fact]

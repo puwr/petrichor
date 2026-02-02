@@ -36,8 +36,6 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    refresh_token = table.Column<string>(type: "text", nullable: true),
-                    refresh_token_expires_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     registered_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     user_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -177,6 +175,28 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "refresh_tokens",
+                schema: "users",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    token = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    expires_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_refresh_tokens", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_refresh_tokens_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "users",
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_asp_net_role_claims_role_id",
                 schema: "users",
@@ -220,6 +240,19 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                 table: "AspNetUsers",
                 column: "normalized_user_name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_refresh_tokens_token",
+                schema: "users",
+                table: "refresh_tokens",
+                column: "token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_refresh_tokens_user_id",
+                schema: "users",
+                table: "refresh_tokens",
+                column: "user_id");
         }
 
         /// <inheritdoc />
@@ -243,6 +276,10 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens",
+                schema: "users");
+
+            migrationBuilder.DropTable(
+                name: "refresh_tokens",
                 schema: "users");
 
             migrationBuilder.DropTable(

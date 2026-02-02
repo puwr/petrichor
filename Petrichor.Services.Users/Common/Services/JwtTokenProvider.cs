@@ -42,7 +42,7 @@ public class JwtTokenProvider(
 
         var tokenResult = new TokenResult(
             Token: accessToken,
-            ExpiresAt: accessTokenExpirationDateInUtc
+            ExpiresAtUtc: accessTokenExpirationDateInUtc
         );
 
         return tokenResult;
@@ -56,7 +56,7 @@ public class JwtTokenProvider(
 
         var tokenResult = new TokenResult(
             Token: refreshToken,
-            ExpiresAt: refreshTokenExpirationDateInUtc
+            ExpiresAtUtc: refreshTokenExpirationDateInUtc
         );
 
         return tokenResult;

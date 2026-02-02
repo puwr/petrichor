@@ -18,7 +18,7 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("users")
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("WolverineEnabled", "true");
 
@@ -186,6 +186,39 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", "users");
                 });
 
+            modelBuilder.Entity("Petrichor.Services.Users.Common.Domain.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("token");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_refresh_tokens");
+
+                    b.HasIndex("Token")
+                        .IsUnique()
+                        .HasDatabaseName("ix_refresh_tokens_token");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
+
+                    b.ToTable("refresh_tokens", "users");
+                });
+
             modelBuilder.Entity("Petrichor.Services.Users.Common.Domain.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -244,14 +277,6 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
-
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("text")
-                        .HasColumnName("refresh_token");
-
-                    b.Property<DateTime?>("RefreshTokenExpiresAtUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("refresh_token_expires_at_utc");
 
                     b.Property<DateTime>("RegisteredAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -436,6 +461,18 @@ namespace Petrichor.Services.Users.Common.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("Petrichor.Services.Users.Common.Domain.RefreshToken", b =>
+                {
+                    b.HasOne("Petrichor.Services.Users.Common.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

@@ -29,11 +29,11 @@ public class CookieService(IHttpContextAccessor httpContextAccessor) : ICookieSe
         SameSiteMode sameSite = SameSiteMode.Strict)
     {
         httpContextAccessor.HttpContext?.Response.Cookies.Delete(name,
-        new CookieOptions
-        {
-            HttpOnly = httpOnly,
-            Secure = secure,
-            SameSite = sameSite
-        });
+            new CookieOptions
+            {
+                HttpOnly = httpOnly,
+                Secure = secure,
+                SameSite = sameSite
+            });
     }
 }
