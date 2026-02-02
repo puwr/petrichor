@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Users.Common.Persistence;
@@ -73,5 +74,8 @@ public class LoginEndpointTests : IDisposable
             Email: "test",
             Password: "Pa$$w0rd"));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

@@ -16,17 +16,12 @@ public class UploadImageEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var response = await client.PostAsync("/images", formData);
+        var response = await client.UploadTestImageAsync();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var imageId = await response.Content.ReadFromJsonAsync<Guid>();
-        imageId.Should().NotBeEmpty();
-        response.Headers.Location.Should().Be($"/images/{imageId}");
+        var uploadedImageId = await response.Content.ReadFromJsonAsync<Guid>();
+        uploadedImageId.Should().NotBeEmpty();
+        response.Headers.Location.Should().Be($"/images/{uploadedImageId}");
     }
 
     [Fact]
@@ -54,5 +49,8 @@ public class UploadImageEndpointTests(ApiFactory apiFactory)
 
         var response = await client.PostAsync("/images", null);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

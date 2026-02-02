@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Comments.Features.CreateComment;
 using Petrichor.Services.Comments.Features.GetComments;
 using Petrichor.Services.Comments.Tests.TestUtilities;
@@ -24,17 +25,13 @@ public class DeleteCommentEndpointTests(ApiFactory apiFactory)
             ResourceId: testResourceId,
             Message: $"Message-{Guid.NewGuid()}");
         var createCommentResponse = await client.PostAsJsonAsync("/comments", request);
-        createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        var commentId = await createCommentResponse.Content.ReadFromJsonAsync<Guid>();
+        var createdCommentId = await createCommentResponse.Content.ReadFromJsonAsync<Guid>();
 
-        var response = await client.DeleteAsync($"/comments/{commentId}");
+        var response = await client.DeleteAsync($"/comments/{createdCommentId}");
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var getCommentsResponse = await client.GetAsync($"/comments?resourceId={testResourceId}");
-        getCommentsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var comments = await getCommentsResponse.Content
-            .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
+        var comments = await client
+            .GetFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>($"/comments?resourceId={testResourceId}");
         comments.Should().NotBeNull();
         comments.Items.Count.Should().Be(0);
     }
@@ -47,16 +44,14 @@ public class DeleteCommentEndpointTests(ApiFactory apiFactory)
 
         var testResourceId = Guid.NewGuid();
 
-        var request = new CreateCommentRequest(
+        var createCommentResponse = await client.PostAsJsonAsync("/comments", new CreateCommentRequest(
             ResourceId: testResourceId,
-            Message: $"Message-{Guid.NewGuid()}");
-        var createCommentResponse = await client.PostAsJsonAsync("/comments", request);
-        createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        var commentId = await createCommentResponse.Content.ReadFromJsonAsync<Guid>();
+            Message: $"Message-{Guid.NewGuid()}"));
+        var createdCommentId = await createCommentResponse.Content.ReadFromJsonAsync<Guid>();
 
         using var adminClient = apiFactory.CreateClient();
         adminClient.SetFakeClaims(role: "Admin");
-        var response = await adminClient.DeleteAsync($"/comments/{commentId}");
+        var response = await adminClient.DeleteAsync($"/comments/{createdCommentId}");
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
@@ -66,18 +61,17 @@ public class DeleteCommentEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        var testResourceId = Guid.NewGuid();
-
-        var request = new CreateCommentRequest(
-            ResourceId: testResourceId,
-            Message: $"Message-{Guid.NewGuid()}");
-        var createCommentResponse = await client.PostAsJsonAsync("/comments", request);
-        createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        var commentId = await createCommentResponse.Content.ReadFromJsonAsync<Guid>();
+        var createCommentResponse = await client.PostAsJsonAsync("/comments", new CreateCommentRequest(
+            ResourceId: Guid.NewGuid(),
+            Message: $"Message-{Guid.NewGuid()}"));
+        var createdCommentId = await createCommentResponse.Content.ReadFromJsonAsync<Guid>();
 
         using var otherClient = apiFactory.CreateClient();
         otherClient.SetFakeClaims();
-        var response = await otherClient.DeleteAsync($"/comments/{commentId}");
+        var response = await otherClient.DeleteAsync($"/comments/{createdCommentId}");
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

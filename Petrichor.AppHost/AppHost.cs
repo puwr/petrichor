@@ -1,18 +1,26 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var database = builder.AddPostgres("pg")
+var database = builder
+    .AddPostgres("pg")
+    .WithImage("postgres:18.1-alpine")
     .WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase("database");
 
-var cache = builder.AddRedis("cache");
+var cache = builder
+    .AddRedis("cache")
+    .WithImage("redis:8.4-alpine");
 
-var rmq = builder.AddRabbitMQ("rmq")
+var rmq = builder
+    .AddRabbitMQ("rmq")
+    .WithImage("rabbitmq:4.2-alpine")
     .WithLifetime(ContainerLifetime.Persistent);
 
 var minioUser = builder.AddParameter("MinioUser");
 var minioPassword = builder.AddParameter("MinioPassword", secret: true);
 
-var minio = builder.AddMinioContainer("minio", minioUser, minioPassword)
+var minio = builder
+    .AddMinioContainer("minio", minioUser, minioPassword)
+    .WithImage("minio/minio:RELEASE.2025-09-07T16-13-09Z")
     .WithLifetime(ContainerLifetime.Persistent);
 minioUser.WithParentRelationship(minio);
 minioPassword.WithParentRelationship(minio);

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,8 +39,8 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
     public async Task Handle_DeletesUserSnapshotAndComments()
     {
         var testUserId = Guid.NewGuid();
-        var userRegisteredEvent = new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}");
-        await _bus.PublishAsync(userRegisteredEvent);
+
+        await _bus.PublishAsync(new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}"));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
@@ -56,14 +55,12 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
         client.SetFakeClaims(userId: testUserId);
 
         var testResourceId = Guid.NewGuid();
-        var request = new CreateCommentRequest(
-            ResourceId: testResourceId,
-            Message: $"Message-{Guid.NewGuid()}");
-        var createCommentResponse = await client.PostAsJsonAsync("/comments", request);
-        createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var userDeletedEvent = new UserDeletedIntegrationEvent(testUserId, false);
-        await _bus.PublishAsync(userDeletedEvent);
+        await client.PostAsJsonAsync("/comments", new CreateCommentRequest(
+            ResourceId: testResourceId,
+            Message: $"Message-{Guid.NewGuid()}"));
+
+        await _bus.PublishAsync(new UserDeletedIntegrationEvent(testUserId, false));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
@@ -74,10 +71,8 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
             return userSnapshot is null;
         });
 
-        var getComments = await client.GetAsync($"/comments?resourceId={testResourceId}");
-        getComments.StatusCode.Should().Be(HttpStatusCode.OK);
-        var comments = await getComments.Content
-            .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
+        var comments = await client
+            .GetFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>($"/comments?resourceId={testResourceId}");
         comments.Should().NotBeNull();
         comments.Items.Count.Should().Be(0);
     }

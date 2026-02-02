@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Users.Common.Persistence;
@@ -81,5 +82,8 @@ public class RefreshTokenEndpointTests : IDisposable
 
         var response = await client.PostAsync("/auth/refresh-token", null);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

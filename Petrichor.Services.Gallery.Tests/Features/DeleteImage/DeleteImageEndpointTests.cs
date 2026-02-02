@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
 
@@ -15,13 +16,7 @@ public class DeleteImageEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var response = await client.DeleteAsync($"/images/{uploadedImageId}");
@@ -37,13 +32,7 @@ public class DeleteImageEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         using var adminClient = apiFactory.CreateClient();
@@ -60,6 +49,9 @@ public class DeleteImageEndpointTests(ApiFactory apiFactory)
 
         var response = await client.DeleteAsync($"/images/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -68,13 +60,7 @@ public class DeleteImageEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         using var otherClient = apiFactory.CreateClient();
@@ -82,5 +68,8 @@ public class DeleteImageEndpointTests(ApiFactory apiFactory)
 
         var otherResponse = await otherClient.DeleteAsync($"/images/{uploadedImageId}");
         otherResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+        var problemDetails = await otherResponse.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

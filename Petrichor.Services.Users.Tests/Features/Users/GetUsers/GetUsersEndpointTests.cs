@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Features.Authentication.Register;
 using Petrichor.Services.Users.Features.Users.GetUsers;
 using Petrichor.Services.Users.Tests.TestUtilities;
@@ -40,6 +41,9 @@ public class GetUsersEndpointTests(ApiFactory apiFactory)
 
         var response = await client.GetAsync($"/users");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -50,5 +54,8 @@ public class GetUsersEndpointTests(ApiFactory apiFactory)
 
         var response = await client.GetAsync($"/users");
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

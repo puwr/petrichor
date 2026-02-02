@@ -10,12 +10,6 @@ import { authGuard } from './auth.guard';
 import { AuthStore } from './auth.store';
 
 describe('authGuard', () => {
-  it('should be created', () => {
-    const { executeGuard } = setup();
-
-    expect(executeGuard).toBeTruthy();
-  });
-
   it('should grant access if authenticated', () => {
     const { executeGuard, authStore, router, route, routerState } = setup();
 

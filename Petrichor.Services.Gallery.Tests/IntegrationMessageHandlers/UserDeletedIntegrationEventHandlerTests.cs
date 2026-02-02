@@ -68,20 +68,13 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
         using var client = _apiFactory.CreateClient();
         client.SetFakeClaims(userId: testUserId);
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
         uploadImageId.Should().NotBeEmpty();
 
-        var userDeletedEvent = new UserDeletedIntegrationEvent(
+        await _bus.PublishAsync(new UserDeletedIntegrationEvent(
             UserId: testUserId,
-            DeleteUploadedImages: true);
-        await _bus.PublishAsync(userDeletedEvent);
+            DeleteUploadedImages: true));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
@@ -99,20 +92,13 @@ public class UserDeletedIntegrationEventHandlerTests : IDisposable
         using var client = _apiFactory.CreateClient();
         client.SetFakeClaims(userId: testUserId);
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
         uploadImageId.Should().NotBeEmpty();
 
-        var userDeletedEvent = new UserDeletedIntegrationEvent(
+        await _bus.PublishAsync(new UserDeletedIntegrationEvent(
             UserId: testUserId,
-            DeleteUploadedImages: false);
-        await _bus.PublishAsync(userDeletedEvent);
+            DeleteUploadedImages: false));
 
         await Poller.PollAsync(TimeSpan.FromSeconds(10), async () =>
         {

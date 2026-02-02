@@ -13,9 +13,9 @@ namespace Petrichor.Services.Gallery.Tests.TestUtilities;
 
 public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:17.6").Build();
-    private readonly RedisContainer _redisContainer = new RedisBuilder("redis:8.2").Build();
-    private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder("rabbitmq:4.2").Build();
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:18.1-alpine").Build();
+    private readonly RedisContainer _redisContainer = new RedisBuilder("redis:8.4-alpine").Build();
+    private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder("rabbitmq:4.2-alpine").Build();
     private readonly MinioContainer _minioContainer = new MinioBuilder("minio/minio:RELEASE.2025-09-07T16-13-09Z")
         .WithUsername("minioadmin")
         .WithPassword("minioadmin")

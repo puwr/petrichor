@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Features.Account.GetCurrentUser;
 using Petrichor.Services.Users.Tests.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
@@ -44,5 +45,8 @@ public class GetCurrentUserEndpointTests(ApiFactory apiFactory)
 
         var response = await client.GetAsync("/account/me");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

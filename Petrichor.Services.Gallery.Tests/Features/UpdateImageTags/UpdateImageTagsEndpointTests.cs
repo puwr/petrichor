@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Gallery.Features.GetImage;
 using Petrichor.Services.Gallery.Features.UpdateImageTags;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
@@ -17,13 +18,7 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var tag = $"tag-{Guid.NewGuid()}";
@@ -31,10 +26,7 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
             .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var getImageResponse = await client.GetAsync($"/images/{uploadedImageId}");
-        getImageResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var image = await getImageResponse.Content.ReadFromJsonAsync<GetImageResponse>();
+        var image = await client.GetFromJsonAsync<GetImageResponse>($"/images/{uploadedImageId}");
         image.Should().NotBeNull();
         image.Tags.Should().BeEquivalentTo([tag]);
     }
@@ -45,13 +37,7 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         using var adminClient = apiFactory.CreateClient();
@@ -71,6 +57,9 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
         var response = await client
             .PatchAsync($"/images/{Guid.NewGuid()}/tags", null);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -79,13 +68,7 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         using var otherClient = apiFactory.CreateClient();
@@ -95,6 +78,9 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
         var response = await otherClient
             .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+        var problemDetails = response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -103,17 +89,14 @@ public class UpdateImageTagsEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var response = await client
             .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([" "]));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Gallery.Features.GetImage;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
@@ -16,13 +17,7 @@ public class GetImageEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var response = await client.GetAsync($"/images/{uploadedImageId}");
@@ -39,5 +34,8 @@ public class GetImageEndpointTests(ApiFactory apiFactory)
 
         var response = await client.GetAsync($"/images/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Features.Authentication.Register;
 using Petrichor.Services.Users.Tests.TestUtilities;
 
@@ -16,19 +17,14 @@ public class RegisterEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
 
         var testUserName = $"test{Random.Shared.Next(1, 10000)}";
-        var registerRequest = new RegisterRequest(
+        var response = await client.PostAsJsonAsync("/auth/register", new RegisterRequest(
             Email: $"{testUserName}@example.com",
             UserName: testUserName,
-            Password: "Pa$$w0rd");
-
-        var response = await client.PostAsJsonAsync("/auth/register", registerRequest);
+            Password: "Pa$$w0rd"));
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var registeredUserId = await response.Content.ReadFromJsonAsync<Guid>();
         registeredUserId.Should().NotBeEmpty();
-
-        var getUserResponse = await client.GetAsync($"/users/{registeredUserId}");
-        getUserResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -37,13 +33,14 @@ public class RegisterEndpointTests(ApiFactory apiFactory)
         using var client = apiFactory.CreateClient();
 
         var testUserName = $"test{Random.Shared.Next(1, 10000)}";
-        var registerRequest = new RegisterRequest(
+        var response = await client.PostAsJsonAsync("/auth/register", new RegisterRequest(
             Email: $"{testUserName}@example.com",
             UserName: testUserName,
-            Password: "qwerty");
-
-        var response = await client.PostAsJsonAsync("/auth/register", registerRequest);
+            Password: "qwerty"));
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -65,6 +62,9 @@ public class RegisterEndpointTests(ApiFactory apiFactory)
 
         var response = await client.PostAsJsonAsync("/auth/register", registerRequest);
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -86,5 +86,8 @@ public class RegisterEndpointTests(ApiFactory apiFactory)
 
         var response = await client.PostAsJsonAsync("/auth/register", registerRequest);
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

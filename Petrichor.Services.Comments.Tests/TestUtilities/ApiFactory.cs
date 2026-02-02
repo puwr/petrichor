@@ -12,9 +12,9 @@ namespace Petrichor.Services.Comments.Tests.TestUtilities;
 
 public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:17.6").Build();
-    private readonly RedisContainer _redisContainer = new RedisBuilder("redis:8.2").Build();
-    private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder("rabbitmq:4.2").Build();
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:18.1-alpine").Build();
+    private readonly RedisContainer _redisContainer = new RedisBuilder("redis:8.4-alpine").Build();
+    private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder("rabbitmq:4.2-alpine").Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

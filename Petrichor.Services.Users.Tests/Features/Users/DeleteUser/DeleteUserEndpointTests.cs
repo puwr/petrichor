@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Features.Authentication.Register;
 using Petrichor.Services.Users.Features.Users.GetUser;
 using Petrichor.Services.Users.Tests.TestUtilities;
@@ -50,6 +51,9 @@ public class DeleteUserEndpointTests(ApiFactory apiFactory)
 
         var response = await client.DeleteAsync($"/users/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     [Fact]
@@ -60,5 +64,8 @@ public class DeleteUserEndpointTests(ApiFactory apiFactory)
 
         var response = await client.DeleteAsync($"/users/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }

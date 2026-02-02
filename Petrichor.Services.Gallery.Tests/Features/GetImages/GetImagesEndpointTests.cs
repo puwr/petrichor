@@ -43,13 +43,7 @@ public class GetImagesEndpointTests: IDisposable
         using var client = _apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var response = await client.GetAsync("/images");
@@ -66,26 +60,19 @@ public class GetImagesEndpointTests: IDisposable
         using var client = _apiFactory.CreateClient();
         client.SetFakeClaims();
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
-        uploadImageResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var tag = $"tag-{Guid.NewGuid()}";
-        var addImageTagResponse = await client
-            .PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
-        addImageTagResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        await client.PatchAsJsonAsync($"/images/{uploadedImageId}/tags", new UpdateImageTagsRequest([tag]));
 
         var response = await client.GetAsync($"/images?tags={tag}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var images = await response.Content.ReadFromJsonAsync<PagedResponse<GetImagesResponse>>();
         images.Should().NotBeNull();
-        images.Count.Should().Be(1);
+        images.Items.Should().HaveCount(1);
+        images.Items[0].Id.Should().Be(uploadedImageId);
     }
 
     [Fact]
@@ -112,12 +99,7 @@ public class GetImagesEndpointTests: IDisposable
             { JwtRegisteredClaimNames.UniqueName, testUserName }
         });
 
-        await using var imageStream = TestImages.GetImageStream("test-image.jpg");
-        var formData = new MultipartFormDataContent
-        {
-            { new StreamContent(imageStream), "ImageFile", "test.jpg" }
-        };
-        var uploadImageResponse = await client.PostAsync("/images", formData);
+        var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
         var response = await client.GetAsync($"/images?uploader={testUserName}");
@@ -125,8 +107,7 @@ public class GetImagesEndpointTests: IDisposable
 
         var images = await response.Content.ReadFromJsonAsync<PagedResponse<GetImagesResponse>>();
         images.Should().NotBeNull();
-        images.Count.Should().Be(1);
-        images.Items.Count.Should().Be(1);
+        images.Items.Should().HaveCount(1);
         images.Items[0].Id.Should().Be(uploadedImageId);
     }
 }

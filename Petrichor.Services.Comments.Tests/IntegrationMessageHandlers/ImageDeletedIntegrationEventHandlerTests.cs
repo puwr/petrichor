@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Comments.Features.CreateComment;
@@ -39,24 +38,20 @@ public class ImageDeletedIntegrationEventHandlerTests : IDisposable
         client.SetFakeClaims();
 
         var testResourceId = Guid.NewGuid();
-        var request = new CreateCommentRequest(
-            ResourceId: testResourceId,
-            Message: $"Message-{Guid.NewGuid()}");
-        var createCommentResponse = await client.PostAsJsonAsync("/comments", request);
-        createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var imageDeletedEvent = new ImageDeletedIntegrationEvent(testResourceId);
-        await _bus.PublishAsync(imageDeletedEvent);
+        await client.PostAsJsonAsync("/comments", new CreateCommentRequest(
+            ResourceId: testResourceId,
+            Message: $"Message-{Guid.NewGuid()}"));
+
+        await _bus.PublishAsync(new ImageDeletedIntegrationEvent(testResourceId));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {
-            var getCommentsResponse = await client.GetAsync($"/comments?resourceId={testResourceId}");
-            getCommentsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            var comments = await client
+                .GetFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>($"/comments?resourceId={testResourceId}");
+            comments.Should().NotBeNull();
 
-            var comments = await getCommentsResponse.Content
-                .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
-
-            return comments!.Items.Count == 0;
+            return comments.Items.Count == 0;
         });
     }
 }

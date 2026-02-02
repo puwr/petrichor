@@ -34,8 +34,10 @@ public class UserRegisteredIntegrationEventHandlerTests : IDisposable
     public async Task Handle_CreatesUserSnapshot()
     {
         var testUserId = Guid.NewGuid();
-        var userRegisteredEvent = new UserRegisteredIntegrationEvent(testUserId, $"UserName-{testUserId}");
-        await _bus.PublishAsync(userRegisteredEvent);
+
+        await _bus.PublishAsync(new UserRegisteredIntegrationEvent(
+            testUserId,
+            $"UserName-{testUserId}"));
 
         await Poller.WaitAsync(TimeSpan.FromSeconds(10), async () =>
         {

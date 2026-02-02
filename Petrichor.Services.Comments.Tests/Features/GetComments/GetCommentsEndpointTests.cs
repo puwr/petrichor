@@ -20,12 +20,9 @@ public class GetCommentsEndpointTests(ApiFactory apiFactory)
 
         var testResourceId = Guid.NewGuid();
 
-        var request = new CreateCommentRequest(
+        await client.PostAsJsonAsync("/comments", new CreateCommentRequest(
             ResourceId: testResourceId,
-            Message: $"Message-{Guid.NewGuid()}");
-
-        var createCommentResponse = await client.PostAsJsonAsync("/comments", request);
-        createCommentResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+            Message: $"Message-{Guid.NewGuid()}"));
 
         var response = await client.GetAsync($"/comments?resourceId={testResourceId}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -33,7 +30,6 @@ public class GetCommentsEndpointTests(ApiFactory apiFactory)
         var comments = await response.Content
             .ReadFromJsonAsync<CursorPagedResponse<GetCommentsResponse>>();
         comments.Should().NotBeNull();
-
         comments.Items.Count.Should().BeGreaterThan(0);
     }
 }

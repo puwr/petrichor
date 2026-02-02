@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Petrichor.Services.Users.Features.Authentication.Register;
 using Petrichor.Services.Users.Features.Users.GetUser;
 using Petrichor.Services.Users.Tests.TestUtilities;
@@ -36,5 +37,8 @@ public class GetUserEndpointTests(ApiFactory apiFactory)
 
         var response = await client.GetAsync($"/users/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 }
