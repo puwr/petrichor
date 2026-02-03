@@ -49,7 +49,15 @@ export class ImagePageComponent implements OnInit, OnDestroy {
     { initialValue: null },
   );
 
-  isUploaderOrAdmin = computed(() => this.authStore.isResourceOwnerOrAdmin(this.image()?.uploader));
+  isUploaderOrAdmin = computed(() => {
+    const uploader = this.image()?.uploader;
+
+    if (uploader) {
+      return this.authStore.isResourceOwnerOrAdmin(uploader);
+    }
+
+    return false;
+  });
 
   ngOnInit(): void {
     this.loadingService.show();

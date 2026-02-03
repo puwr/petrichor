@@ -11,7 +11,7 @@ public partial record GetImageResponse
     public string Url { get; init; }
     public int Width { get; init; }
     public int Height { get; init; }
-    public string Uploader { get; init; }
+    public string? Uploader { get; init; }
     public List<string> Tags { get; init; }
     public DateTime UploadedAt { get; init; }
 
@@ -23,7 +23,7 @@ public partial record GetImageResponse
             Url = image.OriginalImage.Path,
             Width = image.OriginalImage.Width,
             Height = image.OriginalImage.Height,
-            Uploader = userSnapshot?.UserName ?? "Deleted",
+            Uploader = userSnapshot?.UserName,
             Tags = [.. image.Tags.Select(tag => tag.Name)],
             UploadedAt = image.UploadedDateTime
         };

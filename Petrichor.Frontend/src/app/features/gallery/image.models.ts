@@ -3,7 +3,7 @@ export type Image = {
   url: string;
   width: number;
   height: number;
-  uploader: string;
+  uploader: string | null;
   tags: string[];
   uploadedAt: Date;
 };

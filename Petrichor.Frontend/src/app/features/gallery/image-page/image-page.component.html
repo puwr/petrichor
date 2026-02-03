@@ -1,45 +1,48 @@
 <div class="container">
   @if (image(); as img) {
-  <section class="image-page">
-    <img
-      class="image-page__image"
-      src="{{ baseUrl + img.url }}"
-      width="{{ img.width }}"
-      height="{{ img.height }}"
-      fetchpriority="high"
-      loading="eager"
-      (load)="onImageLoad()"
-    />
+    <section class="image-page">
+      <img
+        class="image-page__image"
+        src="{{ baseUrl + img.url }}"
+        width="{{ img.width }}"
+        height="{{ img.height }}"
+        fetchpriority="high"
+        loading="eager"
+        (load)="onImageLoad()"
+      />
 
-    <div class="image-page__details">
-      <div class="image-page__tags">
-        <app-tags
-          [isUploader]="authStore.isResourceOwnerOrAdmin(img.uploader)"
-          [imageId]="img.id"
-          [tags]="img.tags"
-          (tagsChanged)="refreshImage()"
-        />
+      <div class="image-page__details">
+        <div class="image-page__tags">
+          <app-tags
+            [isUploader]="isUploaderOrAdmin()"
+            [imageId]="img.id"
+            [tags]="img.tags"
+            (tagsChanged)="refreshImage()"
+          />
+        </div>
+        <div class="image-page__meta">
+          <span>
+            Uploaded by
+            @if (img.uploader) {
+              <a class="link" routerLink="/" [queryParams]="{ uploader: img.uploader }">
+                {{ img.uploader }}
+              </a>
+            } @else {
+              deleted user
+            }
+            • {{ img.uploadedAt | date: 'mediumDate' }}
+          </span>
+          @if (isUploaderOrAdmin()) {
+            <app-button variant="danger" (click)="onImageDelete()">
+              <app-icon name="delete" />
+            </app-button>
+          }
+        </div>
       </div>
-      <div class="image-page__meta">
-        <span>
-          Uploaded by
-          <a class="link" routerLink="/" [queryParams]="{ uploader: img.uploader }">{{
-            img.uploader
-          }}</a>
-          at:
-          {{ img.uploadedAt | date : 'longDate' }}
-        </span>
-        @if (isUploaderOrAdmin()) {
-        <app-button variant="danger" (click)="onImageDelete()">
-          <app-icon name="delete" />
-        </app-button>
-        }
-      </div>
-    </div>
 
-    @if (imageId) {
-    <app-comments />
-    }
-  </section>
+      @if (imageId) {
+        <app-comments />
+      }
+    </section>
   }
 </div>

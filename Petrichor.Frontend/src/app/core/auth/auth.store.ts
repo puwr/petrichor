@@ -3,7 +3,6 @@ import { computed, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AccountService } from '@app/core/account/account.service';
 import { SnackbarService } from '@app/core/snackbar.service';
-import { tapResponse } from '@ngrx/operators';
 import {
   signalStore,
   withState,
@@ -13,7 +12,7 @@ import {
   patchState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, exhaustMap, finalize, tap, EMPTY } from 'rxjs';
+import { pipe, exhaustMap, finalize, tap } from 'rxjs';
 import { authGuard } from './auth.guard';
 import { RegisterRequest, LoginRequest } from './auth.models';
 import { AuthService } from './auth.service';
@@ -94,7 +93,7 @@ export const AuthStore = signalStore(
       );
     };
 
-    const isResourceOwnerOrAdmin = (userName?: string): boolean => {
+    const isResourceOwnerOrAdmin = (userName: string): boolean => {
       const currentUser = store.currentUser();
 
       return currentUser?.roles.includes('Admin') || currentUser?.userName == userName;
