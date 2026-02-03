@@ -12,7 +12,7 @@ using Petrichor.Services.Users.Common.Persistence;
 namespace Petrichor.Services.Users.Common.Persistence.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20260202122515_InitialCreate")]
+    [Migration("20260203080635_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

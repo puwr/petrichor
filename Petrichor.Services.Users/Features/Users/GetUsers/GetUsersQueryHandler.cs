@@ -14,12 +14,12 @@ public static class GetUsersQueryHandler
     {
         var response = await dbContext.Users
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .OrderByDescending(u => u.RegisteredAtUtc)
             .Select(u => new GetUsersResponse(
                     u.Id,
                     u.Email!,
                     u.UserName!,
+                    u.RegisteredAtUtc,
                     dbContext.Roles
                         .Where(r => dbContext.UserRoles
                             .Any(ur => ur.UserId == u.Id && ur.RoleId == r.Id))

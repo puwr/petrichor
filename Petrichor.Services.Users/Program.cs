@@ -14,7 +14,6 @@ builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddEndpoints();
 builder.Services.AddAuthenticationAndAuthorization(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
-builder.Services.AddCaching(builder.Configuration);
 
 builder.Services.AddOpenApi();
 

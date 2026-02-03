@@ -20,8 +20,6 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options)
 
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
-        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
-
         base.OnModelCreating(modelBuilder);
     }
 }

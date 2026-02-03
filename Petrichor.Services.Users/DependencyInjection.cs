@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Petrichor.Services.Users.Common.Authorization;
@@ -17,9 +16,6 @@ using Wolverine.FluentValidation;
 using Wolverine.MemoryPack;
 using Wolverine.Postgresql;
 using Wolverine.RabbitMQ;
-using ZiggyCreatures.Caching.Fusion;
-using ZiggyCreatures.Caching.Fusion.Serialization.CysharpMemoryPack;
-
 namespace Petrichor.Services.Users;
 
 public static class DependencyInjection
@@ -77,37 +73,6 @@ public static class DependencyInjection
 
             options.UseFluentValidation();
         });
-    }
-
-    public static IServiceCollection AddCaching(this IServiceCollection services, IConfiguration configuration)
-    {
-        var cacheConnectionString = configuration.GetConnectionString("cache")
-            ?? throw new InvalidOperationException("Connection string 'cache' not found.");
-
-        services.AddFusionCache()
-            .WithDefaultEntryOptions(options =>
-            {
-                options.Duration = TimeSpan.FromMinutes(2);
-
-                options.FactorySoftTimeout = TimeSpan.FromMilliseconds(500);
-                options.FactoryHardTimeout = TimeSpan.FromSeconds(2);
-
-                options.IsFailSafeEnabled = true;
-                options.FailSafeMaxDuration = TimeSpan.FromMinutes(20);
-                options.FailSafeThrottleDuration = TimeSpan.FromMinutes(1);
-
-                options.DistributedCacheSoftTimeout = TimeSpan.FromSeconds(1);
-                options.DistributedCacheHardTimeout = TimeSpan.FromSeconds(2);
-
-                options.JitterMaxDuration = TimeSpan.FromSeconds(2);
-            })
-            .WithSerializer(new FusionCacheCysharpMemoryPackSerializer())
-            .WithDistributedCache(new RedisCache(new RedisCacheOptions()
-            {
-                Configuration = cacheConnectionString
-            }));
-
-        return services;
     }
 
     public static IServiceCollection AddAuthenticationAndAuthorization(

@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Petrichor.TestUtilities.Authentication;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
-using Testcontainers.Redis;
 using Wolverine;
 
 namespace Petrichor.Services.Users.Tests.TestUtilities;
@@ -13,13 +12,11 @@ namespace Petrichor.Services.Users.Tests.TestUtilities;
 public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:18.1-alpine").Build();
-    private readonly RedisContainer _redisContainer = new RedisBuilder("redis:8.4-alpine").Build();
     private readonly RabbitMqContainer _rmqContainer = new RabbitMqBuilder("rabbitmq:4.2-alpine").Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable("ConnectionStrings:database", _dbContainer.GetConnectionString());
-        Environment.SetEnvironmentVariable("ConnectionStrings:cache", _redisContainer.GetConnectionString());
         Environment.SetEnvironmentVariable("ConnectionStrings:rmq", _rmqContainer.GetConnectionString());
 
         builder.ConfigureServices(services =>
@@ -39,7 +36,6 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
-        await _redisContainer.StartAsync();
         await _rmqContainer.StartAsync();
     }
 
@@ -47,7 +43,6 @@ public class ApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
     {
         await base.DisposeAsync();
         await _dbContainer.DisposeAsync();
-        await _redisContainer.DisposeAsync();
         await _rmqContainer.DisposeAsync();
     }
 }
