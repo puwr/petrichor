@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Petrichor.Services.Users.Common.Persistence;
 using Petrichor.Services.Users.Features.Authentication.Register;
+using Petrichor.Services.Users.IntegrationMessages;
 using Petrichor.Services.Users.Tests.TestUtilities;
+using Petrichor.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
 
 namespace Petrichor.Services.Users.Tests.Features.Users.DeleteUser;
@@ -39,8 +41,13 @@ public class DeleteUserEndpointTests
         using var adminClient = _apiFactory.CreateClient();
         adminClient.SetFakeClaims(role: "Admin");
 
-        var response = await adminClient.DeleteAsync($"/users/{registeredUserId}");
+        var (response, session) = await _apiFactory.Services
+            .TrackHttpCall(async () => await adminClient.DeleteAsync($"/users/{registeredUserId}"));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var userDeletedEvent = session.Sent.SingleMessage<UserDeletedIntegrationEvent>();
+        userDeletedEvent.UserId.Should().Be(registeredUserId);
+        userDeletedEvent.DeleteUploadedImages.Should().Be(false);
 
         var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == registeredUserId);
         user.Should().NotBeNull();
