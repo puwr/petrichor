@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Petrichor.Services.Gallery.Common.Domain.Images.Events;
+using Petrichor.Services.Gallery.IntegrationMessages;
 using Petrichor.Services.Gallery.Tests.TestUtilities;
+using Petrichor.TestUtilities;
 using Petrichor.TestUtilities.Authentication;
 
 namespace Petrichor.Services.Gallery.Tests.Features.DeleteImage;
@@ -19,8 +22,13 @@ public class DeleteImageEndpointTests(ApiFactory apiFactory)
         var uploadImageResponse = await client.UploadTestImageAsync();
         var uploadedImageId = await uploadImageResponse.Content.ReadFromJsonAsync<Guid>();
 
-        var response = await client.DeleteAsync($"/images/{uploadedImageId}");
+        var (response, session) = await apiFactory.Services
+            .TrackHttpCall(async () => await client.DeleteAsync($"/images/{uploadedImageId}"));
+
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        session.Sent.SingleMessage<ImageDeletedDomainEvent>();
+        session.Sent.SingleMessage<ImageDeletedIntegrationEvent>().ImageId.Should().Be(uploadedImageId);
 
         var getImageResponse = await client.GetAsync($"/images/{uploadedImageId}");
         getImageResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
