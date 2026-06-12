@@ -18,6 +18,7 @@
     <PackageReference Include="WolverineFx.MemoryPack" />
     <PackageReference Include="WolverineFx.Postgresql" />
     <PackageReference Include="WolverineFx.RabbitMQ" />
+    <PackageReference Include="WolverineFx.RuntimeCompilation" />
     <PackageReference Include="CommunityToolkit.Aspire.Minio.Client" />
     <PackageReference Include="ZiggyCreatures.FusionCache" />
     <PackageReference Include="ZiggyCreatures.FusionCache.Serialization.CysharpMemoryPack" />

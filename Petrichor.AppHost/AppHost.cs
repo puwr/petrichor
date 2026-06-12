@@ -2,17 +2,17 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var database = builder
     .AddPostgres("pg")
-    .WithImage("postgres:18.1-alpine")
+    .WithImage("postgres:18-alpine")
     .WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase("database");
 
 var cache = builder
     .AddRedis("cache")
-    .WithImage("redis:8.4-alpine");
+    .WithImage("redis:8-alpine");
 
 var rmq = builder
     .AddRabbitMQ("rmq")
-    .WithImage("rabbitmq:4.2-alpine")
+    .WithImage("rabbitmq:4-alpine")
     .WithLifetime(ContainerLifetime.Persistent);
 
 var minioUser = builder.AddParameter("MinioUser");

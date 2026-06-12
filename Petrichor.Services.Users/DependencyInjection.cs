@@ -55,6 +55,8 @@ public static class DependencyInjection
 
         builder.UseWolverine(options =>
         {
+            options.CodeGeneration.AlwaysUseServiceLocationFor<UserManager<User>>();
+
             options.UseMemoryPackSerialization();
 
             options.PersistMessagesWithPostgresql(databaseConnectionString, "users");
