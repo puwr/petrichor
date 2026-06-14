@@ -1,17 +1,17 @@
+using NetVips;
 using Petrichor.Shared.Extensions;
-using SixLabors.ImageSharp;
 
 namespace Petrichor.Services.Gallery.Common.Services;
 
-public class ImageMetadataProvider : IImageMetadataProvider
+public class ImageMetadataProvider
 {
-    public async Task<(int width, int height)> GetDimensionsAsync(
-        Stream imageStream,
-        CancellationToken cancellationToken = default)
+    public (int width, int height) GetDimensions(Stream imageStream)
     {
         imageStream.Reset();
 
-        using Image image = await Image.LoadAsync(imageStream, cancellationToken);
+        using var image = Image.NewFromStream(
+            imageStream,
+            access: Enums.Access.Sequential);
 
         return (image.Width, image.Height);
     }

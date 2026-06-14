@@ -1,26 +1,18 @@
+using NetVips;
 using Petrichor.Shared.Extensions;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 
 namespace Petrichor.Services.Gallery.Common.Services;
 
-public class ThumbnailGenerator : IThumbnailGenerator
+public class ThumbnailGenerator
 {
-    public async Task<Stream> CreateThumbnailAsync(
-        Stream imageStream,
-        CancellationToken cancellationToken = default)
+    public Stream CreateThumbnail(Stream imageStream)
     {
         imageStream.Reset();
 
-        using Image image = await Image.LoadAsync(imageStream, cancellationToken);
-
-        image.Mutate(i => i.Resize(
-            width: 300,
-            height: 0,
-            KnownResamplers.Lanczos3));
+        using var image = Image.ThumbnailStream(imageStream, width: 300, size: Enums.Size.Down);
 
         var thumbnailStream = new MemoryStream();
-        await image.SaveAsJpegAsync(thumbnailStream, cancellationToken);
+        image.JpegsaveStream(thumbnailStream, q: 85);
 
         return thumbnailStream;
     }

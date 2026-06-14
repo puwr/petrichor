@@ -11,8 +11,8 @@ namespace Petrichor.Services.Gallery.Features.UploadImage;
 public class UploadImageCommandHandler(
     GalleryDbContext dbContext,
     IFileStorage fileStorage,
-    IThumbnailGenerator thumbnailGenerator,
-    IImageMetadataProvider imageMetadataProvider,
+    ThumbnailGenerator thumbnailGenerator,
+    ImageMetadataProvider imageMetadataProvider,
     IFusionCache cache
 )
 {
@@ -46,11 +46,9 @@ public class UploadImageCommandHandler(
             StorageFolders.Uploads,
             cancellationToken);
 
-        var (imageWidth, imageHeight) = await imageMetadataProvider
-            .GetDimensionsAsync(imageStream, cancellationToken);
+        var (imageWidth, imageHeight) = imageMetadataProvider.GetDimensions(imageStream);
 
-        var thumbnailStream = await thumbnailGenerator
-            .CreateThumbnailAsync(imageStream, cancellationToken);
+        var thumbnailStream =  thumbnailGenerator.CreateThumbnail(imageStream);
 
         var thumbnailPath = await fileStorage.SaveFileAsync(
             thumbnailStream,
@@ -58,8 +56,7 @@ public class UploadImageCommandHandler(
             StorageFolders.Thumbnails,
             cancellationToken);
 
-        var (thumbnailWidth, thumbnailHeight) = await imageMetadataProvider
-            .GetDimensionsAsync(thumbnailStream, cancellationToken);
+        var (thumbnailWidth, thumbnailHeight) = imageMetadataProvider.GetDimensions(thumbnailStream);
 
         var originalImage = new OriginalImage(imagePath, imageWidth, imageHeight);
         var thumbnail = new Thumbnail(thumbnailPath, thumbnailWidth, thumbnailHeight);

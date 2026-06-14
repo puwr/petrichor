@@ -28,8 +28,8 @@ public static class DependencyInjection
 {
     public static void AddGallery(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IThumbnailGenerator, ThumbnailGenerator>();
-        builder.Services.AddScoped<IImageMetadataProvider, ImageMetadataProvider>();
+        builder.Services.AddScoped<ThumbnailGenerator>();
+        builder.Services.AddScoped<ImageMetadataProvider>();
 
         builder.AddMinioClient("minio");
         builder.Services.AddScoped<IFileStorage, MinioFileStorage>();
