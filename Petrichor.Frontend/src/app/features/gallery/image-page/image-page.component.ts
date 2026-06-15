@@ -1,6 +1,15 @@
 import { Dialog } from '@angular/cdk/dialog';
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject, DestroyRef, Signal, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  DestroyRef,
+  Signal,
+  computed,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthStore } from '@app/core/auth';
@@ -19,6 +28,7 @@ import { Image } from '../image.models';
   imports: [TagsComponent, DatePipe, CommentsComponent, ButtonComponent, IconComponent, RouterLink],
   templateUrl: './image-page.component.html',
   styleUrl: './image-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImagePageComponent implements OnInit, OnDestroy {
   private router = inject(Router);

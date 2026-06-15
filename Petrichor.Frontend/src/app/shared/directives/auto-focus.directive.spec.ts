@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular/zoneless';
 import { AutoFocusDirective } from './auto-focus.directive';
 import { TestBed } from '@angular/core/testing';
 import { FocusMonitor } from '@angular/cdk/a11y';

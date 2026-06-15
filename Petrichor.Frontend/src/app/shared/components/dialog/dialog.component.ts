@@ -1,5 +1,5 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 import { DialogData } from './dialog.models';
 
@@ -8,6 +8,7 @@ import { DialogData } from './dialog.models';
   imports: [ButtonComponent],
   templateUrl: './dialog.component.html',
   styleUrl: './dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogComponent {
   dialogRef = inject(DialogRef);

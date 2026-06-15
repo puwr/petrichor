@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { signal } from '@angular/core';
 import { AuthStore } from '@app/core/auth';
 import { CommentsComponent } from './comments.component';
-import { render, screen } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular/zoneless';
+import { CommentFormComponent } from './comment-form/comment-form.component';
+import { CommentListComponent } from './comment-list/comment-list.component';
 
 describe('CommentsComponent', () => {
   it('renders comment-form component when isAuthenticated is true', async () => {
@@ -34,7 +36,10 @@ async function setup(config: { isAuthenticated?: boolean } = {}) {
         useValue: authStore,
       },
     ],
-    componentImports: [MockCommentFormComponent, MockCommentListComponent],
+    importOverrides: [
+      { replace: CommentFormComponent, with: MockCommentFormComponent },
+      { replace: CommentListComponent, with: MockCommentListComponent },
+    ],
   });
 }
 

@@ -4,7 +4,7 @@ import { mockCurrentUser } from 'src/test/account.mocks';
 import { Comment, makeComment } from '../comment.models';
 import { CommentStore } from '../comment.store';
 import { CommentListComponent } from './comment-list.component';
-import { render, waitFor, screen } from '@testing-library/angular';
+import { render, waitFor, screen } from '@testing-library/angular/zoneless';
 import { CommentItemComponent } from '../comment-item/comment-item.component';
 import userEvent from '@testing-library/user-event';
 
@@ -85,17 +85,18 @@ async function setup() {
         useValue: commentStore,
       },
     ],
-    childComponentOverrides: [
-      {
-        component: CommentItemComponent,
-        providers: [
-          {
-            provide: AuthStore,
-            useValue: { isResourceOwnerOrAdmin: vi.fn().mockReturnValue(true) },
-          },
-        ],
-      },
-    ],
+    configureTestBed: (testBed) => {
+      testBed.overrideComponent(CommentItemComponent, {
+        set: {
+          providers: [
+            {
+              provide: AuthStore,
+              useValue: { isResourceOwnerOrAdmin: vi.fn().mockReturnValue(true) },
+            },
+          ],
+        },
+      });
+    },
   });
 
   return { user, commentStore };

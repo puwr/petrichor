@@ -3,7 +3,7 @@ import { UploadPageStore } from './upload-page.store';
 import { ImageService } from '../image.service';
 import { SnackbarService } from '@app/core/snackbar.service';
 import { Router } from '@angular/router';
-import { BehaviorSubject, EMPTY, Observable, of, Subject, tap, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { UploadEvent } from '../image.models';
 
 describe('UploadPageStore', () => {

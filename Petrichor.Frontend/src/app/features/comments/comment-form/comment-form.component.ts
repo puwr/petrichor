@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ValidationErrorsComponent, ButtonComponent } from '@app/shared/components';
 import { CommentStore } from '../comment.store';
 import { form, FormField, required, submit } from '@angular/forms/signals';
@@ -9,6 +9,7 @@ import { catchError, firstValueFrom, map, of } from 'rxjs';
   imports: [ValidationErrorsComponent, ButtonComponent, FormField],
   templateUrl: './comment-form.component.html',
   styleUrl: './comment-form.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentFormComponent {
   readonly commentStore = inject(CommentStore);

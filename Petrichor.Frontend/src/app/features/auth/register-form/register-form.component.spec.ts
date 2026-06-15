@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular/zoneless';
 import userEvent from '@testing-library/user-event';
 import { RegisterFormComponent } from './register-form.component';
 import { AuthStore, RegisterRequest } from '@app/core/auth';

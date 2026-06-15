@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { GalleryItem } from '../image.models';
 import { GalleryPageComponent } from './gallery-page.component';
 import { GalleryPageStore } from './gallery-page.store';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular/zoneless';
 import userEvent from '@testing-library/user-event';
 
 describe('GalleryPageComponent', () => {
@@ -57,8 +57,18 @@ async function setup() {
         useValue: router,
       },
     ],
-    configureTestBed: (testBed) =>
-      testBed.overrideProvider(GalleryPageStore, { useValue: galleryPageStore }),
+    configureTestBed: (testBed) => {
+      testBed.overrideComponent(GalleryPageComponent, {
+        set: {
+          providers: [
+            {
+              provide: GalleryPageStore,
+              useValue: galleryPageStore,
+            },
+          ],
+        },
+      });
+    },
   });
 
   return { user, galleryPageStore, router };

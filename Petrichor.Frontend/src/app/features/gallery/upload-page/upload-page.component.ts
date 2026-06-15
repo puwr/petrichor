@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ProgressBarComponent, ValidationErrorsComponent } from '@app/shared/components';
 import { UploadPageStore } from './upload-page.store';
 
@@ -8,6 +8,7 @@ import { UploadPageStore } from './upload-page.store';
   providers: [UploadPageStore],
   templateUrl: './upload-page.component.html',
   styleUrl: './upload-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadPageComponent {
   readonly uploadPageStore = inject(UploadPageStore);

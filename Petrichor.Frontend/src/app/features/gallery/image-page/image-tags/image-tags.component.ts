@@ -1,4 +1,12 @@
-import { Component, OnInit, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ValidationErrorsComponent, ButtonComponent, IconComponent } from '@app/shared/components';
 import { ImageService } from '../../image.service';
@@ -20,6 +28,7 @@ import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive'
   ],
   templateUrl: './image-tags.component.html',
   styleUrl: './image-tags.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagsComponent implements OnInit {
   private imageService = inject(ImageService);

@@ -1,7 +1,7 @@
 import { ValidationError } from '@angular/forms/signals';
 import { LoginFormComponent } from './login-form.component';
 import { AuthStore } from '@app/core/auth';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular/zoneless';
 import { userEvent } from '@testing-library/user-event';
 import { of, throwError } from 'rxjs';
 

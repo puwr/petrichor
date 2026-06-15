@@ -1,6 +1,6 @@
 import { CommentStore } from '../comment.store';
 import { CommentFormComponent } from './comment-form.component';
-import { render, screen, waitFor } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular/zoneless';
 import userEvent from '@testing-library/user-event';
 import { of, throwError } from 'rxjs';
 import { ValidationError } from '@angular/forms/signals';

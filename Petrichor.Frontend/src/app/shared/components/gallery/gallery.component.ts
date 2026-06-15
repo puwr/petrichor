@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { GalleryItem } from '@app/features/gallery/image.models';
 import { environment } from 'src/environments/environment';
@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
   imports: [RouterLink],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GalleryComponent {
   galleryItems = input.required<GalleryItem[]>();

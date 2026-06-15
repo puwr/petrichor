@@ -1,5 +1,5 @@
 import { ValidationErrorsComponent } from './validation-errors.component';
-import { render, screen } from '@testing-library/angular';
+import { render, screen } from '@testing-library/angular/zoneless';
 import { inputBinding } from '@angular/core';
 
 describe('ValidationErrorsComponent', () => {

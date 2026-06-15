@@ -1,6 +1,6 @@
 import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@app/core/auth';
 
@@ -9,6 +9,7 @@ import { AuthStore } from '@app/core/auth';
   imports: [CdkMenu, CdkMenuItem, CdkMenuTrigger, RouterLink],
   templateUrl: './user-nav.component.html',
   styleUrl: './user-nav.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserNavComponent {
   readonly authStore = inject(AuthStore);

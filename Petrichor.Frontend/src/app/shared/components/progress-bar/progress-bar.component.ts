@@ -1,4 +1,4 @@
-import { Component, inject, input, computed } from '@angular/core';
+import { Component, inject, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LoadingService } from '@app/core/loading/loading.service';
 
@@ -7,6 +7,7 @@ import { LoadingService } from '@app/core/loading/loading.service';
   imports: [],
   templateUrl: './progress-bar.component.html',
   styleUrl: './progress-bar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressBarComponent {
   private loadingService = inject(LoadingService);

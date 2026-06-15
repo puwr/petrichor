@@ -5,5 +5,5 @@
     "types": ["vitest/globals", "@testing-library/jest-dom/vitest"],
     "target": "es2022"
   },
-  "include": ["src/**/*.spec.ts"]
+  "include": ["src/**/*.spec.ts", "src/test/test-providers.ts"]
 }
