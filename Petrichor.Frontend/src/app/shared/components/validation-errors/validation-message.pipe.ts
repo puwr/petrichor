@@ -12,7 +12,7 @@ export class ValidationMessagePipe implements PipeTransform {
     ...inject(VALIDATION_MESSAGES, { optional: true }),
   };
 
-  public transform(error: ValidationError.WithOptionalField | null | undefined): string {
+  public transform(error: ValidationError.WithOptionalFieldTree | null | undefined): string {
     if (!error) {
       return '';
     }

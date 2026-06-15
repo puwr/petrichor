@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { identity, delay, finalize } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '@/environments/environment';
 import { SKIP_GLOBAL_LOADING } from '../http-tokens';
 import { LoadingService } from './loading.service';
 

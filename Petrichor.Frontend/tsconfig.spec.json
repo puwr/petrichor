@@ -1,9 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "rootDir": "./src",
     "outDir": "./out-tsc/spec",
     "types": ["vitest/globals", "@testing-library/jest-dom/vitest"],
     "target": "es2022"
   },
-  "include": ["src/**/*.spec.ts", "src/test/test-providers.ts"]
+  "include": ["src/**/*.spec.ts", "src/test/test-setup.ts", "src/test/test-providers.ts"]
 }

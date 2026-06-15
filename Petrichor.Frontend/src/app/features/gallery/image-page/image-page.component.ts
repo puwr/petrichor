@@ -18,7 +18,7 @@ import { CommentsComponent } from '@app/features/comments/comments.component';
 import { ButtonComponent, IconComponent, DialogComponent } from '@app/shared/components';
 import { DialogData } from '@app/shared/components/dialog/dialog.models';
 import { Subject, switchMap, startWith, of, filter } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '@/environments/environment';
 import { ImageService } from '../image.service';
 import { TagsComponent } from './image-tags/image-tags.component';
 import { Image } from '../image.models';

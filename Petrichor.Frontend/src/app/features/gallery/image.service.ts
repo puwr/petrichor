@@ -11,7 +11,7 @@ import { Injectable, inject } from '@angular/core';
 import { SKIP_GLOBAL_LOADING } from '@app/core/http-tokens';
 import { PagedResponse } from '@app/core/pagination.models';
 import { Observable, filter, map } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '@/environments/environment';
 import { UploadEvent, GalleryItem, Image } from './image.models';
 
 @Injectable({

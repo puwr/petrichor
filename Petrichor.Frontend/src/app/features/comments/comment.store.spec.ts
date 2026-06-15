@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { AuthStore } from '@app/core/auth';
 import { of, BehaviorSubject, firstValueFrom } from 'rxjs';
-import { mockCurrentUser } from 'src/test/account.mocks';
+import { mockCurrentUser } from '@/test/account.mocks';
 import { makeComment } from './comment.models';
 import { CommentService } from './comment.service';
 import { CommentStore } from './comment.store';

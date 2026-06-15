@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import {
   email,
   form,
@@ -21,7 +20,6 @@ import { AutoFocusDirective } from '@app/shared/directives/auto-focus.directive'
 @Component({
   selector: 'app-register-form',
   imports: [
-    ReactiveFormsModule,
     ValidationErrorsComponent,
     ButtonComponent,
     FormField,

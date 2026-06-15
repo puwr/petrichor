@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { AuthStore } from '@app/core/auth';
-import { mockCurrentUser } from 'src/test/account.mocks';
+import { mockCurrentUser } from '@/test/account.mocks';
 import { Comment, makeComment } from '../comment.models';
 import { CommentStore } from '../comment.store';
 import { CommentListComponent } from './comment-list.component';

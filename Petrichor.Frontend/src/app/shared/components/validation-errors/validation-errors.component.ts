@@ -28,7 +28,7 @@ import { ValidationMessagePipe } from '@app/shared/components/validation-errors/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ValidationErrorsComponent {
-  validationErrors = input<ValidationError.WithOptionalField[] | null>(null);
+  validationErrors = input<ValidationError.WithOptionalFieldTree[] | null>(null);
   field = input<FormField<unknown> | null>(null);
   describedby = input<string | null>(null);
 
