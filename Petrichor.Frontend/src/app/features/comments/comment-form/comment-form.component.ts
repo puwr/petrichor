@@ -18,9 +18,7 @@ export class CommentFormComponent {
     required(schema.comment, { message: '' });
   });
 
-  async onSubmit(event: SubmitEvent): Promise<void> {
-    event.preventDefault();
-
+  async submitCommentForm(): Promise<void> {
     await submit(this.commentForm, async (form) => {
       if (form().invalid()) return;
 
@@ -35,5 +33,19 @@ export class CommentFormComponent {
         ),
       );
     });
+  }
+
+  async onKeyDown(event: KeyboardEvent): Promise<void> {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault();
+
+      await this.submitCommentForm();
+    }
+  }
+
+  async onSubmit(event: SubmitEvent): Promise<void> {
+    event?.preventDefault();
+
+    await this.submitCommentForm();
   }
 }

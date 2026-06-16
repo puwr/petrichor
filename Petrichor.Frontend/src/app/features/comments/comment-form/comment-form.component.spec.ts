@@ -58,6 +58,18 @@ describe('CommentFormComponent', () => {
 
     expect(screen.queryByText(/comment message/i)).not.toBeInTheDocument();
   });
+
+  it('submits form on ctrl+enter or cmd+enter', async () => {
+    const { user } = await setup();
+
+    await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message ctrl');
+    await user.keyboard('{Control>}{Enter}{/Control}');
+    expect(screen.queryByText(/comment message ctrl/i)).not.toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText(/enter your/i), 'comment message cmd');
+    await user.keyboard('{Meta>}{Enter}{/Meta}');
+    expect(screen.queryByText(/comment message cmd/i)).not.toBeInTheDocument();
+  });
 });
 
 async function setup() {
